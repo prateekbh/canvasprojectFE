@@ -1,0 +1,41 @@
+server:
+  applicationConnectors:
+  - type: http
+    port: 8080
+    acceptorThreads: 1
+    outputBufferSize: 32KB
+    inputBufferSize: 8KB
+    maxRequestHeaderSize: 8KB
+    maxResponseHeaderSize: 8KB
+    reuseAddress: true
+    soLingerTime: null
+    useServerHeader: false
+    useDateHeader: true
+    useForwardedHeaders: true
+    bindHost: null
+
+  adminConnectors:
+  - type: http
+    port: 8081
+
+  minThreads: 8
+  maxThreads: 1024
+  idleThreadTimeout: 200s
+  shutdownGracePeriod: 5s
+  gzip:
+    enabled: true
+    minimumEntitySize: 256 bytes
+    bufferSize: 8KiB
+    excludedUserAgents: []
+    compressedMimeTypes: []
+
+logging:
+  level: INFO
+  loggers:
+    org.hibernate: ALL
+    com.sun.jersey.api.container.filter.LoggingFilter: INFO
+  appenders:
+  - type: console
+    threshold: ALL
+    timeZone: IST
+    logFormat: "%-5p [%d{ISO8601}] [%X{reqId} %X{txnId}] %c{1.}: %m\n%ex"
