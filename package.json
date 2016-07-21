@@ -1,0 +1,19 @@
+{
+  "name": "pied_piper",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Palash-Vijay/pied_piper.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Palash-Vijay/pied_piper/issues"
+  },
+  "homepage": "https://github.com/Palash-Vijay/pied_piper#readme"
+}
