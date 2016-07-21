@@ -1,21 +1,17 @@
 package com.pied.piper.core.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-
+import com.pied.piper.core.db.model.Image;
 import io.dropwizard.jackson.JsonSnakeCase;
 import lombok.Data;
 
-import java.util.List;
-
 /**
- * Created by palash.v on 21/07/16.
+ * Created by akshay.kesarwan on 22/07/16.
  */
 @Data
 @JsonSnakeCase
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class SearchUserRequestDto {
-    private String name;
-    private String accountId;
-    private String userLike;
-    private List<String> accountIds;
+public class PullRequest {
+    private UserResponseDto sender;
+    private Image image;
 }

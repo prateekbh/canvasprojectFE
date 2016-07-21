@@ -44,6 +44,9 @@ public class Image {
     @Column(name = "num_of_likes")
     private Integer numOfLikes = 0;
 
+    @Column(name = "is_cloned")
+    private Boolean isCloned = false;
+
     @OneToMany(mappedBy = "sourceImage", fetch = FetchType.LAZY)
     private List<ImageTags> tags = new ArrayList<>();
 

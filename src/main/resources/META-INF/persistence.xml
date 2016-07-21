@@ -5,7 +5,7 @@
         <class>com.pied.piper.core.db.model.Image</class>
         <class>com.pied.piper.core.db.model.User</class>
         <class>com.pied.piper.core.db.model.UserRelations</class>
-        <class>com.pied.piper.core.db.model.Image</class>
+        <class>com.pied.piper.core.db.model.ImageRelation</class>
         <class>com.pied.piper.core.db.model.ImageTags</class>
     </persistence-unit>
 </persistence>

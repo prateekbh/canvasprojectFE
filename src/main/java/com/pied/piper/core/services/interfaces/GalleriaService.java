@@ -2,6 +2,7 @@ package com.pied.piper.core.services.interfaces;
 
 import com.pied.piper.core.db.model.Image;
 import com.pied.piper.core.dto.ImageMetaData;
+import com.pied.piper.core.dto.ProfileDetails;
 import com.pied.piper.core.dto.SaveImageRequestDto;
 import com.pied.piper.core.dto.SearchResponseDto;
 
@@ -18,4 +19,5 @@ public interface GalleriaService {
     List<Image> findByAccountId(String accountId);
     Image getImage(Long imageId);
     SearchResponseDto search(String searchText);
+    ProfileDetails getProfileDetails(String accountId) throws Exception;
 }
