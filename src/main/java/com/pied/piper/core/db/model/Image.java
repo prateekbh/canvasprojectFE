@@ -2,17 +2,13 @@ package com.pied.piper.core.db.model;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Version;
-
 import io.dropwizard.jackson.JsonSnakeCase;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+
+import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by akshay.kesarwan on 21/07/16.
@@ -47,5 +43,8 @@ public class Image {
 
     @Column(name = "num_of_likes")
     private Integer numOfLikes = 0;
+
+    @OneToMany(mappedBy = "sourceImage", fetch = FetchType.LAZY)
+    private List<ImageTags> tags = new ArrayList<>();
 
 }

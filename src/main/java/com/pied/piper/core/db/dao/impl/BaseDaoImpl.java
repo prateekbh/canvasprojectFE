@@ -6,28 +6,24 @@ package com.pied.piper.core.db.dao.impl;
 
 import com.google.inject.Inject;
 import com.google.inject.persist.Transactional;
-
 import com.pied.piper.core.db.dao.api.BaseDao;
-
+import lombok.extern.slf4j.Slf4j;
 import org.hibernate.Criteria;
 import org.hibernate.LockMode;
 import org.hibernate.Session;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Order;
 
-import java.io.Serializable;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
-import java.util.List;
-import java.util.Map;
-
 import javax.inject.Provider;
 import javax.persistence.EntityManager;
 import javax.persistence.LockModeType;
 import javax.persistence.Query;
 import javax.validation.constraints.NotNull;
-
-import lombok.extern.slf4j.Slf4j;
+import java.io.Serializable;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.util.List;
+import java.util.Map;
 
 @Slf4j
 public class BaseDaoImpl<T, ID extends Serializable> implements BaseDao<T, ID> {

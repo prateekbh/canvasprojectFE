@@ -31,6 +31,7 @@ dependencies {
     compile 'mysql:mysql-connector-java:5.1.28'
     // https://mvnrepository.com/artifact/commons-beanutils/commons-beanutils
     compile group: 'commons-beanutils', name: 'commons-beanutils', version: '1.8.3'
+    compile 'org.hibernate:hibernate-search-orm:5.0.0.Final'
 
 
     testCompile group: 'junit', name: 'junit', version: junitVersion
