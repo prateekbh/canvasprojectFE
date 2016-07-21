@@ -1,0 +1,35 @@
+apply plugin: 'java'
+apply plugin: 'idea'
+apply plugin: 'application'
+
+sourceCompatibility = 1.8
+version = '1.0'
+mainClassName = 'com.pied.piper.GalleriaApplication'
+
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile group: 'io.dropwizard', name: 'dropwizard-core', version: dropwizardVersion
+    compile group: 'io.dropwizard', name: 'dropwizard-migrations', version: dropwizardVersion
+    compile group: 'com.google.inject', name: 'guice', version: guiceVersion
+    compile group: 'com.hubspot.dropwizard', name: 'dropwizard-guice', version: dropwizardGuiceVersion
+    compile group: 'org.projectlombok', name: 'lombok', version: lombokVersion
+
+    testCompile group: 'junit', name: 'junit', version: junitVersion
+}
+
+task createWrapper(type: Wrapper) {
+    gradleVersion = '2.1'
+}
+
+run {
+    args 'server', 'config/development.yaml'
+}
