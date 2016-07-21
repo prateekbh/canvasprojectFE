@@ -12,6 +12,9 @@ import com.pied.piper.exception.ResponseException;
 
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by akshay.kesarwan on 21/05/16.
  */
@@ -69,10 +72,21 @@ public class GalleriaServiceImpl implements GalleriaService {
     @Override
     @Transactional
     public ImageMetaData getImageMetaData(Long imageId) {
-        Image image = getImage(imageId);
-        if(image == null)
+        List<Image> images = imageDao.getMetaData(imageId, null);
+        if(images.size() == 0)
             return null;
-        return new ImageMetaData(image);
+        return new ImageMetaData(images.get(0));
+    }
+
+    @Override
+    @Transactional
+    public List<ImageMetaData> getImageMetaData(String accountId) {
+        List<Image> imageList = imageDao.getMetaData(null, accountId);
+        List<ImageMetaData> metaDataList = new ArrayList<>();
+        for(Image image : imageList){
+            metaDataList.add(new ImageMetaData(image));
+        }
+        return metaDataList;
     }
 
     @Override
@@ -84,5 +98,10 @@ public class GalleriaServiceImpl implements GalleriaService {
             log.error("Some error while fetching for " + imageId, e);
             throw new ResponseException("Error while fetching for " + imageId + ". " + e.getMessage(), e);
         }
+    }
+
+    @Override
+    public List<Image> findByAccountId(String accountId) {
+        return imageDao.findByAccountId(accountId);
     }
 }

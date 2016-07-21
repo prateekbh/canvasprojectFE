@@ -4,7 +4,9 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Singleton;
 
 import com.pied.piper.core.services.impl.GalleriaServiceImpl;
+import com.pied.piper.core.services.impl.UserServiceImpl;
 import com.pied.piper.core.services.interfaces.GalleriaService;
+import com.pied.piper.core.services.interfaces.UserService;
 
 
 /**
@@ -14,5 +16,6 @@ public class GalleriaModule extends AbstractModule {
     @Override
     protected void configure() {
         bind(GalleriaService.class).to(GalleriaServiceImpl.class).in(Singleton.class);
+        bind(UserService.class).to(UserServiceImpl.class).in(Singleton.class);
     }
 }

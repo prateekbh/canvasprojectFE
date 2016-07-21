@@ -19,12 +19,12 @@ import javax.persistence.EntityManager;
 /**
  * Created by palash.v on 21/07/16.
  */
-public class UserDaoImpl extends BaseDaoImpl<Image, Long> {
+public class UserDaoImpl extends BaseDaoImpl<User, Long> {
 
     @Inject
     public UserDaoImpl(Provider<EntityManager> entityManagerProvider) {
         super(entityManagerProvider);
-        this.entityClass = Image.class;
+        this.entityClass = User.class;
     }
 
     public List<User> searchUser(SearchUserRequestDto searchUserRequestDto) {

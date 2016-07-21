@@ -2,6 +2,7 @@ package com.pied.piper.core.services.interfaces;
 
 import com.pied.piper.core.db.model.User;
 import com.pied.piper.core.dto.SearchUserRequestDto;
+import com.pied.piper.core.dto.UserDetails;
 
 import java.util.List;
 
@@ -14,4 +15,7 @@ public interface UserService {
 
     List<String> getImagesForUser(String accountId);
 
+    User findByAccountId(String accountId);
+
+    UserDetails getUserDetailsByUserId(Long userId);
 }
