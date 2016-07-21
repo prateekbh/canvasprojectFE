@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>The pied piper fucka</title>
+	<meta name="viewport" content="initial-scale=1, maximum-scale=1">
+	<link rel="manifest" type="text/css" href="/manifest.json">
+	<link href='http://fonts.googleapis.com/css?family=Roboto' rel='stylesheet' type='text/css'>
+	<link rel="stylesheet" type="text/css" href="/bin/tags/concat_css.css">
+</head>
+<body>
+	<gp-header></gp-header>
+	<quick-view>
+	        <div class="container app-body">
+	        </div>
+	</quick-view>
+	<script type="text/javascript" src="/node_modules/node-lzw/lib/lzw.js"></script>
+	<script type="text/javascript" src="/node_modules/riot/riot.min.js"></script>
+	<script type="text/javascript" src="/bin/tags/tags.js"></script>
+	<script type="text/javascript" src="/node_modules/veronica-x/veronica.min.js"></script>
+	<script type="text/javascript">
+		veronica.addRoute(veronica.createRoute("home","/","gp-home"));
+		veronica.addRoute(veronica.createRoute("draw","/draw","gp-draw"));
+		veronica.addRoute(veronica.createRoute("search","/search","gp-search"));
+	</script>
+</body>
+</html>

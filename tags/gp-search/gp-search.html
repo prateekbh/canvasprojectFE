@@ -1,0 +1,83 @@
+<gp-search>
+	<input type="text" class="q" placeholder="explore">
+	<div class="loader hidden">
+		<gp-loader></gp-loader>
+	</div>
+	<div class="results ">
+		<div class="ppl">
+			<div class="title">People</div>
+			<div class="content">
+				<div class="usernail">
+					<div class="pic">
+						<img class="pic" src="https://igcdn-photos-a-a.akamaihd.net/hphotos-ak-xat1/t51.2885-19/s150x150/12912528_235034833513880_374146734_a.jpg"></img>
+					</div>
+					<div class="name">Prateek</div>
+				</div>
+				<div class="usernail">
+					<div class="pic">
+						<img class="pic" src="https://igcdn-photos-a-a.akamaihd.net/hphotos-ak-xat1/t51.2885-19/s150x150/12912528_235034833513880_374146734_a.jpg"></img>
+					</div>
+					<div class="name">Prateek</div>
+				</div>
+				<div class="usernail">
+					<div class="pic">
+						<img class="pic" src="https://igcdn-photos-a-a.akamaihd.net/hphotos-ak-xat1/t51.2885-19/s150x150/12912528_235034833513880_374146734_a.jpg"></img>
+					</div>
+					<div class="name">Prateek</div>
+				</div>
+				<div class="usernail">
+					<div class="pic">
+						<img class="pic" src="https://igcdn-photos-a-a.akamaihd.net/hphotos-ak-xat1/t51.2885-19/s150x150/12912528_235034833513880_374146734_a.jpg"></img>
+					</div>
+					<div class="name">Prateek</div>
+				</div>
+				<div class="usernail">
+					<div class="pic">
+						<img class="pic" src="https://igcdn-photos-a-a.akamaihd.net/hphotos-ak-xat1/t51.2885-19/s150x150/12912528_235034833513880_374146734_a.jpg"></img>
+					</div>
+					<div class="name">Prateek</div>
+				</div>
+				<div class="usernail">
+					<div class="pic">
+						<img class="pic" src="https://igcdn-photos-a-a.akamaihd.net/hphotos-ak-xat1/t51.2885-19/s150x150/12912528_235034833513880_374146734_a.jpg"></img>
+					</div>
+					<div class="name">Prateek</div>
+				</div>
+				<div class="usernail">
+					<div class="pic">
+						<img class="pic" src="https://igcdn-photos-a-a.akamaihd.net/hphotos-ak-xat1/t51.2885-19/s150x150/12912528_235034833513880_374146734_a.jpg"></img>
+					</div>
+					<div class="name">Prateek</div>
+				</div>
+				<div class="usernail">
+					<div class="pic">
+						<img class="pic" src="https://igcdn-photos-a-a.akamaihd.net/hphotos-ak-xat1/t51.2885-19/s150x150/12912528_235034833513880_374146734_a.jpg"></img>
+					</div>
+					<div class="name">Prateek</div>
+				</div>
+				<div class="usernail">
+					<div class="pic">
+						<img class="pic" src="https://igcdn-photos-a-a.akamaihd.net/hphotos-ak-xat1/t51.2885-19/s150x150/12912528_235034833513880_374146734_a.jpg"></img>
+					</div>
+					<div class="name">Prateek</div>
+				</div>
+			</div>
+		</div>
+		<div class="tags">
+			<div class="title">Tags</div>
+			<div class="content">
+				<a class="tag" href="/">#mum</a>, <a class="tag" href="/">#mummy</a>, <a class="tag" href="/">#delhi</a>, <a class="tag" href="/">#roti</a>, <a class="tag" href="/">#kapda</a>, <a class="tag" href="/">#makaan</a>
+			</div>
+		</div>
+	</div>
+	<script>
+		this.on("mount",function(){
+			document.querySelector(".q").addEventListener("keydown",function(e){
+				document.querySelector(".results").classList.add("hidden");
+				document.querySelector(".loader").classList.remove("hidden");
+				
+			});
+		})
+
+	</script>
+</gp-search>
