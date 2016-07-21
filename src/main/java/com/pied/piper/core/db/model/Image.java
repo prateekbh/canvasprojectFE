@@ -23,7 +23,7 @@ public class Image {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long imageId;
 
-    @Column(name = "image")
+    @Column(name = "image", columnDefinition = "LONGTEXT")
     private String image;
 
     @Column(name = "title")
