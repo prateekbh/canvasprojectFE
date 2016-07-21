@@ -28,6 +28,9 @@ public class User {
     @Column(name = "account_id")
     private String accountId;
 
+    @Column(name = "name")
+    private String name;
+
     @Column(name = "avatar_url")
     private String avatarUrl;
 
