@@ -9,6 +9,7 @@ import lombok.EqualsAndHashCode;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.Version;
 
 /**
  * Created by akshay.kesarwan on 21/07/16.
@@ -20,10 +21,27 @@ import javax.persistence.Id;
 @JsonSnakeCase
 @JsonIgnoreProperties(value = {"hibernateLazyInitializer", "handler"}, ignoreUnknown = true)
 public class Image {
-    @Column(name = "image_name")
+    @Column(name = "image_id")
     @Id
-    private String imageName;
+    private Long imageId;
+
+    @Column(name = "image")
+    private String image;
+
+    @Column(name = "title")
+    private String title;
+
+    @Column(name = "description")
+    private String description;
 
     @Column(name = "account_id")
     private String accountId;
+
+    @Column(name = "version")
+    @Version
+    private Integer version;
+
+    @Column(name = "num_of_likes")
+    private Integer numOfLikes = 0;
+
 }
