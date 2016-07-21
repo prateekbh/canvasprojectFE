@@ -2,6 +2,7 @@ package com.pied.piper;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Singleton;
+
 import com.pied.piper.core.services.impl.GalleriaServiceImpl;
 import com.pied.piper.core.services.interfaces.GalleriaService;
 

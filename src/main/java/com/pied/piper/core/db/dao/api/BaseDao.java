@@ -1,10 +1,11 @@
 package com.pied.piper.core.db.dao.api;
 
-import javax.persistence.EntityManager;
-import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
+
+import javax.persistence.EntityManager;
+import javax.validation.constraints.NotNull;
 
 /**
  * Created by akshay.kesarwan on 21/07/16.

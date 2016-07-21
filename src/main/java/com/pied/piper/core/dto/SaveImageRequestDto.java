@@ -1,10 +1,11 @@
 package com.pied.piper.core.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import io.dropwizard.jackson.JsonSnakeCase;
-import lombok.Data;
 
 import java.util.List;
+
+import io.dropwizard.jackson.JsonSnakeCase;
+import lombok.Data;
 
 /**
  * Created by akshay.kesarwan on 21/07/16.

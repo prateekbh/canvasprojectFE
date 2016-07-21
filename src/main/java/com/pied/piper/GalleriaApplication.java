@@ -2,15 +2,19 @@ package com.pied.piper;
 
 import com.google.inject.Stage;
 import com.google.inject.persist.PersistFilter;
+
 import com.hubspot.dropwizard.guice.GuiceBundle;
-import io.dropwizard.Application;
-import io.dropwizard.setup.Bootstrap;
-import io.dropwizard.setup.Environment;
+
 import org.eclipse.jetty.servlets.CrossOriginFilter;
+
+import java.util.EnumSet;
 
 import javax.servlet.DispatcherType;
 import javax.servlet.FilterRegistration;
-import java.util.EnumSet;
+
+import io.dropwizard.Application;
+import io.dropwizard.setup.Bootstrap;
+import io.dropwizard.setup.Environment;
 
 /**
  * Created by akshay.kesarwan on 21/05/16.

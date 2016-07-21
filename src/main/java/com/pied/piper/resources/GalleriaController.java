@@ -1,13 +1,19 @@
 package com.pied.piper.resources;
 
 import com.google.inject.Inject;
+
 import com.pied.piper.core.dto.SaveImageRequestDto;
 import com.pied.piper.core.services.interfaces.GalleriaService;
 
-import javax.ws.rs.*;
+import java.util.HashMap;
+
+import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.util.HashMap;
 
 /**
  * Created by akshay.kesarwan on 21/05/16.

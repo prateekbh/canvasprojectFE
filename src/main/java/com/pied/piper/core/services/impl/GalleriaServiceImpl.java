@@ -2,12 +2,14 @@ package com.pied.piper.core.services.impl;
 
 import com.google.inject.Inject;
 import com.google.inject.persist.Transactional;
+
 import com.pied.piper.core.db.dao.impl.ImageDaoImpl;
 import com.pied.piper.core.db.model.Image;
 import com.pied.piper.core.dto.ImageMetaData;
 import com.pied.piper.core.dto.SaveImageRequestDto;
 import com.pied.piper.core.services.interfaces.GalleriaService;
 import com.pied.piper.exception.ResponseException;
+
 import lombok.extern.slf4j.Slf4j;
 
 /**
