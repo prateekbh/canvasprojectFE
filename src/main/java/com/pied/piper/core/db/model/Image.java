@@ -6,10 +6,7 @@ import io.dropwizard.jackson.JsonSnakeCase;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Version;
+import javax.persistence.*;
 
 /**
  * Created by akshay.kesarwan on 21/07/16.
@@ -23,6 +20,7 @@ import javax.persistence.Version;
 public class Image {
     @Column(name = "image_id")
     @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long imageId;
 
     @Column(name = "image")
