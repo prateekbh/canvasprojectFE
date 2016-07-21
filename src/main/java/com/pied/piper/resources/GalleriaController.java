@@ -1,19 +1,14 @@
 package com.pied.piper.resources;
 
 import com.google.inject.Inject;
-
 import com.pied.piper.core.dto.SaveImageRequestDto;
+import com.pied.piper.core.dto.SearchResponseDto;
 import com.pied.piper.core.services.interfaces.GalleriaService;
 
-import java.util.HashMap;
-
-import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
+import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.util.HashMap;
 
 /**
  * Created by akshay.kesarwan on 21/05/16.
@@ -48,5 +43,21 @@ public class GalleriaController {
             return Response.status(500).build();
         }
         return Response.status(200).entity(response).build();
+    }
+
+    /*
+        Search Page API
+        Provides matching tags and users
+     */
+    @GET
+    @Path("/search/any/{txt}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response search(@PathParam("txt") String searchText) {
+        try {
+            SearchResponseDto searchResponseDto = galleriaService.search(searchText);
+            return Response.status(200).entity(searchResponseDto).build();
+        } catch (Exception e) {
+            return Response.status(500).build();
+        }
     }
 }
