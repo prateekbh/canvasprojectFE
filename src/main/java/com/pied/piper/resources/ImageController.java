@@ -2,26 +2,39 @@ package com.pied.piper.resources;
 
 import com.google.inject.Inject;
 
+import com.pied.piper.core.db.model.Comment;
+import com.pied.piper.core.db.model.ImageLikes;
+import com.pied.piper.core.dto.CreateCommentDto;
+import com.pied.piper.core.dto.CreateImageLikedDto;
 import com.pied.piper.core.dto.ImageMetaData;
+import com.pied.piper.core.services.interfaces.CommentService;
 import com.pied.piper.core.services.interfaces.GalleriaService;
+import com.pied.piper.core.services.interfaces.ImageLikesService;
 import com.pied.piper.exception.ErrorResponse;
 import com.pied.piper.exception.ResponseException;
+import lombok.extern.slf4j.Slf4j;
 
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
+import javax.validation.Valid;
+import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.util.List;
 
 /**
  * Created by ankit.c on 21/07/16.
  */
+@Slf4j
 @Path("/image")
 @Produces(MediaType.APPLICATION_JSON)
 public class ImageController {
     @Inject
     private GalleriaService galleriaService;
+
+    @Inject
+    private ImageLikesService imageLikesService;
+
+    @Inject
+    private CommentService commentService;
 
     public ImageController() {
     }
@@ -53,6 +66,72 @@ public class ImageController {
             return Response.status(Response.Status.OK).entity(imageMetaData).build();
         } catch (ResponseException e) {
             return Response.status(e.getErrorResponse().getErrorCode()).entity(e.getErrorResponse()).build();
+        }
+    }
+
+    @GET
+    @Path("/{image_id}/like")
+    public Response getImageLikes(@PathParam("image_id") Long imageId) {
+        try {
+            List<ImageLikes> likes = imageLikesService.findByImageId(imageId);
+            return Response.status(Response.Status.OK).entity(likes).build();
+        } catch (ResponseException e) {
+            return Response.status(e.getErrorResponse().getErrorCode()).entity(e.getErrorResponse()).build();
+        } catch (Exception e){
+            String errorMsg = String.format("Error while fetching comments for image id %d.", imageId);
+            log.error(errorMsg, e);
+            ErrorResponse errorResponse = new ErrorResponse(errorMsg + " " + e.getMessage());
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(errorResponse).build();
+        }
+    }
+
+    @GET
+    @Path("/{image_id}/comment")
+    public Response getImageComments(@PathParam("image_id") Long imageId) {
+        try {
+            List<Comment> comments = commentService.findByImageId(imageId);
+            return Response.status(Response.Status.OK).entity(comments).build();
+        } catch (ResponseException e) {
+            return Response.status(e.getErrorResponse().getErrorCode()).entity(e.getErrorResponse()).build();
+        } catch (Exception e){
+            String errorMsg = String.format("Error while fetching comments for image id %d.", imageId);
+            log.error(errorMsg, e);
+            ErrorResponse errorResponse = new ErrorResponse(errorMsg + " " + e.getMessage());
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(errorResponse).build();
+        }
+    }
+
+    @POST
+      @Path("/{image_id}/like")
+      public Response imageLikedByUser(@PathParam("image_id") Long imageId,
+                                       @Valid CreateImageLikedDto dto) {
+        try {
+            imageLikesService.save(imageId, dto);
+            return Response.status(Response.Status.CREATED).build();
+        } catch (ResponseException e) {
+            return Response.status(e.getErrorResponse().getErrorCode()).entity(e.getErrorResponse()).build();
+        } catch (Exception e){
+            String errorMsg = String.format("Error while saving like for image id %d.", imageId);
+            log.error(errorMsg, e);
+            ErrorResponse errorResponse = new ErrorResponse(errorMsg + " " + e.getMessage());
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(errorResponse).build();
+        }
+    }
+
+    @POST
+    @Path("/{image_id}/comment")
+    public Response saveComment(@PathParam("image_id") Long imageId,
+                                     @Valid CreateCommentDto dto) {
+        try {
+            commentService.save(imageId, dto);
+            return Response.status(Response.Status.CREATED).build();
+        } catch (ResponseException e) {
+            return Response.status(e.getErrorResponse().getErrorCode()).entity(e.getErrorResponse()).build();
+        } catch (Exception e){
+            String errorMsg = String.format("Error while saving comment for image id %d.", imageId);
+            log.error(errorMsg, e);
+            ErrorResponse errorResponse = new ErrorResponse(errorMsg + " " + e.getMessage());
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(errorResponse).build();
         }
     }
 }

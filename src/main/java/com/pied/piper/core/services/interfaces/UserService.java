@@ -21,4 +21,6 @@ public interface UserService {
     User findByAccountId(String accountId);
 
     UserDetails getUserDetailsByUserId(Long userId);
+
+    User findById(Long userId);
 }

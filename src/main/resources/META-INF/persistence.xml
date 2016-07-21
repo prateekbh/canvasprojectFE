@@ -7,5 +7,7 @@
         <class>com.pied.piper.core.db.model.UserRelations</class>
         <class>com.pied.piper.core.db.model.Image</class>
         <class>com.pied.piper.core.db.model.ImageTags</class>
+        <class>com.pied.piper.core.db.model.ImageLikes</class>
+        <class>com.pied.piper.core.db.model.Comment</class>
     </persistence-unit>
 </persistence>

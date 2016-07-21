@@ -8,6 +8,7 @@ import com.hubspot.dropwizard.guice.GuiceBundle;
 import org.eclipse.jetty.servlets.CrossOriginFilter;
 
 import java.util.EnumSet;
+import java.util.logging.Logger;
 
 import javax.servlet.DispatcherType;
 import javax.servlet.FilterRegistration;
@@ -15,6 +16,7 @@ import javax.servlet.FilterRegistration;
 import io.dropwizard.Application;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
+import org.glassfish.jersey.filter.LoggingFilter;
 
 /**
  * Created by akshay.kesarwan on 21/05/16.
@@ -47,6 +49,11 @@ public class GalleriaApplication extends Application<GalleriaConfiguration> {
         filter.setInitParameter(CrossOriginFilter.ACCESS_CONTROL_ALLOW_ORIGIN_HEADER, "*");
         filter.setInitParameter("allowedHeaders", "Content-Type,Authorization,X-Requested-With,Content-Length,Accept,Origin");
         filter.setInitParameter("allowCredentials", "true");
+
+        environment.jersey().register(new LoggingFilter(
+                        Logger.getLogger(LoggingFilter.class.getName()),
+                        true)
+        );
     }
 
     public static void main(String args[]) throws Exception {

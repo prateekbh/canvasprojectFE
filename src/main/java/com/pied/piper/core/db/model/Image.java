@@ -2,6 +2,7 @@ package com.pied.piper.core.db.model;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.pied.piper.core.enums.EntityStatus;
 import io.dropwizard.jackson.JsonSnakeCase;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -46,5 +47,15 @@ public class Image {
 
     @OneToMany(mappedBy = "sourceImage", fetch = FetchType.LAZY)
     private List<ImageTags> tags = new ArrayList<>();
+
+    @Column(name = "entity_status")
+    @Enumerated(EnumType.STRING)
+    private EntityStatus entityStatus = EntityStatus.ACTIVE;
+
+    @OneToMany(mappedBy = "image", fetch = FetchType.LAZY)
+    private List<ImageLikes> likes = new ArrayList<>();
+
+    @OneToMany(mappedBy = "image", fetch = FetchType.LAZY)
+    private List<Comment> comments = new ArrayList<>();
 
 }
