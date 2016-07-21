@@ -17,6 +17,7 @@ public class GalleriaApplication extends Application<GalleriaConfiguration> {
     public void initialize(Bootstrap<GalleriaConfiguration> bootstrap) {
         guiceBundle = GuiceBundle.<GalleriaConfiguration>newBuilder()
                 .addModule(new GalleriaModule())
+                .addModule(new JPADatabaseModule())
                 .enableAutoConfig("com.pied.piper")
                 .setConfigClass(GalleriaConfiguration.class)
                 .build(Stage.DEVELOPMENT);

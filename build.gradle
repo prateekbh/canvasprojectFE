@@ -22,6 +22,12 @@ dependencies {
     compile group: 'com.google.inject', name: 'guice', version: guiceVersion
     compile group: 'com.hubspot.dropwizard', name: 'dropwizard-guice', version: dropwizardGuiceVersion
     compile group: 'org.projectlombok', name: 'lombok', version: lombokVersion
+    compile 'org.hibernate.javax.persistence:hibernate-jpa-2.1-api:1.0.0.Final'
+    compile 'org.hibernate:hibernate-core:4.3.11.Final'
+    compile 'org.hibernate:hibernate-entitymanager:4.3.11.Final'
+    compile 'com.googlecode.genericdao:dao-hibernate:1.2.0'
+    compile 'com.google.inject.extensions:guice-multibindings:' + guiceVersion,
+            'com.google.inject.extensions:guice-persist:' + guiceVersion
 
     testCompile group: 'junit', name: 'junit', version: junitVersion
 }
