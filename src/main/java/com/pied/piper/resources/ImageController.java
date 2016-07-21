@@ -1,6 +1,7 @@
 package com.pied.piper.resources;
 
 import com.google.inject.Inject;
+
 import com.pied.piper.core.dto.ImageMetaData;
 import com.pied.piper.core.services.interfaces.GalleriaService;
 import com.pied.piper.exception.ErrorResponse;

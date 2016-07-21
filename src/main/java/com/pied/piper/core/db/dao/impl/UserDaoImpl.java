@@ -34,6 +34,10 @@ public class UserDaoImpl extends BaseDaoImpl<Image, Long> {
             Criterion typeCriterion = Restrictions.eq("name", searchUserRequestDto.getName());
             criteria.add(typeCriterion);
         }
+        if (searchUserRequestDto.getAccountId() != null) {
+            Criterion accountIdCriteria = Restrictions.eq("accountId", searchUserRequestDto.getAccountId());
+            criteria.add(accountIdCriteria);
+        }
         return criteria.list();
     }
 

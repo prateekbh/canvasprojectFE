@@ -13,4 +13,5 @@ import lombok.Data;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class SearchUserRequestDto {
     private String name;
+    private String accountId;
 }

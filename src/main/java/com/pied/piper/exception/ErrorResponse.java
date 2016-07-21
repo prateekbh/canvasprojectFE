@@ -1,9 +1,9 @@
 package com.pied.piper.exception;
 
+import javax.ws.rs.core.Response;
+
 import io.dropwizard.jackson.JsonSnakeCase;
 import lombok.Data;
-
-import javax.ws.rs.core.Response;
 
 /**
  * Created by ankit.c on 21/07/16.

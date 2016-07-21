@@ -1,11 +1,9 @@
 package com.pied.piper.core.dto;
 
 import com.pied.piper.core.db.model.Image;
+
 import io.dropwizard.jackson.JsonSnakeCase;
 import lombok.Data;
-
-import javax.persistence.Column;
-import javax.persistence.Version;
 
 /**
  * Created by ankit.c on 21/07/16.

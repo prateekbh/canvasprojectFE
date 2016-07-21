@@ -11,4 +11,7 @@ import java.util.List;
 public interface UserService {
 
     List<User> searchUser(SearchUserRequestDto searchUserRequestDto);
+
+    List<String> getImagesForUser(String accountId);
+
 }

@@ -1,8 +1,8 @@
 package com.pied.piper.exception;
 
-import lombok.Data;
-
 import javax.ws.rs.core.Response;
+
+import lombok.Data;
 
 /**
  * Created by ankit.c on 21/07/16.
