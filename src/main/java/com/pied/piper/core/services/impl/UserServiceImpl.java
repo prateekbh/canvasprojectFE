@@ -81,4 +81,10 @@ public class UserServiceImpl implements UserService {
         return userDetails;
     }
 
+    @Override
+    public User findById(Long userId) {
+        if(userId == null) return null;
+        return userDao.fetchById(userId);
+    }
+
 }
