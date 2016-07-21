@@ -28,6 +28,7 @@ dependencies {
     compile 'com.googlecode.genericdao:dao-hibernate:1.2.0'
     compile 'com.google.inject.extensions:guice-multibindings:' + guiceVersion,
             'com.google.inject.extensions:guice-persist:' + guiceVersion
+    compile 'mysql:mysql-connector-java:5.1.28'
 
     testCompile group: 'junit', name: 'junit', version: junitVersion
 }

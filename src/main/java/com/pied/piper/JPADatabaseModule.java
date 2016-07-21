@@ -29,6 +29,7 @@ public class JPADatabaseModule extends AbstractModule {
         properties.put("hibernate.show_sql", "true");
         properties.put("hibernate.connection.autocommit","false");
         properties.put("hibernate.connection.isolation","2");
+        properties.put("hibernate.ejb.naming_strategy", "org.hibernate.cfg.ImprovedNamingStrategy");
         return properties;
     }
 }

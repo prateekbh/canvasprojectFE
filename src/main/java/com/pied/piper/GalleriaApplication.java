@@ -1,10 +1,14 @@
 package com.pied.piper;
 
 import com.google.inject.Stage;
+import com.google.inject.persist.PersistFilter;
 import com.hubspot.dropwizard.guice.GuiceBundle;
 import io.dropwizard.Application;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
+
+import javax.servlet.DispatcherType;
+import java.util.EnumSet;
 
 /**
  * Created by akshay.kesarwan on 21/05/16.
@@ -26,6 +30,9 @@ public class GalleriaApplication extends Application<GalleriaConfiguration> {
 
     @Override
     public void run(GalleriaConfiguration configuration, Environment environment) throws Exception {
+        environment.servlets().addFilter("persistFilter", guiceBundle.getInjector()
+                .getInstance(PersistFilter.class))
+                .addMappingForUrlPatterns(EnumSet.of(DispatcherType.REQUEST), true, "/*");
     }
 
     public static void main(String args[]) throws Exception {

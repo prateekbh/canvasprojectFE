@@ -8,6 +8,7 @@ import lombok.EqualsAndHashCode;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.Id;
 
 /**
  * Created by akshay.kesarwan on 21/07/16.
@@ -20,6 +21,7 @@ import javax.persistence.Entity;
 @JsonIgnoreProperties(value = {"hibernateLazyInitializer", "handler"}, ignoreUnknown = true)
 public class Image {
     @Column(name = "image_name")
+    @Id
     private String imageName;
 
     @Column(name = "account_id")
