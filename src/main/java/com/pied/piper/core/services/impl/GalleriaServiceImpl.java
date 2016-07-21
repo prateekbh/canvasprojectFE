@@ -4,8 +4,10 @@ import com.google.inject.Inject;
 import com.google.inject.persist.Transactional;
 import com.pied.piper.core.db.dao.impl.ImageDaoImpl;
 import com.pied.piper.core.db.model.Image;
+import com.pied.piper.core.dto.ImageMetaData;
 import com.pied.piper.core.dto.SaveImageRequestDto;
 import com.pied.piper.core.services.interfaces.GalleriaService;
+import com.pied.piper.exception.ResponseException;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -50,6 +52,35 @@ public class GalleriaServiceImpl implements GalleriaService {
         } catch (Exception e) {
             log.error("Error in db " + e);
             throw e;
+        }
+    }
+
+    @Override
+    @Transactional
+    public String getImageData(Long imageId) {
+        Image image = getImage(imageId);
+        if(image == null)
+            return null;
+        return image.getImage();
+    }
+
+    @Override
+    @Transactional
+    public ImageMetaData getImageMetaData(Long imageId) {
+        Image image = getImage(imageId);
+        if(image == null)
+            return null;
+        return new ImageMetaData(image);
+    }
+
+    @Override
+    @Transactional
+    public Image getImage(Long imageId) {
+        try {
+            return imageDao.fetchById(imageId);
+        } catch (Exception e){
+            log.error("Some error while fetching for " + imageId, e);
+            throw new ResponseException("Error while fetching for " + imageId + ". " + e.getMessage(), e);
         }
     }
 }
