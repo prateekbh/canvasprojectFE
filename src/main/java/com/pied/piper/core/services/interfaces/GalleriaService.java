@@ -22,4 +22,7 @@ public interface GalleriaService {
     SearchResponseDto search(String searchText);
     ProfileDetails getProfileDetails(String accountId) throws Exception;
     Long cloneImage(Long imageId, String accountId) throws Exception;
+    void sendPullRequest(Long imageId,String accountId) throws Exception;
+    void approvePullRequest(Long imageId,String accountId) throws Exception;
+    void rejectPullRequest(Long imageId,String accountId) throws Exception;
 }

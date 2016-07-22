@@ -18,6 +18,7 @@ import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Restrictions;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -53,8 +54,11 @@ public class GalleriaServiceImpl implements GalleriaService {
                 image = new Image();
             }
 
-            if (saveImageRequestDto.getImage() != null)
-                image.setImage(saveImageRequestDto.getImage());
+            if (saveImageRequestDto.getImage() != null) {
+                String imageStr = saveImageRequestDto.getImage();
+                imageStr = imageStr.substring(imageStr.indexOf(",")+1);
+                image.setImage(imageStr);
+            }
 
             if (saveImageRequestDto.getDescription() != null)
                 image.setDescription(saveImageRequestDto.getDescription());
@@ -245,5 +249,22 @@ public class GalleriaServiceImpl implements GalleriaService {
 
         imageRelationService.saveImageRelation(imageRelation);
         return clonedImage.getImageId();
+    }
+
+    @Override
+    public void sendPullRequest(Long imageId, String accountId) throws Exception {
+        ImageRelation imageRelation = imageRelationService.getImageRelationsForClonedImageIds(Arrays.asList(imageId)).get(0);
+        imageRelation.setApprovalStatus(ApprovalStatusEnum.PENDING);
+    }
+
+    @Override
+    public void approvePullRequest(Long imageId, String accountId) throws Exception {
+        ImageRelation imageRelation = imageRelationService.getImageRelationsForClonedImageIds(Arrays.asList(imageId)).get(0);
+        imageRelation.setApprovalStatus(ApprovalStatusEnum.APPROVED);
+    }
+
+    @Override
+    public void rejectPullRequest(Long imageId, String accountId) throws Exception {
+
     }
 }
