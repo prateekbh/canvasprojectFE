@@ -6,6 +6,7 @@ import com.google.inject.persist.Transactional;
 import com.pied.piper.core.db.dao.impl.UserDaoImpl;
 import com.pied.piper.core.db.model.Image;
 import com.pied.piper.core.db.model.User;
+import com.pied.piper.core.db.model.UserRelations;
 import com.pied.piper.core.dto.ImageMetaData;
 import com.pied.piper.core.dto.SearchUserRequestDto;
 import com.pied.piper.core.dto.UserDetails;
@@ -17,6 +18,7 @@ import org.apache.commons.lang3.StringUtils;
 import javax.ws.rs.core.Response;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Created by palash.v on 21/07/16.
@@ -36,16 +38,6 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public List<User> searchUser(SearchUserRequestDto searchUserRequestDto) {
         return userDao.searchUser(searchUserRequestDto);
-    }
-
-    @Override
-    @Transactional
-    public List<String> getImagesForUser(String accountId) {
-//        SearchUserRequestDto searchUserRequestDto = new SearchUserRequestDto();
-//        searchUserRequestDto.setAccountId(accountId);
-//        List<User> users = userDao.searchUser(searchUserRequestDto);
-//        galleriaService.
-    return null;
     }
 
     @Override
@@ -77,6 +69,7 @@ public class UserServiceImpl implements UserService {
                 imageIds.add(metaData.getImageId());
             userDetails.setOwnImageIds(imageIds);
         }
+        userDetails.setFollowers(getFollowers(user.getAccountId()));
 
         return userDetails;
     }
@@ -85,6 +78,26 @@ public class UserServiceImpl implements UserService {
     public User findById(Long userId) {
         if(userId == null) return null;
         return userDao.fetchById(userId);
+    }
+
+    public List<User> getFollowers(String accountId) {
+        User user = findByAccountId(accountId);
+        List<User> followers = user.getFollowers().stream().map(userRelations -> findById(userRelations.getDestinationUserId())).collect(Collectors.toList());
+        return followers;
+    }
+
+    @Override
+    public List<User> createFollower(String userId, String followerId) {
+        User user = findByAccountId(userId);
+        if (user.getFollowers() == null) {
+            user.setFollowers(new ArrayList<>());
+        }
+        User follower = findByAccountId(followerId);
+        UserRelations userRelation = new UserRelations();
+        userRelation.setSourceUser(user);
+        userRelation.setDestinationUserId(follower.getUserId());
+        user.getFollowers().add(userRelation);
+        return getFollowers(userId);
     }
 
 }

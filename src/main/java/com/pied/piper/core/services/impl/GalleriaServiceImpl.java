@@ -18,6 +18,8 @@ import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Restrictions;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -52,8 +54,11 @@ public class GalleriaServiceImpl implements GalleriaService {
                 image = new Image();
             }
 
-            if (saveImageRequestDto.getImage() != null)
-                image.setImage(saveImageRequestDto.getImage());
+            if (saveImageRequestDto.getImage() != null) {
+                String imageStr = saveImageRequestDto.getImage();
+                imageStr = imageStr.substring(imageStr.indexOf(",")+1);
+                image.setImage(imageStr);
+            }
 
             if (saveImageRequestDto.getDescription() != null)
                 image.setDescription(saveImageRequestDto.getDescription());
@@ -117,6 +122,13 @@ public class GalleriaServiceImpl implements GalleriaService {
     }
 
     @Override
+    public List<Image> getImagesForAccountId(String accountId) {
+        Criterion criterion = Restrictions.eq("accountId", accountId);
+        List<Image> images = imageDao.findByCriteria(criterion);
+        return images;
+    }
+
+    @Override
     @Transactional
     public Image getImage(Long imageId) {
         try {
@@ -138,6 +150,7 @@ public class GalleriaServiceImpl implements GalleriaService {
         // Search Tags
         List<ImageTags> imageTags = imageTagService.searchImageTags(searchText);
         List<String> tagStrings = imageTags.stream().map(imageTag -> imageTag.getTag()).collect(Collectors.toList());
+        tagStrings = new ArrayList<>(new HashSet<>(tagStrings));
 
         // Search Users
         SearchUserRequestDto searchUserRequestDto = new SearchUserRequestDto();
@@ -172,15 +185,14 @@ public class GalleriaServiceImpl implements GalleriaService {
         profileDetails.setUser(userResponseDto);
 
         // get all images of user
-        Criterion criterion = Restrictions.eq("accountId", accountId);
-        List<Image> images = imageDao.findByCriteria(criterion);
+        List<ImageMetaData> images = getImagesForAccountId(accountId).stream().map(image -> new ImageMetaData(image)).collect(Collectors.toList());
 
         // filter owned images
-        List<Image> ownedImages = images.stream().filter(image -> image.getIsCloned().equals(false)).collect(Collectors.toList());
+        List<ImageMetaData> ownedImages = images.stream().filter(image -> image.getIsCloned().equals(false)).collect(Collectors.toList());
         profileDetails.setOwnedImages(ownedImages);
 
         // filter cloned images
-        List<Image> clonedImages = images.stream().filter(image -> image.getIsCloned().equals(true)).collect(Collectors.toList());
+        List<ImageMetaData> clonedImages = images.stream().filter(image -> image.getIsCloned().equals(true)).collect(Collectors.toList());
         profileDetails.setClonedImages(clonedImages);
 
         // get Pull Request
@@ -207,5 +219,52 @@ public class GalleriaServiceImpl implements GalleriaService {
             profileDetails.setPullRequests(pullRequests);
         }
         return profileDetails;
+    }
+
+    @Override
+    public Long cloneImage(Long imageId, String accountId) throws Exception {
+        Image image = imageDao.fetchById(imageId);
+        Image clonedImage = new Image();
+        clonedImage.setAccountId(accountId);
+        clonedImage.setTitle(image.getTitle());
+        clonedImage.setDescription(image.getDescription());
+        clonedImage.setImage(image.getImage());
+        clonedImage.setIsCloned(true);
+        imageDao.save(clonedImage);
+        List<ImageTags> newImageTags = new ArrayList<>();
+        for(ImageTags imageTags : image.getTags()) {
+            ImageTags newImageTag = new ImageTags();
+            newImageTag.setTag(imageTags.getTag());
+            newImageTag.setSourceImage(clonedImage);
+            imageTagService.saveImageTag(newImageTag);
+            newImageTags.add(newImageTag);
+        }
+        clonedImage.setTags(newImageTags);
+        imageDao.save(clonedImage);
+
+        ImageRelation imageRelation = new ImageRelation();
+        imageRelation.setApprovalStatus(ApprovalStatusEnum.NEW);
+        imageRelation.setClonedImage(clonedImage.getImageId());
+        imageRelation.setId(imageId);
+
+        imageRelationService.saveImageRelation(imageRelation);
+        return clonedImage.getImageId();
+    }
+
+    @Override
+    public void sendPullRequest(Long imageId, String accountId) throws Exception {
+        ImageRelation imageRelation = imageRelationService.getImageRelationsForClonedImageIds(Arrays.asList(imageId)).get(0);
+        imageRelation.setApprovalStatus(ApprovalStatusEnum.PENDING);
+    }
+
+    @Override
+    public void approvePullRequest(Long imageId, String accountId) throws Exception {
+        ImageRelation imageRelation = imageRelationService.getImageRelationsForClonedImageIds(Arrays.asList(imageId)).get(0);
+        imageRelation.setApprovalStatus(ApprovalStatusEnum.APPROVED);
+    }
+
+    @Override
+    public void rejectPullRequest(Long imageId, String accountId) throws Exception {
+
     }
 }

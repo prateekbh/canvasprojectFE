@@ -16,7 +16,7 @@ import java.util.List;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class ProfileDetails {
     private UserResponseDto user;
-    private List<Image> ownedImages = new ArrayList<>();
-    private List<Image> clonedImages = new ArrayList<>();
+    private List<ImageMetaData> ownedImages = new ArrayList<>();
+    private List<ImageMetaData> clonedImages = new ArrayList<>();
     private List<PullRequest> pullRequests = new ArrayList<>();
 }

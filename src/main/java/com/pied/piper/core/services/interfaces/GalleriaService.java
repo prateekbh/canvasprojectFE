@@ -17,7 +17,12 @@ public interface GalleriaService {
     ImageMetaData getImageMetaData(Long imageId);
     List<ImageMetaData> getImageMetaData(String accountId);
     List<Image> findByAccountId(String accountId);
+    List<Image> getImagesForAccountId(String accountId);
     Image getImage(Long imageId);
     SearchResponseDto search(String searchText);
     ProfileDetails getProfileDetails(String accountId) throws Exception;
+    Long cloneImage(Long imageId, String accountId) throws Exception;
+    void sendPullRequest(Long imageId,String accountId) throws Exception;
+    void approvePullRequest(Long imageId,String accountId) throws Exception;
+    void rejectPullRequest(Long imageId,String accountId) throws Exception;
 }

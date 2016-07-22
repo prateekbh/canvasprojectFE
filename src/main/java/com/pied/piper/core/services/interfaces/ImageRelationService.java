@@ -13,4 +13,5 @@ import java.util.List;
 public interface ImageRelationService {
     List<ImageRelation> getImageRelationsForSourceImageIds(List<Long> imageIds);
     List<ImageRelation> getImageRelationsForClonedImageIds(List<Long> imageIds);
+    void saveImageRelation(ImageRelation imageRelation);
 }

@@ -1,7 +1,6 @@
 package com.pied.piper.resources;
 
 import com.google.inject.Inject;
-
 import com.pied.piper.core.db.model.Comment;
 import com.pied.piper.core.db.model.ImageLikes;
 import com.pied.piper.core.dto.CreateCommentDto;
@@ -13,6 +12,7 @@ import com.pied.piper.core.services.interfaces.ImageLikesService;
 import com.pied.piper.exception.ErrorResponse;
 import com.pied.piper.exception.ResponseException;
 import lombok.extern.slf4j.Slf4j;
+import sun.misc.BASE64Decoder;
 
 import javax.validation.Valid;
 import javax.ws.rs.*;
@@ -48,9 +48,13 @@ public class ImageController {
                 ErrorResponse error = new ErrorResponse(Response.Status.NOT_FOUND.getStatusCode(), "image not found");
                 return Response.status(Response.Status.NOT_FOUND).entity(error).build();
             }
-            return Response.status(Response.Status.OK).entity(imageData).build();
+            BASE64Decoder decoder = new BASE64Decoder();
+            byte[] imageBytes = decoder.decodeBuffer(imageData);
+            return Response.status(Response.Status.OK).entity(imageBytes).header("Content-type","image/jpeg").build();
         } catch (ResponseException e) {
             return Response.status(e.getErrorResponse().getErrorCode()).entity(e.getErrorResponse()).build();
+        } catch (Exception e) {
+            return Response.status(500).build();
         }
     }
 
