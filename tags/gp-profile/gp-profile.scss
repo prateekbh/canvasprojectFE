@@ -1,0 +1,48 @@
+gp-profile{
+	display:block;
+	padding: 0 10px;
+	.tabs{
+		display: flex;
+	}
+	.tab{
+		padding:10px;
+		flex: 1;
+		text-align: center;
+		&.selected{
+			box-shadow: 0 5px 5px -5px #666;
+		}
+	}
+	.num{
+		font-size: 22px;
+	}
+	.label{
+		color: #999;
+		font-size: 18px;
+	}
+	.followers{
+		font-size: 16px;
+		text-orientation: none;
+	}
+}
+
+.userinfo{
+	display: flex;
+	align-items: center;
+	padding: 15px 15px 40px 15px;
+	border-bottom: 1px solid #ddd;
+	.userpic{
+		border-radius: 50%;
+		max-width: 100px;
+	}
+	.info{
+		flex: 1;
+		padding-left: 15px;
+	}
+	.name{
+		font-size: 26px;
+	}
+	.desc{
+		font-size: 16px;
+		color:#999;
+	}
+}

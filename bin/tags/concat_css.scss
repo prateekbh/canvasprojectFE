@@ -2,6 +2,10 @@
 	box-sizing: border-box;
 }
 
+a{
+	text-decoration: none;	
+}
+
 body{
 	margin:0px;
 	padding:0px;
@@ -27,12 +31,12 @@ gp-draw{
     bottom: 0px;
     left: 0px;
     right: 0px;
-    margin: 58px auto auto auto;
+    margin: 0px auto auto auto;
     width: 100%;
-    height: 100%;	
+    height: 90%;	
 	canvas,.upper-canvas{
 		width: 100%;
-    	height: 100%;
+    	height: 90%;
 	}
 	.save{
 		border-radius: 50%;
@@ -51,7 +55,7 @@ gp-draw{
 
 @keyframes comeFromDown{
 	0%{transform: translateY(100px);}
-	100%{transform: translateY(0px);}
+	100%{transform: translateY(-100px);}
 }
 
 gp-home{
@@ -133,6 +137,54 @@ $width: 100px;
     stroke: $yellow;
   }
 }
+gp-profile{
+	display:block;
+	padding: 0 10px;
+	.tabs{
+		display: flex;
+	}
+	.tab{
+		padding:10px;
+		flex: 1;
+		text-align: center;
+		&.selected{
+			box-shadow: 0 5px 5px -5px #666;
+		}
+	}
+	.num{
+		font-size: 22px;
+	}
+	.label{
+		color: #999;
+		font-size: 18px;
+	}
+	.followers{
+		font-size: 16px;
+		text-orientation: none;
+	}
+}
+
+.userinfo{
+	display: flex;
+	align-items: center;
+	padding: 15px 15px 40px 15px;
+	border-bottom: 1px solid #ddd;
+	.userpic{
+		border-radius: 50%;
+		max-width: 100px;
+	}
+	.info{
+		flex: 1;
+		padding-left: 15px;
+	}
+	.name{
+		font-size: 26px;
+	}
+	.desc{
+		font-size: 16px;
+		color:#999;
+	}
+}
 gp-search{
 	display: block;
 	padding: 40px 10px;
@@ -165,6 +217,7 @@ gp-search{
 		white-space: nowrap;
 		max-width: 100%;
 		overflow: scroll;
+		text-align: left;
 	}
 
 	.content{
@@ -174,11 +227,15 @@ gp-search{
 	.tag{
 		text-decoration: none;
 		margin:2px 5px;
+		&:after{
+			content:',';
+		}
 	}
 
 	.usernail{
 		display: inline-block;
 		margin: 5px 10px;
+		text-align: center;
 	}
 
 	.pic{
@@ -186,16 +243,22 @@ gp-search{
 		width: 50px;
 	}
 }
+gp-tagpics{
+	display: block;
+}
 gp-userpic{
 	display:block;
 	margin: 10px 0;
+	padding-bottom: 15px;
 	.userinfo{
 		padding:5px 10px;
 		display: flex;
 		align-items: center;
 	}
-	.userpic{
+	.piccontainer{
 		flex:1;
+	}
+	.userpic{
 		border-radius: 50%;
 		vertical-align: middle;
 	}
@@ -217,7 +280,30 @@ gp-userpic{
 	.img-painting{
 		width:100%;
 	}
+	.painting{
+		position:relative;
+	}
+	.copy{
+		border-radius: 50%;
+		background-color: rgba(66,66,66,0.7);
+		border-width: 0px;
+		padding: 15px;
+		position: absolute;
+		bottom: 20px;
+		right:15px;
+		transition-property: transform opacity;
+		transition-duration: 300ms;
+		opacity: 1;
+		transform: scale(1);
+		&.hidden{
+			opacity:0;
+			display: inline-block;
+			transform: scale(0.1);
+		}
+	}
 }
+
+
 gp-header{
 	display:block;
 	padding:10px;

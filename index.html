@@ -13,6 +13,9 @@
 	        <div class="container app-body">
 	        </div>
 	</quick-view>
+	<script type="text/javascript">
+		window.ip="http://172.20.168.111:8080";
+	</script>
 	<script type="text/javascript" src="/node_modules/node-lzw/lib/lzw.js"></script>
 	<script type="text/javascript" src="/node_modules/riot/riot.min.js"></script>
 	<script type="text/javascript" src="/bin/tags/tags.js"></script>
@@ -21,6 +24,8 @@
 		veronica.addRoute(veronica.createRoute("home","/","gp-home"));
 		veronica.addRoute(veronica.createRoute("draw","/draw","gp-draw"));
 		veronica.addRoute(veronica.createRoute("search","/search","gp-search"));
+		veronica.addRoute(veronica.createRoute("profile","/user/:user","gp-profile"));
+		veronica.addRoute(veronica.createRoute("tagsearch","/tags/:tag","gp-tagpics"));
 	</script>
 </body>
 </html>

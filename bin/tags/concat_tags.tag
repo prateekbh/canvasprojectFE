@@ -61,6 +61,12 @@
 </gp-draw>
 <gp-home>
 	<gp-userpic></gp-userpic>
+	<gp-userpic></gp-userpic>
+	<gp-userpic></gp-userpic>
+	<gp-userpic></gp-userpic>
+	<gp-userpic></gp-userpic>
+	<gp-userpic></gp-userpic>
+	<gp-userpic></gp-userpic>
 </gp-home>
 <gp-loader>
 	<div class="loader">
@@ -69,97 +75,126 @@
 	    </svg>
 	</div>
 </gp-loader>
+<gp-profile>
+	<div class="loader">
+		<gp-loader></gp-loader>
+	</div>
+	<div class="profile hidden">
+		<div class="userinfo">
+			<div class="pic">
+				<img class="userpic" src="https://igcdn-photos-a-a.akamaihd.net/hphotos-ak-xat1/t51.2885-19/s150x150/12912528_235034833513880_374146734_a.jpg"></img>
+			</div>
+			<div class="info">
+				<div class="name">Prateek Bhatnagar</div>
+				<div class="desc">front end engineer @ nowhere</div>
+				<div class="container-followers"><a class="followers" href="/followers/prateek">22 followers</a></div>
+			</div>
+		</div>
+		<div class="tabs">
+			<div class="tab own selected">
+				<div class="num">56</div>
+				<div class="label">OWN</div>
+			</div>
+			<div class="tab cloned">
+				<div class="num">22</div>
+				<div class="label">CLONED</div>
+			</div>
+			<div class="tab pr">
+				<div class="num">2</div>
+				<div class="label">PRs</div>
+			</div>
+		</div>
+	</div>
+</gp-profile>
 <gp-search>
 	<input type="text" class="q" placeholder="explore">
 	<div class="loader hidden">
 		<gp-loader></gp-loader>
 	</div>
-	<div class="results ">
+	<div class="results hidden">
 		<div class="ppl">
 			<div class="title">People</div>
-			<div class="content">
-				<div class="usernail">
+			<div class="content" each={ user in searchdata.users }>
+				<a href="/user/{user.account_id}" class="usernail">
 					<div class="pic">
-						<img class="pic" src="https://igcdn-photos-a-a.akamaihd.net/hphotos-ak-xat1/t51.2885-19/s150x150/12912528_235034833513880_374146734_a.jpg"></img>
+						<img class="pic" src="{user.avatar_url}"></img>
 					</div>
-					<div class="name">Prateek</div>
-				</div>
-				<div class="usernail">
-					<div class="pic">
-						<img class="pic" src="https://igcdn-photos-a-a.akamaihd.net/hphotos-ak-xat1/t51.2885-19/s150x150/12912528_235034833513880_374146734_a.jpg"></img>
-					</div>
-					<div class="name">Prateek</div>
-				</div>
-				<div class="usernail">
-					<div class="pic">
-						<img class="pic" src="https://igcdn-photos-a-a.akamaihd.net/hphotos-ak-xat1/t51.2885-19/s150x150/12912528_235034833513880_374146734_a.jpg"></img>
-					</div>
-					<div class="name">Prateek</div>
-				</div>
-				<div class="usernail">
-					<div class="pic">
-						<img class="pic" src="https://igcdn-photos-a-a.akamaihd.net/hphotos-ak-xat1/t51.2885-19/s150x150/12912528_235034833513880_374146734_a.jpg"></img>
-					</div>
-					<div class="name">Prateek</div>
-				</div>
-				<div class="usernail">
-					<div class="pic">
-						<img class="pic" src="https://igcdn-photos-a-a.akamaihd.net/hphotos-ak-xat1/t51.2885-19/s150x150/12912528_235034833513880_374146734_a.jpg"></img>
-					</div>
-					<div class="name">Prateek</div>
-				</div>
-				<div class="usernail">
-					<div class="pic">
-						<img class="pic" src="https://igcdn-photos-a-a.akamaihd.net/hphotos-ak-xat1/t51.2885-19/s150x150/12912528_235034833513880_374146734_a.jpg"></img>
-					</div>
-					<div class="name">Prateek</div>
-				</div>
-				<div class="usernail">
-					<div class="pic">
-						<img class="pic" src="https://igcdn-photos-a-a.akamaihd.net/hphotos-ak-xat1/t51.2885-19/s150x150/12912528_235034833513880_374146734_a.jpg"></img>
-					</div>
-					<div class="name">Prateek</div>
-				</div>
-				<div class="usernail">
-					<div class="pic">
-						<img class="pic" src="https://igcdn-photos-a-a.akamaihd.net/hphotos-ak-xat1/t51.2885-19/s150x150/12912528_235034833513880_374146734_a.jpg"></img>
-					</div>
-					<div class="name">Prateek</div>
-				</div>
-				<div class="usernail">
-					<div class="pic">
-						<img class="pic" src="https://igcdn-photos-a-a.akamaihd.net/hphotos-ak-xat1/t51.2885-19/s150x150/12912528_235034833513880_374146734_a.jpg"></img>
-					</div>
-					<div class="name">Prateek</div>
-				</div>
+					<div class="name">{ user.name }</div>
+				</a>
 			</div>
 		</div>
 		<div class="tags">
 			<div class="title">Tags</div>
 			<div class="content">
-				<a class="tag" href="/">#mum</a>, <a class="tag" href="/">#mummy</a>, <a class="tag" href="/">#delhi</a>, <a class="tag" href="/">#roti</a>, <a class="tag" href="/">#kapda</a>, <a class="tag" href="/">#makaan</a>
+				<a class="tag" href="/" each={ tag in searchdata.tags }>#{ tag }</a>
 			</div>
 		</div>
 	</div>
 	<script>
+		var self=this;
+
+		this.searchdata={};
+
 		this.on("mount",function(){
-			document.querySelector(".q").addEventListener("keydown",function(e){
+			document.querySelector(".q").addEventListener("keyup",function(e){
 				document.querySelector(".results").classList.add("hidden");
 				document.querySelector(".loader").classList.remove("hidden");
+				fetch(window.ip+"/galleria/search/any/"+document.querySelector(".q").value)
+				.then(res=>res.json()).then(data=>{
+					self.update({ searchdata: data });
+					document.querySelector(".results").classList.remove("hidden");
+					document.querySelector(".loader").classList.add("hidden");
+				});
 			});
 		})
 
 	</script>
 </gp-search>
+<gp-tagpics>
+	<div class="content"></div>
+	<script>
+		this.on("mount",function(){
+			document.querySelector("h1").innerHTML="tag: "+veronica.getCurrentState().data[":tag"];
+		});
+		this.on("unmount",function(){
+			document.querySelector("h1").innerHTML="Painteria";
+		});
+	</script>
+</gp-tagpics>
 <gp-userpic>
 	<div class="userinfo">
-		<img class="userpic" height="50" width="50" src="https://igcdn-photos-a-a.akamaihd.net/hphotos-ak-xat1/t51.2885-19/s150x150/12912528_235034833513880_374146734_a.jpg"></img>
-		<span class="username">Prateek Bhatnagar</span>
+		<div class="piccontainer">
+			<img class="userpic" height="50" width="50" src="https://igcdn-photos-a-a.akamaihd.net/hphotos-ak-xat1/t51.2885-19/s150x150/12912528_235034833513880_374146734_a.jpg"></img>	
+		</div>
+		<a href="/user/prateek" class="username">Prateek Bhatnagar</a>
 		<span class="time">15m</span>
 	</div>
-	<div class="painting">
+	<div class="painting" onclick={toggleCopy}>
 		<img class="img-painting" src="https://igcdn-photos-e-a.akamaihd.net/hphotos-ak-xtp1/t51.2885-15/e35/13712640_1582972958669636_496558116_n.jpg"/>
+		<button class="copy hidden">
+			<svg xmlns="http://www.w3.org/2000/svg" fill="#FFFFFF" height="24" viewBox="0 0 24 24" width="24">
+			    <path d="M0 0h24v24H0z" fill="none"/>
+			    <path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/>
+			</svg>
+		</button>
 	</div>
+	<script>
+		var showingCopy=false;
+		var $copy=this.root.querySelector(".copy");
+		this.on("mount",function(e){
+			$copy=this.root.querySelector(".copy");
+		});
+		this.toggleCopy=function(){
+			if(!showingCopy){
+				console.log($copy);
+				$copy.classList.remove("hidden");
+			}
+			else{
+				$copy.classList.add("hidden");	
+			}
+			showingCopy=!showingCopy;
+		}
+	</script>
 </gp-userpic>
 <gp-header>
 	<header>

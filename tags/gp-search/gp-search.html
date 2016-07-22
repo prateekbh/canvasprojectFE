@@ -3,79 +3,40 @@
 	<div class="loader hidden">
 		<gp-loader></gp-loader>
 	</div>
-	<div class="results ">
+	<div class="results hidden">
 		<div class="ppl">
 			<div class="title">People</div>
-			<div class="content">
-				<div class="usernail">
+			<div class="content" each={ user in searchdata.users }>
+				<a href="/user/{user.account_id}" class="usernail">
 					<div class="pic">
-						<img class="pic" src="https://igcdn-photos-a-a.akamaihd.net/hphotos-ak-xat1/t51.2885-19/s150x150/12912528_235034833513880_374146734_a.jpg"></img>
+						<img class="pic" src="{user.avatar_url}"></img>
 					</div>
-					<div class="name">Prateek</div>
-				</div>
-				<div class="usernail">
-					<div class="pic">
-						<img class="pic" src="https://igcdn-photos-a-a.akamaihd.net/hphotos-ak-xat1/t51.2885-19/s150x150/12912528_235034833513880_374146734_a.jpg"></img>
-					</div>
-					<div class="name">Prateek</div>
-				</div>
-				<div class="usernail">
-					<div class="pic">
-						<img class="pic" src="https://igcdn-photos-a-a.akamaihd.net/hphotos-ak-xat1/t51.2885-19/s150x150/12912528_235034833513880_374146734_a.jpg"></img>
-					</div>
-					<div class="name">Prateek</div>
-				</div>
-				<div class="usernail">
-					<div class="pic">
-						<img class="pic" src="https://igcdn-photos-a-a.akamaihd.net/hphotos-ak-xat1/t51.2885-19/s150x150/12912528_235034833513880_374146734_a.jpg"></img>
-					</div>
-					<div class="name">Prateek</div>
-				</div>
-				<div class="usernail">
-					<div class="pic">
-						<img class="pic" src="https://igcdn-photos-a-a.akamaihd.net/hphotos-ak-xat1/t51.2885-19/s150x150/12912528_235034833513880_374146734_a.jpg"></img>
-					</div>
-					<div class="name">Prateek</div>
-				</div>
-				<div class="usernail">
-					<div class="pic">
-						<img class="pic" src="https://igcdn-photos-a-a.akamaihd.net/hphotos-ak-xat1/t51.2885-19/s150x150/12912528_235034833513880_374146734_a.jpg"></img>
-					</div>
-					<div class="name">Prateek</div>
-				</div>
-				<div class="usernail">
-					<div class="pic">
-						<img class="pic" src="https://igcdn-photos-a-a.akamaihd.net/hphotos-ak-xat1/t51.2885-19/s150x150/12912528_235034833513880_374146734_a.jpg"></img>
-					</div>
-					<div class="name">Prateek</div>
-				</div>
-				<div class="usernail">
-					<div class="pic">
-						<img class="pic" src="https://igcdn-photos-a-a.akamaihd.net/hphotos-ak-xat1/t51.2885-19/s150x150/12912528_235034833513880_374146734_a.jpg"></img>
-					</div>
-					<div class="name">Prateek</div>
-				</div>
-				<div class="usernail">
-					<div class="pic">
-						<img class="pic" src="https://igcdn-photos-a-a.akamaihd.net/hphotos-ak-xat1/t51.2885-19/s150x150/12912528_235034833513880_374146734_a.jpg"></img>
-					</div>
-					<div class="name">Prateek</div>
-				</div>
+					<div class="name">{ user.name }</div>
+				</a>
 			</div>
 		</div>
 		<div class="tags">
 			<div class="title">Tags</div>
 			<div class="content">
-				<a class="tag" href="/">#mum</a>, <a class="tag" href="/">#mummy</a>, <a class="tag" href="/">#delhi</a>, <a class="tag" href="/">#roti</a>, <a class="tag" href="/">#kapda</a>, <a class="tag" href="/">#makaan</a>
+				<a class="tag" href="/" each={ tag in searchdata.tags }>#{ tag }</a>
 			</div>
 		</div>
 	</div>
 	<script>
+		var self=this;
+
+		this.searchdata={};
+
 		this.on("mount",function(){
-			document.querySelector(".q").addEventListener("keydown",function(e){
+			document.querySelector(".q").addEventListener("keyup",function(e){
 				document.querySelector(".results").classList.add("hidden");
 				document.querySelector(".loader").classList.remove("hidden");
-				
+				fetch(window.ip+"/galleria/search/any/"+document.querySelector(".q").value)
+				.then(res=>res.json()).then(data=>{
+					self.update({ searchdata: data });
+					document.querySelector(".results").classList.remove("hidden");
+					document.querySelector(".loader").classList.add("hidden");
+				});
 			});
 		})
 

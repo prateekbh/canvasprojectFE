@@ -1,13 +1,16 @@
 gp-userpic{
 	display:block;
 	margin: 10px 0;
+	padding-bottom: 15px;
 	.userinfo{
 		padding:5px 10px;
 		display: flex;
 		align-items: center;
 	}
-	.userpic{
+	.piccontainer{
 		flex:1;
+	}
+	.userpic{
 		border-radius: 50%;
 		vertical-align: middle;
 	}
@@ -29,4 +32,26 @@ gp-userpic{
 	.img-painting{
 		width:100%;
 	}
+	.painting{
+		position:relative;
+	}
+	.copy{
+		border-radius: 50%;
+		background-color: rgba(66,66,66,0.7);
+		border-width: 0px;
+		padding: 15px;
+		position: absolute;
+		bottom: 20px;
+		right:15px;
+		transition-property: transform opacity;
+		transition-duration: 300ms;
+		opacity: 1;
+		transform: scale(1);
+		&.hidden{
+			opacity:0;
+			display: inline-block;
+			transform: scale(0.1);
+		}
+	}
 }
+

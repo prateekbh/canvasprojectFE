@@ -1,10 +1,35 @@
 <gp-userpic>
 	<div class="userinfo">
-		<img class="userpic" height="50" width="50" src="https://igcdn-photos-a-a.akamaihd.net/hphotos-ak-xat1/t51.2885-19/s150x150/12912528_235034833513880_374146734_a.jpg"></img>
-		<span class="username">Prateek Bhatnagar</span>
+		<div class="piccontainer">
+			<img class="userpic" height="50" width="50" src="https://igcdn-photos-a-a.akamaihd.net/hphotos-ak-xat1/t51.2885-19/s150x150/12912528_235034833513880_374146734_a.jpg"></img>	
+		</div>
+		<a href="/user/prateek" class="username">Prateek Bhatnagar</a>
 		<span class="time">15m</span>
 	</div>
-	<div class="painting">
+	<div class="painting" onclick={toggleCopy}>
 		<img class="img-painting" src="https://igcdn-photos-e-a.akamaihd.net/hphotos-ak-xtp1/t51.2885-15/e35/13712640_1582972958669636_496558116_n.jpg"/>
+		<button class="copy hidden">
+			<svg xmlns="http://www.w3.org/2000/svg" fill="#FFFFFF" height="24" viewBox="0 0 24 24" width="24">
+			    <path d="M0 0h24v24H0z" fill="none"/>
+			    <path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/>
+			</svg>
+		</button>
 	</div>
+	<script>
+		var showingCopy=false;
+		var $copy=this.root.querySelector(".copy");
+		this.on("mount",function(e){
+			$copy=this.root.querySelector(".copy");
+		});
+		this.toggleCopy=function(){
+			if(!showingCopy){
+				console.log($copy);
+				$copy.classList.remove("hidden");
+			}
+			else{
+				$copy.classList.add("hidden");	
+			}
+			showingCopy=!showingCopy;
+		}
+	</script>
 </gp-userpic>
