@@ -17,7 +17,7 @@ public interface GalleriaService {
     ImageMetaData getImageMetaData(Long imageId);
     List<ImageMetaData> getImageMetaData(String accountId);
     List<Image> findByAccountId(String accountId);
-    Image getImage(String accountId);
+    List<Image> getImagesForAccountId(String accountId);
     Image getImage(Long imageId);
     SearchResponseDto search(String searchText);
     ProfileDetails getProfileDetails(String accountId) throws Exception;

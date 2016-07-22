@@ -17,6 +17,7 @@ import org.apache.commons.lang3.StringUtils;
 import javax.ws.rs.core.Response;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Created by palash.v on 21/07/16.
@@ -36,16 +37,6 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public List<User> searchUser(SearchUserRequestDto searchUserRequestDto) {
         return userDao.searchUser(searchUserRequestDto);
-    }
-
-    @Override
-    @Transactional
-    public List<String> getImagesForUser(String accountId) {
-//        SearchUserRequestDto searchUserRequestDto = new SearchUserRequestDto();
-//        searchUserRequestDto.setAccountId(accountId);
-//        List<User> users = userDao.searchUser(searchUserRequestDto);
-//        galleriaService.
-    return null;
     }
 
     @Override
@@ -77,6 +68,7 @@ public class UserServiceImpl implements UserService {
                 imageIds.add(metaData.getImageId());
             userDetails.setOwnImageIds(imageIds);
         }
+        userDetails.setFollowers(getFollowers(user.getAccountId()));
 
         return userDetails;
     }
@@ -85,6 +77,12 @@ public class UserServiceImpl implements UserService {
     public User findById(Long userId) {
         if(userId == null) return null;
         return userDao.fetchById(userId);
+    }
+
+    public List<User> getFollowers(String accountId) {
+        User user = findByAccountId(accountId);
+        List<User> followers = user.getFollowers().stream().map(userRelations -> findById(userRelations.getDestinationUserId())).collect(Collectors.toList());
+        return followers;
     }
 
 }

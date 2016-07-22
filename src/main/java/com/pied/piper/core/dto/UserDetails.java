@@ -18,6 +18,7 @@ public class UserDetails {
     private List<Long> ownImageIds = new ArrayList<>();
     private List<Long> clonedImageIds = new ArrayList<>();
     private List<Long> prIds = new ArrayList<>();
+    private List<User> followers;
 
     public UserDetails(){}
 

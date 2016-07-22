@@ -118,8 +118,10 @@ public class GalleriaServiceImpl implements GalleriaService {
     }
 
     @Override
-    public Image getImage(String accountId) {
-        return null;
+    public List<Image> getImagesForAccountId(String accountId) {
+        Criterion criterion = Restrictions.eq("accountId", accountId);
+        List<Image> images = imageDao.findByCriteria(criterion);
+        return images;
     }
 
     @Override
@@ -179,8 +181,7 @@ public class GalleriaServiceImpl implements GalleriaService {
         profileDetails.setUser(userResponseDto);
 
         // get all images of user
-        Criterion criterion = Restrictions.eq("accountId", accountId);
-        List<Image> images = imageDao.findByCriteria(criterion);
+        List<Image> images = getImagesForAccountId(accountId);
 
         // filter owned images
         List<Image> ownedImages = images.stream().filter(image -> image.getIsCloned().equals(false)).collect(Collectors.toList());

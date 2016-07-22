@@ -1,6 +1,8 @@
 package com.pied.piper.core.services.interfaces;
 
 import com.google.inject.ImplementedBy;
+
+import com.pied.piper.core.db.model.Image;
 import com.pied.piper.core.db.model.User;
 import com.pied.piper.core.dto.SearchUserRequestDto;
 import com.pied.piper.core.dto.UserDetails;
@@ -16,11 +18,12 @@ public interface UserService {
 
     List<User> searchUser(SearchUserRequestDto searchUserRequestDto);
 
-    List<String> getImagesForUser(String accountId);
-
     User findByAccountId(String accountId);
 
     UserDetails getUserDetailsByUserId(Long userId);
 
     User findById(Long userId);
+
+    List<User> getFollowers(String accountId);
+
 }
