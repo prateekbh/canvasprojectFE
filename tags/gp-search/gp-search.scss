@@ -43,6 +43,9 @@ gp-search{
 		&:after{
 			content:',';
 		}
+		&:last-child:after{
+			content:'';
+		}
 	}
 
 	.usernail{

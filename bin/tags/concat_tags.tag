@@ -76,42 +76,87 @@
 	</div>
 </gp-loader>
 <gp-profile>
-	<div class="loader">
+	<div class="loader { profileData ? 'hidden' : '' }">
 		<gp-loader></gp-loader>
 	</div>
-	<div class="profile hidden">
+	<div class="profile { !profileData ? 'hidden' : '' }">
 		<div class="userinfo">
 			<div class="pic">
-				<img class="userpic" src="https://igcdn-photos-a-a.akamaihd.net/hphotos-ak-xat1/t51.2885-19/s150x150/12912528_235034833513880_374146734_a.jpg"></img>
+				<img class="userpic" src="{profileData.user.avatar_url}"></img>
 			</div>
 			<div class="info">
-				<div class="name">Prateek Bhatnagar</div>
+				<div class="name">{profileData.user.name}</div>
 				<div class="desc">front end engineer @ nowhere</div>
 				<div class="container-followers"><a class="followers" href="/followers/prateek">22 followers</a></div>
 			</div>
 		</div>
 		<div class="tabs">
-			<div class="tab own selected">
-				<div class="num">56</div>
+			<div class="tab own selected" onclick={selTab}>
+				<div class="num">{profileData.owned_images&&profileData.owned_images.length}</div>
 				<div class="label">OWN</div>
 			</div>
-			<div class="tab cloned">
-				<div class="num">22</div>
+			<div class="tab cloned" onclick={selTab}>
+				<div class="num">{profileData.cloned_images&&profileData.cloned_images.length}</div>
 				<div class="label">CLONED</div>
 			</div>
-			<div class="tab pr">
-				<div class="num">2</div>
+			<div class="tab pr" if={profileData.user.account_id===window.uid} onclick={selTab}>
+				<div class="num">{profileData.pull_requests&&profileData.pull_requests.length}</div>
 				<div class="label">PRs</div>
 			</div>
 		</div>
+		<div class="content">
+
+			<div if={selectedTab===0}>
+				<a class="imagelink" each={image in profileData.owned_images}>
+					<img class="imgthumb" src="{window.ip+'/image/'+ image.image_id +'/data'}"></img>
+				</a>	
+			</div>
+			<div if={selectedTab===1}>
+				<a class="imagelink" each={image in profileData.cloned_images}>
+					<img class="imgthumb" src="{window.ip+'/image/'+ image.image_id +'/data'}"></img>
+				</a>	
+			</div>
+			<div if={selectedTab===2}>
+				<a class="pr" each={pr in profileData.pull_requests} href="/pr/1">
+					<img class="sender" src="{pr.sender.avatar_url}"></img>
+					<span class="info"><b>{pr.sender.name}</b> sent a pr on</span>
+					<img class="source" src={window.ip + "/image/"+pr.image.image_id+"/data" }></img>
+				</a>
+			</div>
+		</div>
 	</div>
+	<script>
+		var self=this;
+		this.selectedTab=0;
+		this.on("mount",function(e){
+			fetch(window.ip+"/galleria/profile/details/"+veronica.getCurrentState().data[":user"],{
+				headers: { 'x-account-id': window.uid }
+			})
+			.then(res=>res.json())
+			.then(data=>{
+				self.update({profileData: data});
+			})
+		})
+
+		this.selTab=function(e){
+			document.querySelector(".selected")&&document.querySelector(".selected").classList.remove("selected");
+			e.target.classList.add("selected");
+			if(e.target.classList.contains("cloned")){
+				self.update({selectedTab: 1});	
+			} else if(e.target.classList.contains("own")){
+				self.update({selectedTab: 0});	
+			} else {
+				self.update({selectedTab: 2});	
+			}
+		}
+	</script>
 </gp-profile>
 <gp-search>
 	<input type="text" class="q" placeholder="explore">
-	<div class="loader hidden">
+	<div class="loader { !resultShown ? '' : 'hidden' }">
 		<gp-loader></gp-loader>
 	</div>
-	<div class="results hidden">
+	<div class="results { !resultShown ? 'hidden' : '' }">
 		<div class="ppl">
 			<div class="title">People</div>
 			<div class="content" each={ user in searchdata.users }>
@@ -126,7 +171,7 @@
 		<div class="tags">
 			<div class="title">Tags</div>
 			<div class="content">
-				<a class="tag" href="/" each={ tag in searchdata.tags }>#{ tag }</a>
+				<a class="tag" href="/tags/{tag}" each={ tag in searchdata.tags }>#{ tag }</a>
 			</div>
 		</div>
 	</div>
@@ -134,16 +179,20 @@
 		var self=this;
 
 		this.searchdata={};
+		this.resultShown=false;
 
 		this.on("mount",function(){
 			document.querySelector(".q").addEventListener("keyup",function(e){
 				document.querySelector(".results").classList.add("hidden");
 				document.querySelector(".loader").classList.remove("hidden");
+				self.update({ resultShown: false });
 				fetch(window.ip+"/galleria/search/any/"+document.querySelector(".q").value)
 				.then(res=>res.json()).then(data=>{
-					self.update({ searchdata: data });
+					self.update({ searchdata: data, resultShown: true });
 					document.querySelector(".results").classList.remove("hidden");
 					document.querySelector(".loader").classList.add("hidden");
+				}).catch(()=>{
+					self.update({ resultShown: false });
 				});
 			});
 		})
@@ -186,7 +235,6 @@
 		});
 		this.toggleCopy=function(){
 			if(!showingCopy){
-				console.log($copy);
 				$copy.classList.remove("hidden");
 			}
 			else{

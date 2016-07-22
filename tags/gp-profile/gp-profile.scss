@@ -14,10 +14,12 @@ gp-profile{
 	}
 	.num{
 		font-size: 22px;
+		pointer-events: none;
 	}
 	.label{
 		color: #999;
 		font-size: 18px;
+		pointer-events: none;
 	}
 	.followers{
 		font-size: 16px;
@@ -46,3 +48,43 @@ gp-profile{
 		color:#999;
 	}
 }
+
+.content{
+	margin-top: 10px;
+	.imagelink{
+		display: inline-block;
+		width: 33%;
+		padding-right: 5px;
+	}
+	.imgthumb{
+		width: 100%;
+	}
+}
+
+
+.pr{
+	padding: 10px;
+	border-bottom: 1px solid #ccc;
+	display: block;
+
+	.info{
+		color: #333;
+		font-size: 16px;
+		vertical-align: middle;
+
+		margin-left: 10px
+	}
+	.sender{
+		display: inline-block;
+		border-radius: 50%;
+		max-width: 50px;
+		vertical-align: middle;
+	}
+	.source{
+		float: right;
+		vertical-align: middle;
+		max-width: 50px;
+	}
+
+}
+

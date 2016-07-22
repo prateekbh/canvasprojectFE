@@ -120,10 +120,12 @@ gp-profile {
     gp-profile .tab.selected {
       box-shadow: 0 5px 5px -5px #666; }
   gp-profile .num {
-    font-size: 22px; }
+    font-size: 22px;
+    pointer-events: none; }
   gp-profile .label {
     color: #999;
-    font-size: 18px; }
+    font-size: 18px;
+    pointer-events: none; }
   gp-profile .followers {
     font-size: 16px;
     text-orientation: none; }
@@ -144,6 +146,34 @@ gp-profile {
   .userinfo .desc {
     font-size: 16px;
     color: #999; }
+
+.content {
+  margin-top: 10px; }
+  .content .imagelink {
+    display: inline-block;
+    width: 33%;
+    padding-right: 5px; }
+  .content .imgthumb {
+    width: 100%; }
+
+.pr {
+  padding: 10px;
+  border-bottom: 1px solid #ccc;
+  display: block; }
+  .pr .info {
+    color: #333;
+    font-size: 16px;
+    vertical-align: middle;
+    margin-left: 10px; }
+  .pr .sender {
+    display: inline-block;
+    border-radius: 50%;
+    max-width: 50px;
+    vertical-align: middle; }
+  .pr .source {
+    float: right;
+    vertical-align: middle;
+    max-width: 50px; }
 
 gp-search {
   display: block;
@@ -180,6 +210,8 @@ gp-search {
     margin: 2px 5px; }
     gp-search .tag:after {
       content: ','; }
+    gp-search .tag:last-child:after {
+      content: ''; }
   gp-search .usernail {
     display: inline-block;
     margin: 5px 10px;
@@ -243,7 +275,8 @@ gp-header {
   padding: 10px;
   background-color: #5d3cb2;
   position: fixed;
-  width: 100%; }
+  width: 100%;
+  z-index: 5; }
 
 h1 {
   font-weight: 300;
