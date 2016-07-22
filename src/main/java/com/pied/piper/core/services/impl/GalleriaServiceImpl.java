@@ -117,6 +117,11 @@ public class GalleriaServiceImpl implements GalleriaService {
     }
 
     @Override
+    public Image getImage(String accountId) {
+        return null;
+    }
+
+    @Override
     @Transactional
     public Image getImage(Long imageId) {
         try {
