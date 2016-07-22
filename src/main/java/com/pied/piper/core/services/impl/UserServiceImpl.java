@@ -6,6 +6,7 @@ import com.google.inject.persist.Transactional;
 import com.pied.piper.core.db.dao.impl.UserDaoImpl;
 import com.pied.piper.core.db.model.Image;
 import com.pied.piper.core.db.model.User;
+import com.pied.piper.core.db.model.UserRelations;
 import com.pied.piper.core.dto.ImageMetaData;
 import com.pied.piper.core.dto.SearchUserRequestDto;
 import com.pied.piper.core.dto.UserDetails;
@@ -83,6 +84,20 @@ public class UserServiceImpl implements UserService {
         User user = findByAccountId(accountId);
         List<User> followers = user.getFollowers().stream().map(userRelations -> findById(userRelations.getDestinationUserId())).collect(Collectors.toList());
         return followers;
+    }
+
+    @Override
+    public List<User> createFollower(String userId, String followerId) {
+        User user = findByAccountId(userId);
+        if (user.getFollowers() == null) {
+            user.setFollowers(new ArrayList<>());
+        }
+        User follower = findByAccountId(followerId);
+        UserRelations userRelation = new UserRelations();
+        userRelation.setSourceUser(user);
+        userRelation.setDestinationUserId(follower.getUserId());
+        user.getFollowers().add(userRelation);
+        return getFollowers(userId);
     }
 
 }

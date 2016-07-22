@@ -26,4 +26,6 @@ public interface UserService {
 
     List<User> getFollowers(String accountId);
 
+    List<User> createFollower(String user, String follower);
+
 }
