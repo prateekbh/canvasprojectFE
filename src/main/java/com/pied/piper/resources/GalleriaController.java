@@ -79,4 +79,45 @@ public class GalleriaController {
             return Response.status(500).build();
         }
     }
+
+    /*
+        Clone Image API
+    */
+    @POST
+    @Path("/clone")
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response cloneImage(@QueryParam("account_id") String accountId, @QueryParam("image_id") Long imageId) {
+        HashMap response = new HashMap();
+        try {
+            Long clonedImageId = galleriaService.cloneImage(imageId, accountId);
+            response.put("image_id", clonedImageId);
+            return Response.status(200).entity(response).build();
+        } catch (ResponseException e) {
+            return Response.status(e.getErrorResponse().getErrorCode()).entity(e.getErrorResponse()).build();
+        } catch (Exception e) {
+            return Response.status(500).build();
+        }
+    }
+
+    /*
+       Send Pull Request API
+    */
+    @POST
+    @Path("/pullrequest/send")
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response sendPullRequest(@QueryParam("account_id") String accountId, @QueryParam("image_id") Long imageId) {
+        HashMap response = new HashMap();
+        try {
+            /*
+            Long clonedImageId = galleriaService.cloneImage(imageId, accountId);
+            response.put("image_id", clonedImageId);
+            return Response.status(200).entity(response).build();
+            */
+            return Response.status(200).build();
+        } catch (ResponseException e) {
+            return Response.status(e.getErrorResponse().getErrorCode()).entity(e.getErrorResponse()).build();
+        } catch (Exception e) {
+            return Response.status(500).build();
+        }
+    }
 }

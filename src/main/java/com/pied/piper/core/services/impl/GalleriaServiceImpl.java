@@ -18,6 +18,7 @@ import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Restrictions;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -143,6 +144,7 @@ public class GalleriaServiceImpl implements GalleriaService {
         // Search Tags
         List<ImageTags> imageTags = imageTagService.searchImageTags(searchText);
         List<String> tagStrings = imageTags.stream().map(imageTag -> imageTag.getTag()).collect(Collectors.toList());
+        tagStrings = new ArrayList<>(new HashSet<>(tagStrings));
 
         // Search Users
         SearchUserRequestDto searchUserRequestDto = new SearchUserRequestDto();
@@ -212,5 +214,35 @@ public class GalleriaServiceImpl implements GalleriaService {
             profileDetails.setPullRequests(pullRequests);
         }
         return profileDetails;
+    }
+
+    @Override
+    public Long cloneImage(Long imageId, String accountId) throws Exception {
+        Image image = imageDao.fetchById(imageId);
+        Image clonedImage = new Image();
+        clonedImage.setAccountId(accountId);
+        clonedImage.setTitle(image.getTitle());
+        clonedImage.setDescription(image.getDescription());
+        clonedImage.setImage(image.getImage());
+        clonedImage.setIsCloned(true);
+        imageDao.save(clonedImage);
+        List<ImageTags> newImageTags = new ArrayList<>();
+        for(ImageTags imageTags : image.getTags()) {
+            ImageTags newImageTag = new ImageTags();
+            newImageTag.setTag(imageTags.getTag());
+            newImageTag.setSourceImage(clonedImage);
+            imageTagService.saveImageTag(newImageTag);
+            newImageTags.add(newImageTag);
+        }
+        clonedImage.setTags(newImageTags);
+        imageDao.save(clonedImage);
+
+        ImageRelation imageRelation = new ImageRelation();
+        imageRelation.setApprovalStatus(ApprovalStatusEnum.NEW);
+        imageRelation.setClonedImage(clonedImage.getImageId());
+        imageRelation.setId(imageId);
+
+        imageRelationService.saveImageRelation(imageRelation);
+        return clonedImage.getImageId();
     }
 }

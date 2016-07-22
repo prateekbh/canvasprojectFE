@@ -32,4 +32,9 @@ public class ImageRelationServiceImpl implements ImageRelationService {
         Criterion criterion = Restrictions.in("clonedImage", imageIds);
         return imageRelationDao.findByCriteria(criterion);
     }
+
+    @Override
+    public void saveImageRelation(ImageRelation imageRelation) {
+        imageRelationDao.save(imageRelation);
+    }
 }

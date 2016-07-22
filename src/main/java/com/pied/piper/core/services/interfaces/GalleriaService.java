@@ -21,4 +21,5 @@ public interface GalleriaService {
     Image getImage(Long imageId);
     SearchResponseDto search(String searchText);
     ProfileDetails getProfileDetails(String accountId) throws Exception;
+    Long cloneImage(Long imageId, String accountId) throws Exception;
 }
