@@ -9,20 +9,10 @@ import java.util.List;
 /**
  * Created by akshay.kesarwan on 21/07/16.
  */
-@JsonSnakeCase
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class SaveImageRequestDto {
-
-    private Long imageId;
-
-    private String image;
-
+@JsonSnakeCase
+public class SearchResponseDto {
     private List<String> tags;
-
-    private String description;
-
-    private String title;
-
-    private String accountId;
+    private List<UserResponseDto> users;
 }

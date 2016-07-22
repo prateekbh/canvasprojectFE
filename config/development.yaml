@@ -31,9 +31,9 @@ server:
 
 logging:
   level: INFO
-  loggers:
-    org.hibernate: ALL
-    com.sun.jersey.api.container.filter.LoggingFilter: INFO
+#  loggers:
+#    org.hibernate: ALL
+#    com.sun.jersey.api.container.filter.LoggingFilter: INFO
   appenders:
   - type: console
     threshold: ALL

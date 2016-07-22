@@ -3,5 +3,11 @@
     <persistence-unit name="pied-piper" transaction-type="RESOURCE_LOCAL">
         <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
         <class>com.pied.piper.core.db.model.Image</class>
+        <class>com.pied.piper.core.db.model.User</class>
+        <class>com.pied.piper.core.db.model.UserRelations</class>
+        <class>com.pied.piper.core.db.model.ImageRelation</class>
+        <class>com.pied.piper.core.db.model.ImageTags</class>
+        <class>com.pied.piper.core.db.model.ImageLikes</class>
+        <class>com.pied.piper.core.db.model.Comment</class>
     </persistence-unit>
 </persistence>

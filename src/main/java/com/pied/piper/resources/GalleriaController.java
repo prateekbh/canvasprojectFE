@@ -1,8 +1,11 @@
 package com.pied.piper.resources;
 
 import com.google.inject.Inject;
+import com.pied.piper.core.dto.ProfileDetails;
 import com.pied.piper.core.dto.SaveImageRequestDto;
+import com.pied.piper.core.dto.SearchResponseDto;
 import com.pied.piper.core.services.interfaces.GalleriaService;
+import com.pied.piper.exception.ResponseException;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -42,5 +45,38 @@ public class GalleriaController {
             return Response.status(500).build();
         }
         return Response.status(200).entity(response).build();
+    }
+
+    /*
+        Search Page API
+        Provides matching tags and users
+     */
+    @GET
+    @Path("/search/any/{txt}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response search(@PathParam("txt") String searchText) {
+        try {
+            SearchResponseDto searchResponseDto = galleriaService.search(searchText);
+            return Response.status(200).entity(searchResponseDto).build();
+        } catch (Exception e) {
+            return Response.status(500).build();
+        }
+    }
+
+    /*
+        Profile Details API
+    */
+    @GET
+    @Path("/profile/details/{account_id}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response getProfileDetails(@PathParam("account_id") String accountId) {
+        try {
+            ProfileDetails profileDetails = galleriaService.getProfileDetails(accountId);
+            return Response.status(200).entity(profileDetails).build();
+        } catch (ResponseException e) {
+            return Response.status(e.getErrorResponse().getErrorCode()).entity(e.getErrorResponse()).build();
+        } catch (Exception e) {
+            return Response.status(500).build();
+        }
     }
 }

@@ -77,7 +77,7 @@ public class BaseDaoImpl<T, ID extends Serializable> implements BaseDao<T, ID> {
         return entityClass;
     }
 
-    protected List<T> findByCriteria(final Criterion... criterion) {
+    public List<T> findByCriteria(final Criterion... criterion) {
         Session session = (Session) getEntityManager().getDelegate();
         Criteria crit = session.createCriteria(getEntityClass());
 
