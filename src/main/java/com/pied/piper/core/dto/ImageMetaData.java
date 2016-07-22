@@ -1,6 +1,9 @@
 package com.pied.piper.core.dto;
 
 import com.pied.piper.core.db.model.Image;
+import com.pied.piper.core.db.model.ImageTags;
+
+import java.util.List;
 
 import io.dropwizard.jackson.JsonSnakeCase;
 import lombok.Data;
@@ -16,6 +19,8 @@ public class ImageMetaData {
     private String description;
     private String accountId;
     private Integer numOfLikes;
+    private Boolean isCloned;
+    private List<ImageTags> tags;
 
     public ImageMetaData(){}
 
@@ -25,5 +30,7 @@ public class ImageMetaData {
         this.description = image.getDescription();
         this.accountId = image.getAccountId();
         this.numOfLikes = image.getNumOfLikes();
+        this.isCloned = image.getIsCloned();
+        this.tags = image.getTags();
     }
 }

@@ -181,14 +181,14 @@ public class GalleriaServiceImpl implements GalleriaService {
         profileDetails.setUser(userResponseDto);
 
         // get all images of user
-        List<Image> images = getImagesForAccountId(accountId);
+        List<ImageMetaData> images = getImagesForAccountId(accountId).stream().map(image -> new ImageMetaData(image)).collect(Collectors.toList());
 
         // filter owned images
-        List<Image> ownedImages = images.stream().filter(image -> image.getIsCloned().equals(false)).collect(Collectors.toList());
+        List<ImageMetaData> ownedImages = images.stream().filter(image -> image.getIsCloned().equals(false)).collect(Collectors.toList());
         profileDetails.setOwnedImages(ownedImages);
 
         // filter cloned images
-        List<Image> clonedImages = images.stream().filter(image -> image.getIsCloned().equals(true)).collect(Collectors.toList());
+        List<ImageMetaData> clonedImages = images.stream().filter(image -> image.getIsCloned().equals(true)).collect(Collectors.toList());
         profileDetails.setClonedImages(clonedImages);
 
         // get Pull Request
