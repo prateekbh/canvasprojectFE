@@ -58,6 +58,53 @@ gp-draw{
 	100%{transform: translateY(-100px);}
 }
 
+gp-editimg{
+	position: absolute;
+    top: 0px;
+    bottom: 0px;
+    left: 0px;
+    right: 0px;
+    margin: 0px auto auto auto;
+    width: 100%;
+    height: 90%;	
+	canvas{
+		width: 100%;
+    	height: 90%;
+    	margin-top: 62px;
+    	position: relative;
+    	z-index: 2;
+	}
+	#bgcanvas{
+		position: absolute;
+	    top: 0px;
+	    width: 100%;
+	    left: 0px;
+	    z-index: 1;
+	}
+	.save,.pr{
+		z-index: 3;
+		border-radius: 50%;
+		position: fixed;
+		bottom: 10px;
+		right: 10px;
+		padding:10px;
+		background-color: #FFEB3B;
+		border:1px solid #FFEB3B;
+		outline: none;
+		animation: comeFromDown 100ms linear;
+		animation-fill-mode: forwards;
+		will-change:transform;
+	}
+	.pr{
+		bottom: 70px;
+	}
+}
+
+@keyframes comeFromDown{
+	0%{transform: translateY(100px);}
+	100%{transform: translateY(-100px);}
+}
+
 gp-home{
 	display:block;
 }
@@ -171,6 +218,7 @@ gp-profile{
 	align-items: center;
 	padding: 15px 15px 40px 15px;
 	border-bottom: 1px solid #ddd;
+	position:relative;
 	.userpic{
 		border-radius: 50%;
 		max-width: 100px;
@@ -185,6 +233,17 @@ gp-profile{
 	.desc{
 		font-size: 16px;
 		color:#999;
+	}
+	.btn-follow{
+		position: absolute;
+		right:10px;
+		top:10px;
+		background-color: #5d3cb2;
+		padding: 10px;
+		color: #fff;
+		font-size: 14px;
+		border-width: 0px;
+		outline: 0px;
 	}
 }
 
@@ -227,6 +286,53 @@ gp-profile{
 
 }
 
+
+gp-pullrequest{
+	position: absolute;
+    top: 0px;
+    bottom: 0px;
+    left: 0px;
+    right: 0px;
+    margin: 0px auto auto auto;
+    width: 100%;
+    height: 90%;	
+	canvas{
+		width: 100%;
+    	height: 90%;
+    	margin-top: 62px;
+    	position: relative;
+    	z-index: 2;
+	}
+	#bgcanvas{
+		position: absolute;
+	    top: 0px;
+	    width: 100%;
+	    left: 0px;
+	    z-index: 1;
+	}
+	.accept,.pr{
+		z-index: 3;
+		border-radius: 50%;
+		position: fixed;
+		bottom: 10px;
+		right: 10px;
+		padding:10px;
+		background-color: #FFEB3B;
+		border:1px solid #FFEB3B;
+		outline: none;
+		animation: comeFromDown 100ms linear;
+		animation-fill-mode: forwards;
+		will-change:transform;
+	}
+	.pr{
+		bottom: 70px;
+	}
+}
+
+@keyframes comeFromDown{
+	0%{transform: translateY(100px);}
+	100%{transform: translateY(-100px);}
+}
 
 gp-search{
 	display: block;

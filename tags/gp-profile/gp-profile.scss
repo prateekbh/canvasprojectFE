@@ -32,6 +32,7 @@ gp-profile{
 	align-items: center;
 	padding: 15px 15px 40px 15px;
 	border-bottom: 1px solid #ddd;
+	position:relative;
 	.userpic{
 		border-radius: 50%;
 		max-width: 100px;
@@ -46,6 +47,17 @@ gp-profile{
 	.desc{
 		font-size: 16px;
 		color:#999;
+	}
+	.btn-follow{
+		position: absolute;
+		right:10px;
+		top:10px;
+		background-color: #5d3cb2;
+		padding: 10px;
+		color: #fff;
+		font-size: 14px;
+		border-width: 0px;
+		outline: 0px;
 	}
 }
 

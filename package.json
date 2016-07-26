@@ -28,7 +28,7 @@
     "forever": "^0.14.1",
     "grunt-sass": "^1.2.0",
     "morgan": "~1.5.1",
-    "mustache-express": "*",
+    "mustache-express": "^1.2.2",
     "node-lzw": "^0.3.1",
     "node-sass": "^3.8.0",
     "request": "*",

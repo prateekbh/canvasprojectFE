@@ -23,11 +23,11 @@
 		  ctx.lineJoin = ctx.lineCap = 'round';
 		  ctx.shadowBlur = 10;
 		  ctx.shadowColor = 'rgb(0, 0, 0)';
-		  ctx.moveTo(e.touches[0].clientX, e.touches[0].clientY-58);
+		  ctx.moveTo(e.touches[0].clientX, e.touches[0].clientY+58);
 		});
 		el.addEventListener("touchmove", function(e) {
 		  if (isDrawing) {
-		    ctx.lineTo(e.touches[0].clientX, e.touches[0].clientY-58);
+		    ctx.lineTo(e.touches[0].clientX, e.touches[0].clientY+58);
 		    ctx.stroke();
 		  }
 		});
@@ -36,7 +36,7 @@
 		});
 
 		document.querySelector(".save").addEventListener("click",function(e){
-			fetch('http://172.20.41.158:8080/galleria/save',{
+			fetch(window.ip+'/galleria/save',{
 				headers: {
 			      'Accept': 'application/json',
 			      'Content-Type': 'application/json'

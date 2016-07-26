@@ -1,0 +1,109 @@
+<gp-editimg>
+	<canvas id="drawer">
+	</canvas>
+	<canvas id="bgcanvas">
+	</canvas>
+	<button class="save">
+		<svg xmlns="http://www.w3.org/2000/svg" fill="#FFFFFF" height="24" viewBox="0 0 24 24" width="24">
+		    <path d="M0 0h24v24H0z" fill="none"/>
+		    <path d="M17 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V7l-4-4zm-5 16c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3zm3-10H5V5h10v4z"/>
+		</svg>
+	</button>
+	<button class="pr" onclick={raisepr}>
+		<svg xmlns="http://www.w3.org/2000/svg" fill="#FFFFFF" height="24" viewBox="0 0 24 24" width="24">
+		    <path d="M0 0h24v24H0z" fill="none"/>
+		    <path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM14 13v4h-4v-4H7l5-5 5 5h-3z"/>
+		</svg>
+	</button>
+	<script>
+	var curr_img=null;
+	this.on("mount",function(){
+		document.querySelector('body').style.overflow="hidden";
+		var el = document.getElementById('drawer');
+		var bgel = document.getElementById('bgcanvas');
+		el.setAttribute("width",window.innerWidth);
+		el.setAttribute("height",window.innerHeight);
+		bgel.setAttribute("width",window.innerWidth);
+		bgel.setAttribute("height",window.innerHeight);
+		curr_img=veronica.getCurrentState().data[":imgid"];
+
+		var ctx = el.getContext('2d');
+		var bgctx = bgel.getContext('2d');
+
+		var isDrawing;
+		var imgToEdit = new Image();
+        var bgImg = new Image();
+        imgToEdit.setAttribute("crossOrigin","Anonymous");
+        bgImg.setAttribute("crossOrigin","Anonymous");
+        
+
+        bgImg.onload = function(){
+        	var rect=bgel.getBoundingClientRect();
+        	bgctx.drawImage(bgImg, 0, 0, rect.width, rect.height);
+        };
+
+        imgToEdit.onload = function () {
+            //draw background image
+            var rect=el.getBoundingClientRect();
+            ctx.drawImage(imgToEdit, 0, 0, rect.width, rect.height);
+            startEditing(el,ctx);
+        };
+
+        imgToEdit.src = window.ip+"/image/"+veronica.getCurrentState().data[":imgid"]+"/data";
+        bgImg.src = window.ip+"/image/"+veronica.getCurrentState().data[":sourceid"]+"/data";
+	});
+
+	function startEditing(el,ctx){
+		el.addEventListener("touchstart", function(e) {
+		  isDrawing = true;
+		  ctx.lineWidth = 10;
+		  ctx.lineJoin = ctx.lineCap = 'round';
+		  ctx.shadowBlur = 10;
+		  ctx.shadowColor = 'rgb(0, 0, 0)';
+		  ctx.moveTo(e.touches[0].clientX, e.touches[0].clientY);
+		});
+		el.addEventListener("touchmove", function(e) {
+		  if (isDrawing) {
+		    ctx.lineTo(e.touches[0].clientX, e.touches[0].clientY);
+		    ctx.stroke();
+		  }
+		});
+		el.addEventListener("touchend", function(e) {
+		  isDrawing = false;
+		});
+
+		document.querySelector(".save").addEventListener("click",function(e){
+			fetch(window.ip+'/galleria/save',{
+				headers: {
+			      'Accept': 'application/json',
+			      'Content-Type': 'application/json'
+		    	},
+			    method: "POST",
+			    body: JSON.stringify({
+			    	"image_id":curr_img,
+			    	"title":"img_"+Date.now(),
+			    	"image":el.toDataURL(),
+			    })
+			}).then(res=>res.json()).then(data=>{
+				curr_img=data.image_id;
+			});
+		})
+	}
+
+	this.raisepr=function(e){
+		e.preventDefault();
+		fetch(window.ip+"/galleria/pullrequest/send?image_id="+veronica.getCurrentState().data[":imgid"],{
+			headers: { 'x-account-id': window.uid },
+			method: "POST",
+		})
+		.then(res=>{
+			alert("PR RAISED");
+			veronica.loc("/");
+		});
+	}
+
+	this.on("unmount",function(){
+		document.querySelector('body').style.overflow="auto";
+	})
+	</script>
+</gp-editimg>

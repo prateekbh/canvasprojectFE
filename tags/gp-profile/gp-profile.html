@@ -10,8 +10,11 @@
 			<div class="info">
 				<div class="name">{profileData.user.name}</div>
 				<div class="desc">front end engineer @ nowhere</div>
-				<div class="container-followers"><a class="followers" href="/followers/prateek">22 followers</a></div>
+				<div class="container-followers"><a class="followers" href="/followers/prateek">{profileData.user.followers.length} followers</a></div>
 			</div>
+			<button if={profileData.user.account_id!==window.uid} class="btn-follow" onclick={follow}>
+				{isFollowing||profileData.is_follower?'FOLLOWING':'FOLLOW'}
+			</button>
 		</div>
 		<div class="tabs">
 			<div class="tab own selected" onclick={selTab}>
@@ -35,15 +38,15 @@
 				</a>	
 			</div>
 			<div if={selectedTab===1}>
-				<a class="imagelink" each={image in profileData.cloned_images}>
+				<a class="imagelink" href="/img/edit/{image.image_id}/{image.source_image_id}" each={image in profileData.cloned_images}>
 					<img class="imgthumb" src="{window.ip+'/image/'+ image.image_id +'/data'}"></img>
 				</a>	
 			</div>
 			<div if={selectedTab===2}>
-				<a class="pr" each={pr in profileData.pull_requests} href="/pr/1">
+				<a class="pr" each={pr in profileData.pull_requests} href="/pr/{pr.pull_request_id}">
 					<img class="sender" src="{pr.sender.avatar_url}"></img>
 					<span class="info"><b>{pr.sender.name}</b> sent a pr on</span>
-					<img class="source" src={window.ip + "/image/"+pr.image.image_id+"/data" }></img>
+					<img class="source" src={window.ip + "/image/"+pr.original_image.image_id+"/data" }></img>
 				</a>
 			</div>
 		</div>
@@ -51,6 +54,7 @@
 	<script>
 		var self=this;
 		this.selectedTab=0;
+		this.isFollowing=false;
 		this.on("mount",function(e){
 			fetch(window.ip+"/galleria/profile/details/"+veronica.getCurrentState().data[":user"],{
 				headers: { 'x-account-id': window.uid }
@@ -58,7 +62,8 @@
 			.then(res=>res.json())
 			.then(data=>{
 				self.update({profileData: data});
-			})
+			});
+
 		})
 
 		this.selTab=function(e){
@@ -71,6 +76,15 @@
 			} else {
 				self.update({selectedTab: 2});	
 			}
+		}
+
+		this.follow=function(e){
+			e.preventDefault();
+			fetch(window.ip+"/user/"+this.profileData.user.account_id+"/createFollower?follower_id="+window.uid)
+			.then(res=>res.json())
+			.then(data=>{
+				self.update({isFollowing:true});
+			});
 		}
 	</script>
 </gp-profile>

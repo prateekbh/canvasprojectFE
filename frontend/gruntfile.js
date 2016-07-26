@@ -7,13 +7,6 @@ module.exports = function(grunt) {
     grunt.initConfig({
         pkg: grunt.file.readJSON("package.json"),
 
-        clean: {
-            pre_build: [
-
-            ],
-            post_build: [
-            ]        
-        },
 
         concat: {
             concat_tags: {
@@ -55,18 +48,14 @@ module.exports = function(grunt) {
 
     });
 
-    // Load the plugin that provides the "clean" task.
-    grunt.loadNpmTasks('grunt-contrib-clean');
+    // Load the plugin that provides the "riot" task.
+    grunt.loadNpmTasks("grunt-contrib-concat");
 
     // Load the plugin that provides the "riot" task.
     grunt.loadNpmTasks("grunt-riot");
 
-    // Load the plugin that provides the "concat" task.
-    grunt.loadNpmTasks("grunt-contrib-concat");
-
     // Load the plugin that provides the "sass" task.
     grunt.loadNpmTasks('grunt-sass');
-
 
     // Load the grunt riot so that transformation of tags is done on server itself
     grunt.loadNpmTasks('grunt-riot');
@@ -78,6 +67,6 @@ module.exports = function(grunt) {
     grunt.registerTask("make-js", ["concat:concat_tags",  "riot"]);
 
     //Task for building the static contents of the application
-    grunt.registerTask("default", ["clean:pre_build", "make-css", "make-js" ]);
+    grunt.registerTask("default", [ "make-css", "make-js" ]);
 
 };
