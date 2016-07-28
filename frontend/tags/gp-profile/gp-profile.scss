@@ -1,0 +1,35 @@
+gp-profile{
+	display: block;
+	.cover{
+		height: 100px;
+		background-size: cover;
+		background-repeat: no-repeat;
+		background-position: center;
+		-webkit-filter:blur(15px);
+		filter:blur(15px);
+	}
+	.userinfo{
+		display: flex;
+		position: relative;
+		z-index: 2;
+		margin-top:-50px;
+		margin-left: 15px;
+
+	}
+	.userpic{
+		border-radius: 50%;
+	}
+	.userdetails{
+		padding: 15px;
+	}
+	.username{
+		@extend .thinfont;
+		text-transform: lowercase;
+		font-size: 28px;
+	}
+	.followers{
+		padding-top: 5px;
+		color: #2196F3;
+		font-size: 14px;
+	}
+}

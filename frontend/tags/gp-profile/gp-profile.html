@@ -1,0 +1,21 @@
+<gp-profile>
+	<div class="cover" style="background-image:url('{userProfile.picture.data.url}')">
+	</div>
+	<div class="userinfo">
+			<img class="userpic" src="{userBigPic}" height="100" width="100"></img>
+			<div class="userdetails">
+				<div class="username">Prateek Bhatnagar</div>
+				<div class="followers"><span class="count">22</span> followers</div>
+			</div>
+	</div>
+	<script>
+		var self = this;
+		var userStore = veronica.flux.Stores.getStore("UserStore");
+		
+		this.userProfile = userStore.getUserProfile();
+		this.userBigPic = userStore.getUserBigPic();
+		
+		this.on("mount",function(){
+		});
+	</script>
+</gp-profile>

@@ -1,0 +1,51 @@
+<gp-login>
+	<div class="title titlefont">
+		KrowdKanvas
+	</div>
+	<div class="fblogin" if={!userProfile} >
+		<img if={!loading}
+			src="https://www.takingwings.in/wp-content/plugins/wordpress-social-login/assets/img/32x32/wpzoom/facebook.png"
+			width="200"
+			onclick={startLoading}>
+		<material-spinner if={loading}>
+		</material-spinner>
+	</div>
+	<script>
+		var self=this;
+		var userStore=veronica.flux.Stores.getStore("UserStore");
+		var userActions=veronica.flux.Actions.getAction("UserActions");
+		
+		this.userProfile=userStore.getUserProfile();
+		this.loading=false;
+
+		this.startLoading=function(){
+			self.update({loading:true});
+			FB.login(function(res){
+				if(res.status==="connected"){
+					userActions.setAuthCredentials(res);
+					var url = '/me?fields=name,email,picture';
+					FB.api('/me/picture?type=large',function(imgRes){
+						var imgCaching=new Image();
+						imgCaching.src=imgRes.data.url;
+						userActions.setBigPic(imgRes.data.url);
+					})
+	                FB.api(url, function (response) {
+	                	userActions.setUserProfile(response);
+	                	veronica.loc("/",true);
+	                });
+				}
+			});
+		}
+
+		this.on("mount",()=>{
+			if(this.userProfile){
+				veronica.loc("/",true);
+			}
+
+		});
+
+		this.on("unmount",()=>{
+
+		})
+	</script>
+</gp-login>

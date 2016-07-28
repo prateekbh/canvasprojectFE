@@ -1,6 +1,38 @@
 gp-header{
-	display: block;
+	display: flex;
+	align-items:center;
 	position: fixed;
+	z-index: 10;
 	left: 0px;
 	top:0px;
+	background-color: #3F51B5;
+	width: 100%;
+	padding: 15px 0;
+
+
+	.nav{
+		flex:1;
+	}
+
+	.title{
+		flex:8;
+	}
+
+	.search{
+		flex:1;
+	}
+
+	h1{
+		color: #fff;
+		margin:0;
+		padding: 0;
+		font-size: 24px;
+	}
+
+	.menu{
+		background-color: transparent;
+		border-width: 0px;
+		padding: 5px;
+		outline: none;
+	}
 }
