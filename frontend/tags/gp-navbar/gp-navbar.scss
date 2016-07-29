@@ -1,0 +1,72 @@
+gp-navbar{
+	display: block;
+	nav{
+		position: fixed;
+		left: 0px;
+		top:0px;
+		height: 100%;
+		width: 80%;
+		background-color: rgba(55, 71, 79, 0.995);
+		z-index: 80;
+		transform: translateX(-100%);
+		transition-duration:300ms;
+		transition-property:transform;
+		will-change:transform;
+		&.opened{
+			transform: translateX(0%);
+		}
+	}
+	.userinfo{
+		padding: 16px;
+		background-color: #263238;
+	}
+	.pic{
+		background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAACWCAYAAAA8AXHiAAADQ0lEQVR42u3dsU4cQQwGYL//c6WlSZeONKRMRJOSaApOpCA6LnPL+vdnaUokOD7ZPu/sTH15eHyxrN2rfAgWWBZYFlg+CAusTuv708/LAsu6en399uMC55oAy/pnFvr1/Pvlo7EQgmX9VcpugfQa62enoQJrY0Z6D5XmfXivtAvT25jYtI+HdS9MYA2FtUAdFUqh3knmAut8JU/2GgbryLJn9DAA1tlATcxeBRVcYF3RoHeK5NJYUH1+JOIq5Q8usEJRJeJqDystwDrBOsPg07fFMFidm/UJj4BKCdRvgTUgW6X0W2DJWmBNKYMJjXyZWymHYA0qg93LIVhGD2CBBRZYYIEFFlhggQUWWGCBBRZYYIEFFlhggQUWWGCBBRZYc2ElvkABlk1+YIEFFlhggQUWWGCBBRZYYIEFFlhggQUWWGCBBRZYYIEFFlhgdYc1bavM21i7Odbf3+0MB7AaBVhggQUWWGANjm6n+4Hl2yFYYIFlfgUWWGCBBRZY3ifcGSbvGvjxMyywwAJr2o0UnYej7bbNaNzB0sAPbtzbwZpYDrveAOb2L9kKrGnfEF2ECZYRQwKsCeWw8+2qbWFNGD10fTunPaz00UPn/qo1rPQ+qzMqsJRBsCY18N3LYGtYyQ18d1TtYSWWw+5jhghYieUwob9qDyuxHCagioCVVA5TymAErKSslYIqBlZCr5XSW0XBSiiJSaiiYHV+fpgwEI2Gtf5B3XCllcBIWB2b+cRsBZbeCiywwPLtECywwAILLLDAAgsssMDKeyANFlhggQUWWGCBZV8WWCNhddyTBdaJs9QC1fksh/W7p+1y8JaO7AVW+gurSZv+vGIva4EFFlhggaW/sgcerPijIh0KYsKuHDrnXdYCy1HcEafOlGwla4H1MOdqOTdTHPigeWKsv9t9hQ75sAPirLAmZ6drgXXIYnWmplx2ug0ZWMrdGGAFE2TtYQE1ZxZW+icji1awZKfZZbI8dlEmTw1LuTN43Qprwo3ygB0IS4bSh22FpX/Sh22FBRRgW2EBJW7pwwoocQ9gpSkX/1Mi3wNWxgbiHhmsJu0jF8c1+eXjELtjZS+wxF0CLAGWAEuAJQRYAiwBlhCb4w9bvo/7zaEmGAAAAABJRU5ErkJggg==');
+		background-size: cover;
+		border-radius: 50%;
+		vertical-align: middle;
+	}
+	.name{
+		@extend .thinfont;
+		color:#fff;
+		text-transform: lowercase;
+		display: inline-block;
+		font-size: 22px;
+		margin-left: 10px;
+		max-width: 150px;
+		overflow: hidden;
+		text-overflow:ellipsis;
+		white-space: nowrap;
+		vertical-align: middle;
+	}
+	.navlink{
+		display: block;
+		padding: 16px;
+		color:#fff;
+		font-size: 18px;
+		.icon{
+			margin-right: 16px;
+		}
+		.icon,.text{
+			display: inline-block;
+			vertical-align: middle;
+		}
+	}
+	.navcontents{
+		display: flex;
+		flex-direction:column;
+		height: 100%;
+	}
+	.navlinks{
+		flex:8;
+	}
+	.others{
+		flex:2.4;
+	}
+	.othercontainers{
+		border-top: 1px solid #aaa;
+		display: flex;
+		height: 100%;
+		flex-direction: column;
+	}
+}

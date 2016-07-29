@@ -3266,10 +3266,14 @@ if (opts.tabs) {
     try {
         tabs = opts.tabs ? eval(opts.tabs) : [];
         this.tabs = tabs;
-    } catch (e) {}
+        console.log(tabs);
+    } catch (e) {
+        console.log(e);
+    }
 }
 
 this.on('mount', function () {
+
     _this.setWidth();
     _this.setLinePosition();
 });

@@ -20,7 +20,7 @@ gp-profile{
 		border-radius: 50%;
 	}
 	.userdetails{
-		padding: 15px;
+		padding: 25px 15px;
 	}
 	.username{
 		@extend .thinfont;
@@ -29,7 +29,39 @@ gp-profile{
 	}
 	.followers{
 		padding-top: 5px;
-		color: #2196F3;
 		font-size: 14px;
 	}
+	.stats{
+		padding-top: 5px;
+		font-size: 14px;
+	}
+	.stat{
+		display: inline-block;
+	}
+	.count{
+		@extend .boldfont;
+	}
+	.stat+.stat{
+		margin-left: 10px;
+	}
+	.usercontent{
+		margin-top: 20px;
+	}
+	material-tabs{
+		material-button{ background-color: transparent; }	
+		material-button .content .text{
+			@extend .thinfont;
+			color: #ccc;
+
+		}
+		material-button.selected .content .text{
+			color: #333;
+		}
+		.line-wrapper{
+			height: 1px;
+		}
+		.line-wrapper .line{
+			background-color:#333;
+		}
+	} 
 }

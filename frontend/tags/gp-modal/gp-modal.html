@@ -1,0 +1,27 @@
+<gp-modal>
+	<div class="modal {isModalShown?'opened':''}" onclick={closeModal}>
+		
+	</div>
+	<script>
+		var self=this;
+
+		var navActions=veronica.flux.Actions.getAction("NavigationActions");
+		var navStore=veronica.flux.Stores.getStore("NavigationStore");
+
+		this.isModalShown=false;
+
+		this.closeModal=function(e){
+			navActions.hideModal();
+		}
+
+		this.on("mount",function(e){
+			navStore.subscribe("nav:modalchange",function(){
+				self.update({isModalShown:navStore.getModalStatus()});
+			});
+		});
+
+		this.on("unmount",function(e){
+
+		});
+	</script>
+</gp-modal>

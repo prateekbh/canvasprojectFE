@@ -7,8 +7,9 @@
 	<link rel="stylesheet" type="text/css" href="/bin/tags/concat_css.css">
 </head>
 <body>
-	<gp-header>
-	</gp-header>
+	<gp-header></gp-header>
+	<gp-navbar></gp-navbar>
+	<gp-modal></gp-modal>
 	<div class="container app-body">
 	</div>
 	<script src="https://cdn.polyfill.io/v2/polyfill.min.js"></script>
@@ -16,10 +17,13 @@
 	<script type="text/javascript" src="/bin/tags/tags.js"></script>
 	<script type="text/javascript">
 		riot.mount("gp-header",{});
+		riot.mount("gp-navbar",{});
+		riot.mount("gp-modal",{});
 		veronica.addRoute(veronica.createRoute("home","/","gp-home"));
 		veronica.addRoute(veronica.createRoute("login","/login","gp-login"));
 		veronica.addRoute(veronica.createRoute("search","/search","gp-search"));
 		veronica.addRoute(veronica.createRoute("profile","/profile","gp-profile"));
+		veronica.addRoute(veronica.createRoute("draw","/draw","gp-draw"));
 	</script>
 	<script>
 		(function(d, s, id) {

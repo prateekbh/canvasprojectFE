@@ -1,0 +1,142 @@
+gp-draw{
+	display: block;
+	#canvas{
+		max-width: 100%;
+		background-color: #fff;
+		will-change:opacity;
+		animation-name:appear;
+		animation-duration:300ms;
+		animation-fill-mode:forwards;
+	}
+	.controls{
+		position: absolute;
+		right: 15px;
+		bottom: 15px;
+		will-change:transform;
+		animation-name:morebtnappear;
+		animation-duration:300ms;
+		animation-fill-mode:forwards;
+		&.controlsshown{
+			.save{
+				transform:translateY(-50px);
+			}
+			.brush{
+				transform:translateY(-100px);	
+			}
+			.colors{
+				transform:translateY(-150px);	
+			}
+		}
+	}
+	.btn-control{
+		position: absolute;
+		bottom: 0;
+		right: 0;
+		text-align: center;
+		background-color: #FFD600;
+		outline: none;
+		border-width: 0px;
+		border-radius: 50%;
+		width: 47px;
+		height: 47px;
+		overflow: hidden;
+		will-change: transform;
+		transition-property:transform;
+		transition-duration:300ms;
+		transition-timing-function: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+	}
+	.save{
+		z-index: 14;
+		padding: 11px;
+	}
+	.brush{
+		z-index: 13;
+		padding: 11px;	
+	}
+	.colors{
+		z-index: 12;
+		padding: 11px;	
+	}
+	.options{
+		z-index: 15;
+		padding: 10px;
+		.leg{
+			transition-property:transform;
+			transition-duration:300ms;	
+		}
+		&.controlsshown{
+			.firstleg{
+				transform:rotate(45deg);
+			}
+			.secondleg{
+				transform:rotate(-45deg);
+			}
+			
+		}
+		.secondleg{
+			position: absolute;
+			left: 12px;
+			top:11px;
+		}
+	}
+
+	.bottomsheet{
+		position: absolute;
+		width: 100%;
+		padding: 8px 16px;
+		background-color: #fff;
+		height: 300px;
+		border-top: 1px solid #ccc;
+		bottom: 0;
+		left: 0;
+		z-index: 20;
+		transform:translateY(350px);
+		transition-duration:300ms;
+		transition-property:transform;
+		will-change:transform;
+		&.shown{
+			transform:translateY(0px);
+		}
+
+		.sheetcontent{
+			height: 235px;
+			overflow: scroll;
+		}
+
+		.closesheet{
+			bottom: auto;
+			right: 15px;
+			top: -23px;
+			padding: 12px;
+			.firstleg{
+				transform:rotate(45deg);
+			}
+			.secondleg{
+				transform:rotate(-45deg);
+				position: absolute;
+			    top: 12px;
+			    left: 12px;
+			}
+		}
+
+		.title{
+			text-transform: capitalize;
+			padding: 8px 0 16px 0;
+			color:#999;
+			font-size: 20px;
+		}
+		.color{
+			cursor: pointer;
+			height:40px;
+		}
+	}
+}
+
+@keyframes morebtnappear{
+	0%{
+		transform:translateY(200px);
+	}
+	100%{
+		transform:translateY(0px);	
+	}
+}

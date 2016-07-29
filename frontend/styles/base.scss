@@ -1,7 +1,11 @@
 body{
 	padding: 0;
 	margin: 0;
+	background-color: #fafafa;
 	font-family: "Roboto", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
+	&.noscroll{
+		overflow: hidden;
+	}
 }
 
 *{
@@ -20,4 +24,15 @@ a{
 
 .container{
 	padding-top: 66px;
+}
+
+
+
+@keyframes appear{
+	0%{
+		opacity: 0;
+	}
+	100%{
+		opacity: 1;
+	}
 }

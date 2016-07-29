@@ -1,13 +1,15 @@
 <gp-header>
 	<div class="nav">
-		<button class="menu">
+		<button class="menu {isBackEnabled?'back':''}" onclick={menuClick}>
 			<svg fill="#FFFFFF" height="24" viewBox="0 0 24 24" width="24">
-			    <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/>
+			    <path class="line line-first" d="M3 18h18v-2H3v2zm0-5h18v"></path>
+			    <path class="line line-second" d="M3 18h18v-2H3v2zm0-5h18v"></path>
+			    <path class="line line-third" d="M3 18h18v-2H3v2zm0-5h18v"></path>
 			</svg>
 		</button>
 	</div>
 	<div class="title">
-		<h1 class="titlefont">KrowdKanvas</h1>
+		<h1 class="titlefont">kanvasProject</h1>
 	</div>
 	<div class="search">
 		<svg fill="#FFFFFF" height="24" viewBox="0 0 24 24" width="24" onclick={goToSearch}>
@@ -15,8 +17,44 @@
 		</svg>
 	</div>
 	<script>
-		this.goToSearch=function(){
-			veronica.loc("/search");
+		var self=this;
+
+		var navActions=veronica.flux.Actions.getAction("NavigationActions");
+		var routeStore=veronica.flux.Stores.getStore("RouteStore");
+
+		function checkBackButton(){
+			var currState=(routeStore.getCurrentRoute()||veronica.getCurrentState()).state;
+			if(window.history.state.state==="home"){
+				self.update({isBackEnabled:false});
+			}
+			else{
+				self.update({isBackEnabled:true});
+			}
 		}
+
+		this.isBackEnabled=false;
+
+		this.goToSearch=function(){
+			if(veronica.getCurrentState().state!=="search"){
+				veronica.loc("/search");	
+			}
+			
+		}
+
+		this.menuClick=function(e){
+			e.preventDefault();
+			if(this.isBackEnabled){
+				history.go(-1);
+			}else{
+				navActions.showModal();
+				navActions.openNavbar();
+			}
+		}
+
+		this.on("mount",function(){
+			setTimeout(checkBackButton,300);
+			routeStore.subscribe("route:changed",checkBackButton);
+		});
+
 	</script>
 </gp-header>

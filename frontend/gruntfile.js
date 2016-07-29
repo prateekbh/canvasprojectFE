@@ -1,6 +1,9 @@
 var fluxFiles = [
     "./actions/userActions.js",
-    "./stores/userStore.js"
+    "./actions/navigationActions.js",
+    "./stores/userStore.js",
+    "./stores/routeStore.js",
+    "./stores/navigationStore.js"
 ];
 var vendorFiles = [
     "./node_modules/riot/riot.js", 
