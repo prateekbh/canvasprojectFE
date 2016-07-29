@@ -1124,6 +1124,10 @@ gp-draw {
     gp-draw .bottomsheet .color {
       cursor: pointer;
       height: 40px; }
+    gp-draw .bottomsheet .brushcontrol {
+      padding: 16px 0;
+      line-height: 16px;
+      font-size: 16px; }
 
 @keyframes morebtnappear {
   0% {
