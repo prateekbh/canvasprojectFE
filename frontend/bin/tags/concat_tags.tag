@@ -1,5 +1,113 @@
+<gp-colorpicker>
+	<div class="colorlist" >
+	    <div class="color" each={color in colorList.concat(customColors)}>
+	    	<div class="colordot" style="background-color:{color}" onclick={selectColor}></div>
+	    </div>
+	    <div class="color">
+	    	<div class="colordot new" onclick={showColorWheel}></div>
+	    </div>
+	</div>
+	<div class="picker {ispickerShown?'shown':''}">
+		<div class="bg"></div>
+		<div class="wheelcontainer">
+			<canvas id="picker" if={showWheel} height="300" width={window.innerWidth} ontouchmove={getColor} ontouchstart={getColor}>
+			</canvas>
+			<div class="selector" style="background-color:{selectedColor}" onclick={colorSelectionDone}>
+				<svg fill="#FFFFFF" height="24" viewBox="0 0 24 24" width="24">
+				    <path d="M0 0h24v24H0z" fill="none"/>
+				    <path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"/>
+				</svg>
+			</div>	
+		</div>
+		
+	</div>
+	<script>
+		var self=this;
+		var context;
+		var heightFactor=window.innerHeight-300;
+		
+		this.customColors=[];
+
+		if(localStorage.customColors){
+			self.update({customColors:JSON.parse(localStorage.customColors)});
+		}
+
+		this.colorList =["rgb(255,255,255)", "rgb(0,0,0)", "rgb(148,0,211)", "rgb(75,0,130)", "rgb(0,0,255)", "rgb(0,255,0)", "rgb(255,255,0)", "rgb(255,127,0)"];
+		this.ispickerShown=false;
+		this.pickerLeft=0;
+		this.pickerTop=0;
+		this.showWheel=false;
+		this.selectedColor="tomato";
+
+		function makeColorWheel(){
+			var canvas = document.getElementById("picker");
+			context = canvas.getContext("2d");
+			var x = canvas.width / 2;
+			var y = canvas.height / 2;
+			var radius = 100;
+			var counterClockwise = false;
+
+			for(var angle=0; angle<=360; angle+=1){
+			    var startAngle = (angle-2)*Math.PI/180;
+			    var endAngle = angle * Math.PI/180;
+			    context.beginPath();
+			    context.moveTo(x, y);
+			    context.arc(x, y, radius, startAngle, endAngle, counterClockwise);
+			    context.closePath();
+			    var gradient = context.createRadialGradient(x, y, 0, x, y, radius);
+				gradient.addColorStop(0,'hsl('+angle+', 10%, 100%)');
+				gradient.addColorStop(1,'hsl('+angle+', 100%, 50%)');
+			    context.fillStyle = gradient;
+			    context.fill();
+			}
+			context.beginPath();
+			context.moveTo(x, y);
+			context.arc(x, y, radius/1.5, 0, 2*Math.PI);
+			context.closePath();
+			context.fillStyle = '#263238';
+			context.fill();			
+		}
+
+		this.on("mount",function(e){
+			self.update({ispickerShown:false});
+			setTimeout(function(){
+				self.update({showWheel:true});
+				makeColorWheel();
+			},800);
+		});
+
+		this.selectColor=function(e){
+			self.opts.onselectchange&&self.opts.onselectchange(e.target.style.backgroundColor);
+		}
+
+		this.showColorWheel=function(e){
+			self.update({ispickerShown:true});
+		}
+
+		this.colorSelectionDone=function(e){
+			var tempArr=self.customColors;
+			tempArr.push(self.selectedColor);
+
+			self.update({
+				customColors:tempArr,
+				ispickerShown:false
+			});
+
+			setTimeout(function(){
+				localStorage.customColors=JSON.stringify(tempArr);
+			},1);
+		}
+
+		this.getColor=function(e){
+			var data=context.getImageData(e.touches[0].clientX, e.touches[0].clientY-heightFactor, 1, 1).data;
+			if(!(data[0]===255&&data[1]===255&&data[2]===255)&&!(data[0]===38&&data[1]===50&&data[2]===56)&&!(data[0]===0&&data[1]===0&&data[2]===0)){
+				self.update({selectedColor:'rgb('+data[0]+','+data[1]+','+data[2]+')'});	
+			}
+		}
+	</script>
+</gp-colorpicker>
 <gp-draw>
-    <canvas id="canvas" width="800" height="800"></canvas>
+    <canvas if={showCanvas} id="canvas" width="800" height="800"></canvas>
     <div class="controls {isControlsOpen?'controlsshown':''}">
         <button class="btn-control colors" onclick={showColors}>
             <svg fill="#FFFFFF" height="24" viewBox="0 0 24 24" width="24">
@@ -37,9 +145,7 @@
         </button>
         <div class="title">{sheetTitle}</div>
         <div class="sheetcontent">
-            <div class="colorlist" if={currentControl==="PALLETE" }>
-                <div class="color" each={color in colorList} style="background-color:{color}" onclick={selectColor}></div>
-            </div>
+            <gp-colorpicker if={currentControl==="PALLETE"} onselectchange={selectColor}></gp-colorpicker>
             <div class="brushlist" if={currentControl==="BRUSHES"}>
                 <div class="brushcontrol" each={brush in brushesList} onclick={selectBrush}>
                 	{brush}
@@ -50,17 +156,13 @@
     <script>
     var self = this;
 
-    this.colorList = ['#F44336', '#FFEBEE', '#FFCDD2', '#EF9A9A', '#E57373', '#EF5350', '#F44336', '#E53935', '#D32F2F', '#C62828', '#B71C1C', '#FF8A80', '#FF5252', '#FF1744', '#D50000', '#E91E63', '#FCE4EC', '#F8BBD0', '#F48FB1', '#F06292', '#EC407A', '#E91E63', '#D81B60', '#C2185B', '#AD1457', '#880E4F', '#FF80AB', '#FF4081', '#F50057', '#C51162', '#9C27B0', '#F3E5F5', '#E1BEE7', '#CE93D8', '#BA68C8', '#AB47BC', '#9C27B0', '#8E24AA', '#7B1FA2', '#6A1B9A', '#4A148C', '#EA80FC', '#E040FB', '#D500F9', '#AA00FF', '#673AB7', '#EDE7F6', '#D1C4E9', '#B39DDB', '#9575CD', '#7E57C2', '#673AB7', '#5E35B1', '#512DA8', '#4527A0', '#311B92', '#B388FF', '#7C4DFF', '#651FFF', '#6200EA', '#3F51B5', '#E8EAF6', '#C5CAE9', '#9FA8DA', '#7986CB', '#5C6BC0', '#3F51B5', '#3949AB', '#303F9F', '#283593', '#1A237E', '#8C9EFF', '#536DFE', '#3D5AFE', '#304FFE', '#2196F3', '#E3F2FD', '#BBDEFB', '#90CAF9', '#64B5F6', '#42A5F5', '#2196F3', '#1E88E5', '#1976D2', '#1565C0', '#0D47A1', '#82B1FF', '#448AFF', '#2979FF', '#2962FF', '#03A9F4', '#E1F5FE', '#B3E5FC', '#81D4FA', '#4FC3F7', '#29B6F6', '#03A9F4', '#039BE5', '#0288D1', '#0277BD', '#01579B', '#80D8FF', '#40C4FF', '#00B0FF', '#0091EA', '#00BCD4', '#E0F7FA', '#B2EBF2', '#80DEEA', '#4DD0E1', '#26C6DA', '#00BCD4', '#00ACC1', '#0097A7', '#00838F', '#006064', '#84FFFF', '#18FFFF', '#00E5FF', '#00B8D4', '#009688', '#E0F2F1', '#B2DFDB', '#80CBC4', '#4DB6AC', '#26A69A', '#009688', '#00897B', '#00796B', '#00695C', '#004D40', '#A7FFEB', '#64FFDA', '#1DE9B6', '#00BFA5', '#4CAF50', '#E8F5E9', '#C8E6C9', '#A5D6A7', '#81C784', '#66BB6A', '#4CAF50', '#43A047', '#388E3C', '#2E7D32', '#1B5E20', '#B9F6CA', '#69F0AE', '#00E676', '#00C853', '#8BC34A', '#F1F8E9', '#DCEDC8', '#C5E1A5', '#AED581', '#9CCC65', '#8BC34A', '#7CB342', '#689F38', '#558B2F', '#33691E', '#CCFF90', '#B2FF59', '#76FF03', '#64DD17', '#CDDC39', '#F9FBE7', '#F0F4C3', '#E6EE9C', '#DCE775', '#D4E157', '#CDDC39', '#C0CA33', '#AFB42B', '#9E9D24', '#827717', '#F4FF81', '#EEFF41', '#C6FF00', '#AEEA00', '#FFEB3B', '#FFFDE7', '#FFF9C4', '#FFF59D', '#FFF176', '#FFEE58', '#FFEB3B', '#FDD835', '#FBC02D', '#F9A825', '#F57F17', '#FFFF8D', '#FFFF00', '#FFEA00', '#FFD600', '#FFC107', '#FFF8E1', '#FFECB3', '#FFE082', '#FFD54F', '#FFCA28', '#FFC107', '#FFB300', '#FFA000', '#FF8F00', '#FF6F00', '#FFE57F', '#FFD740', '#FFC400', '#FFAB00', '#FF9800', '#FFF3E0', '#FFE0B2', '#FFCC80', '#FFB74D', '#FFA726', '#FF9800', '#FB8C00', '#F57C00', '#EF6C00', '#E65100', '#FFD180', '#FFAB40', '#FF9100', '#FF6D00', '#FF5722', '#FBE9E7', '#FFCCBC', '#FFAB91', '#FF8A65', '#FF7043', '#FF5722', '#F4511E', '#E64A19', '#D84315', '#BF360C', '#FF9E80', '#FF6E40', '#FF3D00', '#DD2C00', '#795548', '#EFEBE9', '#D7CCC8', '#BCAAA4', '#A1887F', '#8D6E63', '#795548', '#6D4C41', '#5D4037', '#4E342E', '#3E2723', '#9E9E9E', '#FAFAFA', '#F5F5F5', '#EEEEEE', '#E0E0E0', '#BDBDBD', '#9E9E9E', '#757575', '#616161', '#424242', '#212121', '#607D8B', '#ECEFF1', '#CFD8DC', '#B0BEC5', '#90A4AE', '#78909C', '#607D8B', '#546E7A', '#455A64', '#37474F', '#263238', '#000000', '#FFFFFF'];
-
     this.brushesList = [
     		"Simple Pencil",
         "Simple Brush",
         "Air Brush",
+        "Slice Brush",
         "Radial Brush",
-        "Flat Brush",
-        "Fur Brush",
         "Pen Multi Stroke Brush",
-        "Slice Brushes",
         "Spray"
     ];
 
@@ -69,38 +171,114 @@
     this.currentControl = "";
     this.sheetTitle = "";
 
+    // Brush Variables
     var el, ctx;
     var factor=800/window.innerWidth;
 		var selectedBrush="Simple Pencil";
-		var currentColor="#000000";
+		var currentColor="rgb(0,0,0)";
+		var lastPoint;
+
+		/* Brush Utility functions */
+		function getRandomInt(min, max) {
+		  return Math.floor(Math.random() * (max - min + 1)) + min;
+		}
+		/* Brush Utility functions end*/
 
     function startDraw(e){
     	e.preventDefault();
+    	e.clientX=e.touches[0].clientX*factor;
+    	e.clientY=(e.touches[0].clientY-66)*factor;
     	ctx.beginPath();
-    	ctx.strokeStyle = currentColor;
-    	ctx.moveTo(e.touches[0].clientX*factor, (e.touches[0].clientY-66)*factor);
+    	ctx.strokeStyle = 'transparent';
+    	ctx.moveTo(e.clientX,e.clientY);
+    	ctx.lineJoin = ctx.lineCap = 'round';
     	ctx.shadowColor = 'transparent';
+    	ctx.lineWidth = 1;
     	switch(selectedBrush){
     		case "Simple Pencil":
     			ctx.lineWidth = 1;
-    			ctx.lineJoin = ctx.lineCap = 'round';
     		break;
     		case "Simple Brush":
     			ctx.lineWidth = 10;
-    			ctx.lineJoin = ctx.lineCap = 'round';
     		break;
     		case "Air Brush":
     			ctx.lineWidth = 10;
-					ctx.lineJoin = ctx.lineCap = 'round';
 					ctx.shadowBlur = 10;
 					ctx.shadowColor = currentColor;
+    		break;
+    		case "Radial Brush":
+    			//ctx.shadowColor = currentColor;
+    		break;
+    		case "Pen Multi Stroke Brush":
+    		case "Slice Brush":
+    			ctx.lineWidth = 4;
+    			lastPoint = { x: e.clientX, y: e.clientY };
     		break;
     	}
     }
 
     function draw(e){
-			ctx.lineTo(e.touches[0].clientX*factor, (e.touches[0].clientY-66)*factor);
-			ctx.stroke();
+    	e.clientX=e.touches[0].clientX*factor;
+    	e.clientY=(e.touches[0].clientY-66)*factor;
+    	switch(selectedBrush){
+    		case "Radial Brush":
+    			var radgrad = ctx.createRadialGradient(e.clientX,e.clientY,10,e.clientX,e.clientY,20);
+			    
+			    radgrad.addColorStop(0, currentColor);
+			    radgrad.addColorStop(0.5, 'rgba('+currentColor.substring(currentColor.indexOf('(')+1,currentColor.indexOf(')'))+',0.5)');
+			    radgrad.addColorStop(1, 'transparent');
+
+			    ctx.fillStyle = radgrad;
+			    
+			    ctx.fillRect(e.clientX-20, e.clientY-20, 40, 40);
+    		break;
+    		case "Pen Multi Stroke Brush":
+    		ctx.beginPath();
+  		  
+  		  ctx.moveTo(lastPoint.x - getRandomInt(0, 2), lastPoint.y - getRandomInt(0, 2));
+  		  ctx.lineTo(e.clientX - getRandomInt(0, 2), e.clientY - getRandomInt(0, 2));
+  		  ctx.stroke();
+  		  
+  		  ctx.moveTo(lastPoint.x, lastPoint.y);
+  		  ctx.lineTo(e.clientX, e.clientY);
+  		  ctx.stroke();
+  		  
+  		  ctx.moveTo(lastPoint.x + getRandomInt(0, 2), lastPoint.y + getRandomInt(0, 2));
+  		  ctx.lineTo(e.clientX + getRandomInt(0, 2), e.clientY + getRandomInt(0, 2));
+  		  ctx.stroke();
+  		    
+  		  lastPoint = { x: e.clientX, y: e.clientY };
+  		  break;
+    		case "Slice Brush":
+    			ctx.beginPath();
+  			  
+  			  ctx.globalAlpha = 1;
+  			  ctx.moveTo(lastPoint.x, lastPoint.y);
+  			  ctx.lineTo(e.clientX, e.clientY);
+  			  ctx.stroke();
+  			  
+  			  ctx.moveTo(lastPoint.x - 4, lastPoint.y - 4);
+  			  ctx.lineTo(e.clientX - 4, e.clientY - 4);
+  			  ctx.stroke();
+  			  
+  			  ctx.moveTo(lastPoint.x - 2, lastPoint.y - 2);
+  			  ctx.lineTo(e.clientX - 2, e.clientY - 2);
+  			  ctx.stroke();
+  			  
+  			  ctx.moveTo(lastPoint.x + 2, lastPoint.y + 2);
+  			  ctx.lineTo(e.clientX + 2, e.clientY + 2);
+  			  ctx.stroke();
+  			  
+  			  ctx.moveTo(lastPoint.x + 4, lastPoint.y + 4);
+  			  ctx.lineTo(e.clientX + 4, e.clientY + 4);
+  			  ctx.stroke();
+  			    
+  			  lastPoint = { x: e.clientX, y: e.clientY };
+    		break;
+    		default:
+    			ctx.lineTo(e.touches[0].clientX*factor, (e.touches[0].clientY-66)*factor);
+    			ctx.stroke();
+    	}
     }
 
     function endDraw(e){
@@ -116,7 +294,7 @@
     }
 
     this.closeSheet = function(e) {
-        e.preventDefault();
+        e&&e.preventDefault();
         self.update({
             isBottomsheetShown: false,
             currentControl: "",
@@ -150,18 +328,22 @@
     }
 
     this.selectColor=function(e){
-    	currentColor=e.target.style.backgroundColor;
-    	this.closeSheet(e);
+    	currentColor=e;
+    	self.closeSheet();
     }
 
     this.on("mount", function() {
-    		selectedBrush = "Simple Pencil";
-        document.body.classList.add("noscroll");
-        el = document.getElementById('canvas');
-        ctx = el.getContext('2d');
-        el.addEventListener("touchstart",startDraw);
-        el.addEventListener("touchmove",draw);
-        el.addEventListener("touchend",endDraw);
+    		setTimeout(function(){
+    			self.update({showCanvas:true});
+					selectedBrush = "Simple Pencil";
+			    document.body.classList.add("noscroll");
+			    el = document.getElementById('canvas');
+			    ctx = el.getContext('2d');
+			    el.addEventListener("touchstart",startDraw);
+			    el.addEventListener("touchmove",draw);
+			    el.addEventListener("touchend",endDraw);
+    		},400);
+    		
     });
 
     this.on("unmount", function() {

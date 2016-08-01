@@ -59,6 +59,130 @@ a{
 a{
 	color: #2196F3;
 }
+gp-colorpicker{
+	display: block;
+	position: relative;
+	overflow: scroll;
+	.colorlist{
+		display: flex;
+		flex-flow: row wrap;
+	}
+	.color{
+		flex:1;
+		cursor: pointer;
+		flex-basis:33%;
+		max-width: 33%;
+		text-align: center;
+		padding: 8px;
+	}
+	.colordot{
+		display: inline-block;
+		height:40px;
+		width: 40px;
+		border: 1px solid rgba(200,200,200,0.5);
+		border-radius: 50%;
+		&.new{
+			background-color: #fff;
+			border:1px solid #ccc;
+			position: relative;
+
+			will-change:transform;
+			transition-duration:300ms;
+			transition-property:transform;
+
+			&:after,&:before{
+				content: '';
+				position: absolute;
+				top: 0px;
+				right: 0px;
+				left: 0px;
+				bottom: 0px;
+				margin: auto;
+			}
+			&:after{
+				height: 15px;
+				width: 0px;
+				border-left: 1px solid #999;
+			}
+			&:before{
+				height: 0px;
+				width: 15px;
+				border-top: 1px solid #999;
+			}
+		}
+	}
+	.picker{
+		position: fixed;
+		overflow: hidden;
+		bottom: 0;
+		left: 0;
+		margin: auto;
+		height: 300px;
+		width: 100%;
+		opacity: 0;
+		pointer-events:none;
+		transition-duration:300ms;
+		transition-property:opacity;
+		will-change:opacity;
+		.bg{
+			position: absolute;
+			border-radius: 50%;
+			bottom: 0;
+			left: -25%;
+			right: 0;
+			top: 0;
+			width: 150%;
+			height: 150%;
+			margin: auto;
+			background-color: #263238;
+			z-index: 81;
+			transition-duration:200ms;
+			transition-property:transform;
+			transform: scale(0);
+			will-change:transform;
+		}
+		.wheelcontainer{
+			position: relative;
+			transition-duration:300ms;
+			transition-property:transform;
+			transform: scale(0);
+			will-change:transform;
+			z-index: 82;
+		}
+		.selector{
+			position: absolute;
+			width: 60px;
+			height: 60px;
+			padding: 18px;
+			top: 0;
+			bottom: 0;
+			right: 0;
+			left: 0;
+			margin: auto;
+			border-radius: 50%;
+			background-color: tomato;
+			transition-delay:400ms;
+			transition-duration:300ms;
+			transition-property:transform;
+			transform: scale(0);
+			will-change:transform;
+		}
+		&.shown{
+			pointer-events:all;
+			opacity: 1;
+			.bg{
+				transform: scale(1);
+			}
+			.wheelcontainer{
+				transform: scale(1);
+			}
+			.selector{
+				transform: scale(1);
+			}
+		}
+	}
+}
+
 gp-draw{
 	display: block;
 	#canvas{
@@ -186,10 +310,6 @@ gp-draw{
 			color:#999;
 			font-size: 20px;
 		}
-		.color{
-			cursor: pointer;
-			height:40px;
-		}
 		.brushcontrol{
 			padding: 16px 0;
 			line-height: 16px;
@@ -216,7 +336,7 @@ gp-header{
 	background-color: #3F51B5;
 	width: 100%;
 	padding: 15px 0;
-
+	height: 66px;
 
 	.nav{
 		flex:1;

@@ -1,0 +1,108 @@
+<gp-colorpicker>
+	<div class="colorlist" >
+	    <div class="color" each={color in colorList.concat(customColors)}>
+	    	<div class="colordot" style="background-color:{color}" onclick={selectColor}></div>
+	    </div>
+	    <div class="color">
+	    	<div class="colordot new" onclick={showColorWheel}></div>
+	    </div>
+	</div>
+	<div class="picker {ispickerShown?'shown':''}">
+		<div class="bg"></div>
+		<div class="wheelcontainer">
+			<canvas id="picker" if={showWheel} height="300" width={window.innerWidth} ontouchmove={getColor} ontouchstart={getColor}>
+			</canvas>
+			<div class="selector" style="background-color:{selectedColor}" onclick={colorSelectionDone}>
+				<svg fill="#FFFFFF" height="24" viewBox="0 0 24 24" width="24">
+				    <path d="M0 0h24v24H0z" fill="none"/>
+				    <path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"/>
+				</svg>
+			</div>	
+		</div>
+		
+	</div>
+	<script>
+		var self=this;
+		var context;
+		var heightFactor=window.innerHeight-300;
+		
+		this.customColors=[];
+
+		if(localStorage.customColors){
+			self.update({customColors:JSON.parse(localStorage.customColors)});
+		}
+
+		this.colorList =["rgb(255,255,255)", "rgb(0,0,0)", "rgb(148,0,211)", "rgb(75,0,130)", "rgb(0,0,255)", "rgb(0,255,0)", "rgb(255,255,0)", "rgb(255,127,0)"];
+		this.ispickerShown=false;
+		this.pickerLeft=0;
+		this.pickerTop=0;
+		this.showWheel=false;
+		this.selectedColor="tomato";
+
+		function makeColorWheel(){
+			var canvas = document.getElementById("picker");
+			context = canvas.getContext("2d");
+			var x = canvas.width / 2;
+			var y = canvas.height / 2;
+			var radius = 100;
+			var counterClockwise = false;
+
+			for(var angle=0; angle<=360; angle+=1){
+			    var startAngle = (angle-2)*Math.PI/180;
+			    var endAngle = angle * Math.PI/180;
+			    context.beginPath();
+			    context.moveTo(x, y);
+			    context.arc(x, y, radius, startAngle, endAngle, counterClockwise);
+			    context.closePath();
+			    var gradient = context.createRadialGradient(x, y, 0, x, y, radius);
+				gradient.addColorStop(0,'hsl('+angle+', 10%, 100%)');
+				gradient.addColorStop(1,'hsl('+angle+', 100%, 50%)');
+			    context.fillStyle = gradient;
+			    context.fill();
+			}
+			context.beginPath();
+			context.moveTo(x, y);
+			context.arc(x, y, radius/1.5, 0, 2*Math.PI);
+			context.closePath();
+			context.fillStyle = '#263238';
+			context.fill();			
+		}
+
+		this.on("mount",function(e){
+			self.update({ispickerShown:false});
+			setTimeout(function(){
+				self.update({showWheel:true});
+				makeColorWheel();
+			},800);
+		});
+
+		this.selectColor=function(e){
+			self.opts.onselectchange&&self.opts.onselectchange(e.target.style.backgroundColor);
+		}
+
+		this.showColorWheel=function(e){
+			self.update({ispickerShown:true});
+		}
+
+		this.colorSelectionDone=function(e){
+			var tempArr=self.customColors;
+			tempArr.push(self.selectedColor);
+
+			self.update({
+				customColors:tempArr,
+				ispickerShown:false
+			});
+
+			setTimeout(function(){
+				localStorage.customColors=JSON.stringify(tempArr);
+			},1);
+		}
+
+		this.getColor=function(e){
+			var data=context.getImageData(e.touches[0].clientX, e.touches[0].clientY-heightFactor, 1, 1).data;
+			if(!(data[0]===255&&data[1]===255&&data[2]===255)&&!(data[0]===38&&data[1]===50&&data[2]===56)&&!(data[0]===0&&data[1]===0&&data[2]===0)){
+				self.update({selectedColor:'rgb('+data[0]+','+data[1]+','+data[2]+')'});	
+			}
+		}
+	</script>
+</gp-colorpicker>
