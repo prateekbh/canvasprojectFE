@@ -15,37 +15,36 @@
 		var userStore=veronica.flux.Stores.getStore("UserStore");
 		var userActions=veronica.flux.Actions.getAction("UserActions");
 		
-		this.userProfile=userStore.getUserProfile();
+		this.userProfile=userStore.getUserProfile("me");
 		this.loading=false;
 
 		this.startLoading=function(){
 			self.update({loading:true});
 			FB.login(function(res){
 				if(res.status==="connected"){
-					userActions.setAuthCredentials(res);
 					var url = '/me?fields=name,email,picture';
-					FB.api('/me/picture?type=large',function(imgRes){
-						var imgCaching=new Image();
-						imgCaching.src=imgRes.data.url;
-						userActions.setBigPic(imgRes.data.url);
-					})
 	                FB.api(url, function (response) {
-	                	userActions.setUserProfile(response);
-	                	veronica.loc("/",true);
+	                	userActions.loginUser(response,res);
 	                });
 				}
 			});
 		}
 
+		function logInSuccess(){
+			//show toast
+			veronica.loc("/",true);
+		}
+
 		this.on("mount",()=>{
 			if(this.userProfile){
 				veronica.loc("/",true);
+			}else{
+				userStore.subscribe("user:login:success", logInSuccess);
 			}
-
 		});
 
 		this.on("unmount",()=>{
-
-		})
+			userStore.unsubscribe("user:login:success", logInSuccess);
+		});
 	</script>
 </gp-login>

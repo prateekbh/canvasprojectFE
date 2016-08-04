@@ -22,8 +22,11 @@ a{
 }
 
 
-.container{
+.page{
 	padding-top: 66px;
+	&.gp-profile{
+		padding-top: 0px;
+	}
 }
 
 

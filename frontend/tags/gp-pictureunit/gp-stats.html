@@ -1,0 +1,50 @@
+<gp-stats>
+	<div class="stats">
+		<div class="copystats stat">
+			<button class="btn-action copy">
+				<icon-copy class="icon"></icon-copy>
+				<span class="copy-count count">{likeCount}</span>
+			</button>
+		</div>
+		<div class="commentstat stat">
+			<button class="btn-action comment">
+				<icon-chat class="icon icon-comment"></icon-chat>
+				<span class="comment-count count">{likeCount}</span>
+			</button>
+		</div>
+		<div class="likestat stat">
+			<button class="btn-action like" onclick={likePic}>
+				<icon-heart class="icon icon-like {isPicLiked?'liked':''}"></icon-heart>
+				<span class="like-count count">{likeCount}</span>
+			</button>
+			<div class="likers me">
+				<img class="liker me" src="https://scontent.xx.fbcdn.net/v/t1.0-1/p200x200/13669817_1117113145017292_4920305262041128067_n.jpg?oh=32783654cad84190711280a5c377221d&oe=582970EA" 
+					style="transform:{isPicLiked?'scale(1) translateX(10px)':'scale(0) translateX(0px)'}; z-index:{5} ">
+			</div>
+			<div class="likers others {isPicLiked?'liked':''}">
+				<img 
+					class="liker" each={img,index in likers} src="{img}" 
+					style="transform:translateX({(-10*index)-10}px) {isPicLiked&&index===3?'scale(0)':''}; z-index:{4-index}">
+			</div>
+		</div>
+	</div>
+	<script>
+		var self=this;
+
+		this.isPicLiked=false;
+		this.likers=[
+			"https://scontent.xx.fbcdn.net/v/t1.0-1/p200x200/13669817_1117113145017292_4920305262041128067_n.jpg?oh=32783654cad84190711280a5c377221d&oe=582970EA",
+			"https://scontent.xx.fbcdn.net/v/t1.0-1/p200x200/13669817_1117113145017292_4920305262041128067_n.jpg?oh=32783654cad84190711280a5c377221d&oe=582970EA",
+			"https://scontent.xx.fbcdn.net/v/t1.0-1/p200x200/13669817_1117113145017292_4920305262041128067_n.jpg?oh=32783654cad84190711280a5c377221d&oe=582970EA",
+			"https://scontent.xx.fbcdn.net/v/t1.0-1/p200x200/13669817_1117113145017292_4920305262041128067_n.jpg?oh=32783654cad84190711280a5c377221d&oe=582970EA"];
+		this.likeCount=4;
+
+		this.likePic=function(e){
+			e.preventDefault();
+			self.update({
+				isPicLiked:!self.isPicLiked,
+				likeCount:!self.isPicLiked?self.likeCount+1:self.likeCount-1
+			});
+		}
+	</script>
+</gp-stats>

@@ -1,0 +1,90 @@
+gp-stats{
+	display: block;
+	padding: 8px;
+	.stat{
+		display: inline-block;
+	}
+	.btn-action{
+		background-color: #455A64;
+		border-color: transparent;
+		vertical-align: middle;
+		width: 60px;
+		outline: none;
+	}
+	.copystats .btn-action{
+		border-radius: 20px 0 0 20px;
+	}
+	.like{
+		border-radius: 0 20px 20px 0;
+	}
+	.icon{
+		display: inline-block;
+		vertical-align: middle;
+		.icon-heart,.icon-chat{
+			height: 20px;
+			width: 20px;	
+			vertical-align: middle;
+		}
+		.icon-copy{
+			height: 18px;
+		}
+		&.liked{
+			animation-name:likeanim;
+			animation-duration:500ms;
+			.icon-heart{
+				fill: #C62828;
+			}
+		}
+	}
+	.count{
+		@extend .thinfont;
+		display: inline-block;
+		margin-left: 5px;
+		vertical-align: middle;
+		font-size: 12px;
+		color: #eee;
+	}
+	.likers{
+		display: inline-block;
+		vertical-align: middle;
+		transform:translateX(-10px);
+		transition-duration:300ms;
+		transition-property:transform;
+		will-change:transform;
+		&.me{
+			transform:translateX(0);
+			position: relative;
+			z-index: 2;
+		}
+		&.liked{
+				transform:translateX(10px);
+		}
+	}
+	.liker{
+		position: relative;
+		border: 2px solid #eee;
+		border-radius: 50%;
+		height: 30px;
+		width: 30px;
+		vertical-align: middle;
+		transition-duration:300ms;
+		transition-property:transform;
+		will-change:transform;
+
+	}
+
+	@keyframes likeanim{
+		0%{
+			transform: translateY(0) scale(1);
+		}
+		60%{
+			transform: translateY(-40px) scale(2.5);
+		}
+		85%{
+			transform: translateY(-40px) scale(2.5);
+		}
+		100%{
+			transform: translateY(0) scale(1);
+		}
+	}
+}

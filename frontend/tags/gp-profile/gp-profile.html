@@ -1,35 +1,93 @@
 <gp-profile>
-	<div class="cover" style="background-image:url('{userProfile.picture.data.url}')">
+	<div class="profilepic {userPic?'loaded':''}" style="{userPic?'background-image:url(\''+userPic+'\')':''}">
+		<div class="username">{userProfile.name}</div>
+		<gp-followbutton 
+			following={true} 
+			if={userProfile&&ownerProfile&&ownerProfile.profile.id!==userProfile.profile.id}>
+		</gp-followbutton>
 	</div>
-	<div class="userinfo">
-			<img class="userpic" src="{userBigPic}" height="100" width="100"></img>
-			<div class="userdetails">
-				<div class="username">Prateek Bhatnagar</div>
-				<div class="stats">
-					<a class="stat">
-						<span class="count">22</span> <span class="label"> posts</span> 	
-					</a>
-					<a class="stat">
-						<span class="count">22</span> <span class="label"> following</span> 	
-					</a>
-					<a class="stat">
-						<span class="count">38</span> <span class="label"> followers</span> 
-					</a>
-				</div>
+	<div class="usercontent" if={userProfile}>
+		<material-tabs useLine="true" 
+			tabs="[\{title:'OWNED'\},\{title:'CONTRIBUTIONS'\}]" 
+			selected={selectedTab}
+			tabchanged={tabChanged}>	
+		</material-tabs>
+		<div 
+			class="tabcontent"
+			onswipeleft={incTabsIndex}
+			onswiperight={decTabsIndex}>
+			<div class="tab tab-owned">
+				
 			</div>
+			<div class="tab tab-contri">
+				
+			</div>
+		</div>
 	</div>
-	<div class="usercontent">
-		<material-tabs useLine="true" tabs="[\{title:'OWNED'\},\{title:'CLONED'\}]"></material-tabs>
+	<div class="usercontent" if={!userProfile}>
+		<div class="loader">
+			<material-spinner></material-spinner>	
+		</div>
 	</div>
 	<script>
 		var self = this;
 		var userStore = veronica.flux.Stores.getStore("UserStore");
+		var userAction = veronica.flux.Actions.getAction("UserActions");
+		var pid=veronica.getCurrentState().data[':pid'];
+		var userProfileEventSubscribed=false;
 
-		this.userProfile = userStore.getUserProfile();
-		this.userBigPic = userStore.getUserBigPic();
-				
-		this.on("mount",function(){
+		this.userProfile = userStore.getUserProfile(pid);
+		this.ownerProfile = userStore.getUserProfile("me");
+		this.userPic = null;
+		this.selectedTab=0;
+
+		function setUserPic(profile){
+			var img = new Image();
+			img.onload=function(){
+				self.update({userPic : img.src});
+			}
+			img.src=profile.full_profile_url;
+		}
+
+		function setUserProfile(){
+			self.update({
+				userProfile:userStore.getUserProfile(pid)
+			});
+			setUserPic(userStore.getUserProfile(pid));
+		}
+
+		this.incTabsIndex=function(e){
+			console.log("swipe inc");
+			if(this.selectedTab<1){
+				self.update({selectedTab:this.selectedTab+1});
+			}
+		}
+		this.decTabsIndex=function(e){
+			console.log("swipe dec");
+			if(this.selectedTab>0){
+				self.update({selectedTab:this.selectedTab-1});
+			}
+		}
+
+		this.tabChanged=function(){
+			console.log("tab changed");
+		}
+
+		this.on("mount",()=>{
+			userAction.fetchUserProfile(pid, userStore.getSessionId());
+			if(!this.userProfile){
+				userProfileEventSubscribed=true;
+				userStore.subscribe("user:profile:fetched",setUserProfile);
+			}else{
+				setUserPic(this.userProfile);
+			}
 
 		});
+
+		this.on("unmount",(e)=>{
+			if(userProfileEventSubscribed){
+				userStore.unsubscribe("user:profile:fetched",setUserProfile);
+			}
+		})
 	</script>
 </gp-profile>

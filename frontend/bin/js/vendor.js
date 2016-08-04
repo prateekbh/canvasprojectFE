@@ -1,3 +1,60 @@
+"use strict";
+
+var LZW = function() { };
+
+LZW.prototype.encode = function(s) {
+    var dict = {};
+    var data = (s + "").split("");
+    var out = [];
+    var currChar;
+    var phrase = data[0];
+    var code = 256;
+    for (var i = 1; i < data.length; i++) {
+        currChar = data[i];
+        if (dict[phrase + currChar] != null) {
+            phrase += currChar;
+        }
+        else {
+            out.push(phrase.length > 1 ? dict[phrase] : phrase.charCodeAt(0));
+            dict[phrase + currChar] = code;
+            code++;
+            phrase=currChar;
+        }
+    }
+    out.push(phrase.length > 1 ? dict[phrase] : phrase.charCodeAt(0));
+    for (var i = 0; i < out.length; i++) {
+        out[i] = String.fromCharCode(out[i]);
+    }
+    return out.join("");
+};
+
+LZW.prototype.decode = function(s) {
+	var dict = {};
+	var data = (s + "").split("");
+	var currChar = data[0];
+	var oldPhrase = currChar;
+	var out = [currChar];
+	var code = 256;
+	var phrase;
+	for (var i = 1; i < data.length; i++) {
+		var currCode = data[i].charCodeAt(0);
+		if (currCode < 256) {
+			phrase = data[i];
+		}
+		else {
+		   phrase = dict[currCode] ? dict[currCode] : (oldPhrase + currChar);
+		}
+		out.push(phrase);
+		currChar = phrase.charAt(0);
+		dict[code] = oldPhrase + currChar;
+		code++;
+		oldPhrase = phrase;
+	}
+	return out.join("");
+};
+
+window.LZW = new LZW();
+
 /* Riot v2.5.0, @license MIT */
 
 ;(function(window, undefined) {
@@ -3258,7 +3315,7 @@ riot.tag2('material-spinner', '<svg class="loader-circular" height="50" width="5
 riot.tag2('material-tabs', '<material-button each="{tab,k in tabs}" onclick="{parent.onChangeTab}" class="{selected:parent.selected==k}" waves-opacity="{parent.opts.wavesOpacity}" waves-duration="{parent.opts.wavesDuration}" waves-center="{parent.opts.wavesCenter}" waves-color="{parent.opts.wavesColor}"> <div class="text" title="{tab.title}">{parent.opts.cut ? parent.cut(tab.title) : tab.title}</div> </material-button> <div class="line-wrapper" if="{opts.useline}"> <div class="line" name="line"></div> </div> <yield></yield>', '', '', function(opts) {
 var _this = this;
 
-this.selected = 0;
+this.selected = opts.__selected||0;
 this.tabs = [];
 
 if (opts.tabs) {
@@ -3266,16 +3323,18 @@ if (opts.tabs) {
     try {
         tabs = opts.tabs ? eval(opts.tabs) : [];
         this.tabs = tabs;
-        console.log(tabs);
     } catch (e) {
         console.log(e);
     }
 }
 
 this.on('mount', function () {
-
     _this.setWidth();
     _this.setLinePosition();
+});
+
+this.on('update',(val)=>{
+    this.changeTab(opts.__selected);
 });
 
 this.setWidth = function () {

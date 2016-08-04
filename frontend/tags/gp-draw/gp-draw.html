@@ -12,7 +12,7 @@
                 <path d="M7 14c-1.66 0-3 1.34-3 3 0 1.31-1.16 2-2 2 .92 1.22 2.49 2 4 2 2.21 0 4-1.79 4-4 0-1.66-1.34-3-3-3zm13.71-9.37l-1.34-1.34c-.39-.39-1.02-.39-1.41 0L9 12.25 11.75 15l8.96-8.96c.39-.39.39-1.02 0-1.41z" />
             </svg>
         </button>
-        <button class="btn-control save">
+        <button class="btn-control save" onclick={save}>
             <svg fill="#FFFFFF" height="24" viewBox="0 0 24 24" width="24">
                 <path d="M17 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V7l-4-4zm-5 16c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3zm3-10H5V5h10v4z" />
             </svg>
@@ -47,9 +47,11 @@
     </div>
     <script>
     var self = this;
+    var imageActions = veronica.flux.Actions.getAction("ImageActions");
+    var userStore = veronica.flux.Stores.getStore("UserStore");
 
     this.brushesList = [
-    		"Simple Pencil",
+    	"Simple Pencil",
         "Simple Brush",
         "Air Brush",
         "Slice Brush",
@@ -81,7 +83,8 @@
     	e.clientX=e.touches[0].clientX*factor;
     	e.clientY=(e.touches[0].clientY-66)*factor;
     	ctx.beginPath();
-    	ctx.strokeStyle = 'transparent';
+        ctx.storkeStyle=currentColor;
+    	ctx.fillStyle = currentColor;
     	ctx.moveTo(e.clientX,e.clientY);
     	ctx.lineJoin = ctx.lineCap = 'round';
     	ctx.shadowColor = 'transparent';
@@ -95,11 +98,8 @@
     		break;
     		case "Air Brush":
     			ctx.lineWidth = 10;
-					ctx.shadowBlur = 10;
-					ctx.shadowColor = currentColor;
-    		break;
-    		case "Radial Brush":
-    			//ctx.shadowColor = currentColor;
+				ctx.shadowBlur = 10;
+				ctx.shadowColor = currentColor;
     		break;
     		case "Pen Multi Stroke Brush":
     		case "Slice Brush":
@@ -224,10 +224,16 @@
     	self.closeSheet();
     }
 
+    this.save=function(e){
+        e.preventDefault();
+        imageActions.saveImage(el.toDataURL(),null,null,userStore.getSessionId());
+    }
+
+
     this.on("mount", function() {
     		setTimeout(function(){
     			self.update({showCanvas:true});
-					selectedBrush = "Simple Pencil";
+				selectedBrush = "Simple Pencil";
 			    document.body.classList.add("noscroll");
 			    el = document.getElementById('canvas');
 			    ctx = el.getContext('2d');

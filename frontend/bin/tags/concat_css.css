@@ -979,6 +979,23 @@ material-waves #waves .wave {
 material-waves[rounded=true], material-waves[rounded=true] #waves {
   border-radius: 50%; }
 
+@keyframes placeHolderShimmer {
+  0% {
+    background-position: -468px 0; }
+  100% {
+    background-position: 468px 0; } }
+
+.animated-background {
+  animation-duration: 1s;
+  animation-fill-mode: forwards;
+  animation-iteration-count: infinite;
+  animation-name: placeHolderShimmer;
+  animation-timing-function: linear;
+  background: #5C6BC0;
+  background: linear-gradient(to right, #7986CB 8%, #5C6BC0 18%, #7986CB 33%);
+  background-size: 800px 104px;
+  position: relative; }
+
 body {
   padding: 0;
   margin: 0;
@@ -996,8 +1013,10 @@ a {
 .hidden {
   display: none; }
 
-.container {
+.page {
   padding-top: 66px; }
+  .page.gp-profile {
+    padding-top: 0px; }
 
 @keyframes appear {
   0% {
@@ -1012,11 +1031,11 @@ a {
   font-family: "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
   font-weight: 400; }
 
-.boldfont, gp-profile .count {
+.boldfont, gp-profile .username, gp-profile .count {
   font-family: "HelveticaNeue-Bold", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
   font-weight: 700; }
 
-.thinfont, gp-navbar .name, gp-profile .username, gp-profile material-tabs material-button .content .text {
+.thinfont, gp-navbar .name, gp-pictureunit .desc, gp-picunitheader .namesection, gp-stats .count, gp-profile material-tabs material-button .content .text {
   font-family: "HelveticaNeue-Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
   font-weight: 300; }
 
@@ -1239,16 +1258,21 @@ gp-draw {
     transform: translateY(0px); } }
 
 gp-header {
-  display: flex;
-  align-items: center;
   position: fixed;
   z-index: 10;
   left: 0px;
   top: 0px;
-  background-color: #3F51B5;
-  width: 100%;
-  padding: 15px 0;
-  height: 66px; }
+  width: 100%; }
+  gp-header .header {
+    display: flex;
+    align-items: center;
+    background-color: #3F51B5;
+    padding: 15px 0;
+    height: 66px; }
+    gp-header .header.profile {
+      background-color: transparent; }
+      gp-header .header.profile .title {
+        opacity: 0; }
   gp-header .nav {
     flex: 1; }
   gp-header .title {
@@ -1345,6 +1369,8 @@ gp-nav {
 gp-navbar {
   display: block; }
   gp-navbar nav {
+    display: flex;
+    flex-direction: column;
     position: fixed;
     left: 0px;
     top: 0px;
@@ -1388,44 +1414,173 @@ gp-navbar {
       display: inline-block;
       vertical-align: middle; }
   gp-navbar .navcontents {
-    display: flex;
+    flex: 1;
     flex-direction: column;
     height: 100%; }
-  gp-navbar .navlinks {
+  gp-navbar .settings {
+    border-top: 1px solid #455A64; }
+
+gp-picture {
+  display: block; }
+  gp-picture .pic {
+    width: 100%; }
+
+gp-pictureunit {
+  display: block;
+  margin-bottom: 35px; }
+  gp-pictureunit .desc {
+    padding: 8px;
+    font-size: 14px; }
+
+gp-picunitheader {
+  display: flex;
+  align-items: center;
+  padding: 8px 0px; }
+  gp-picunitheader .picsection {
+    flex: 1;
+    text-align: center;
+    padding: 8px; }
+  gp-picunitheader .namesection {
+    font-size: 16px;
     flex: 8; }
-  gp-navbar .others {
-    flex: 2.4; }
-  gp-navbar .othercontainers {
-    border-top: 1px solid #aaa;
-    display: flex;
-    height: 100%;
-    flex-direction: column; }
+  gp-picunitheader .timesection {
+    flex: 1;
+    text-align: center;
+    font-size: 12px;
+    color: #666;
+    min-width: 50px; }
+  gp-picunitheader .pic {
+    border-radius: 50%;
+    vertical-align: middle; }
+  gp-picunitheader .event-desc {
+    font-size: 14px; }
+
+gp-stats {
+  display: block;
+  padding: 8px; }
+  gp-stats .stat {
+    display: inline-block; }
+  gp-stats .btn-action {
+    background-color: #455A64;
+    border-color: transparent;
+    vertical-align: middle;
+    width: 60px;
+    outline: none; }
+  gp-stats .copystats .btn-action {
+    border-radius: 20px 0 0 20px; }
+  gp-stats .like {
+    border-radius: 0 20px 20px 0; }
+  gp-stats .icon {
+    display: inline-block;
+    vertical-align: middle; }
+    gp-stats .icon .icon-heart, gp-stats .icon .icon-chat {
+      height: 20px;
+      width: 20px;
+      vertical-align: middle; }
+    gp-stats .icon .icon-copy {
+      height: 18px; }
+    gp-stats .icon.liked {
+      animation-name: likeanim;
+      animation-duration: 500ms; }
+      gp-stats .icon.liked .icon-heart {
+        fill: #C62828; }
+  gp-stats .count {
+    display: inline-block;
+    margin-left: 5px;
+    vertical-align: middle;
+    font-size: 12px;
+    color: #eee; }
+  gp-stats .likers {
+    display: inline-block;
+    vertical-align: middle;
+    transform: translateX(-10px);
+    transition-duration: 300ms;
+    transition-property: transform;
+    will-change: transform; }
+    gp-stats .likers.me {
+      transform: translateX(0);
+      position: relative;
+      z-index: 2; }
+    gp-stats .likers.liked {
+      transform: translateX(10px); }
+  gp-stats .liker {
+    position: relative;
+    border: 2px solid #eee;
+    border-radius: 50%;
+    height: 30px;
+    width: 30px;
+    vertical-align: middle;
+    transition-duration: 300ms;
+    transition-property: transform;
+    will-change: transform; }
+
+@keyframes likeanim {
+  0% {
+    transform: translateY(0) scale(1); }
+  60% {
+    transform: translateY(-40px) scale(2.5); }
+  85% {
+    transform: translateY(-40px) scale(2.5); }
+  100% {
+    transform: translateY(0) scale(1); } }
 
 gp-picunit {
   display: block; }
 
+gp-followbutton {
+  display: inline-block; }
+  gp-followbutton .icon-tick, gp-followbutton .icon-add {
+    height: 15px; }
+  gp-followbutton .icon-tick, gp-followbutton .icon-add, gp-followbutton .text {
+    vertical-align: middle; }
+  gp-followbutton .text {
+    margin-left: 5px; }
+  gp-followbutton .follow {
+    background-color: #3F51B5;
+    border-color: transparent;
+    color: #fff;
+    font-size: 12px;
+    padding: 8px 16px;
+    border-radius: 3px;
+    text-align: center;
+    outline: 0px; }
+    gp-followbutton .follow.following {
+      background-color: #43A047; }
+
 gp-profile {
-  display: block; }
-  gp-profile .cover {
-    height: 100px;
-    background-size: cover;
-    background-repeat: no-repeat;
-    background-position: center;
-    -webkit-filter: blur(15px);
-    filter: blur(15px); }
-  gp-profile .userinfo {
-    display: flex;
+  display: block;
+  position: relative; }
+  gp-profile gp-followbutton {
+    position: absolute;
+    bottom: 16px;
+    right: 16px; }
+  gp-profile .profilepic {
     position: relative;
-    z-index: 2;
-    margin-top: -50px;
-    margin-left: 15px; }
-  gp-profile .userpic {
-    border-radius: 50%; }
-  gp-profile .userdetails {
-    padding: 25px 15px; }
+    margin-top: -4px;
+    height: 65vh;
+    background-image: url("data:image/jpeg;base64,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");
+    background-size: cover;
+    background-position: center;
+    transition-delay: 600ms;
+    transition-duration: 300ms;
+    transition-timing-function: cubic-bezier(0.075, 0.82, 0.165, 1);
+    transition-property: -webkit-filter;
+    will-change: -webkit-filter;
+    -webkit-filter: saturate(0); }
+    gp-profile .profilepic.loaded {
+      -webkit-filter: saturate(1); }
+  gp-profile .loader {
+    text-align: center; }
   gp-profile .username {
+    color: #fff;
+    position: absolute;
+    left: 60px;
+    top: 70px;
     text-transform: lowercase;
-    font-size: 28px; }
+    font-size: 34px;
+    word-spacing: 999px;
+    line-height: 45px;
+    text-shadow: 0px 2px 2px rgba(0, 0, 0, 0.4); }
   gp-profile .followers {
     padding-top: 5px;
     font-size: 14px; }
@@ -1437,9 +1592,18 @@ gp-profile {
   gp-profile .stat + .stat {
     margin-left: 10px; }
   gp-profile .usercontent {
-    margin-top: 20px; }
+    max-width: 100%;
+    overflow: hidden; }
+  gp-profile .tabcontent {
+    white-space: nowrap; }
+  gp-profile .tab {
+    display: inline-block;
+    width: 100vw;
+    min-height: 400px; }
   gp-profile material-tabs material-button {
-    background-color: transparent; }
+    background-color: transparent;
+    padding: 8px 0;
+    height: auto; }
   gp-profile material-tabs material-button .content .text {
     color: #ccc; }
   gp-profile material-tabs material-button.selected .content .text {

@@ -1,0 +1,9 @@
+gp-pictureunit{
+	display: block;
+	margin-bottom: 35px;
+	.desc{
+		@extend .thinfont;
+		padding:8px;
+		font-size: 14px;
+	}
+}

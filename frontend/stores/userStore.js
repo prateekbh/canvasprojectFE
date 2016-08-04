@@ -1,42 +1,36 @@
 function UserStore(){
-    var user={
-        oAuthCredentials:null,
-        userProfile:null,
-        bigPic:null,
-    };
 
-    user=localStorage.user&&JSON.parse(localStorage.user)||user;
+    var sessionId=localStorage.sid||null;
+    var users={};
 
+    users["me"]=localStorage.user&&JSON.parse(localStorage.user)||null;
+    users[users["me"].account_id]=users["me"];
     //Register for actions
-    this.Dispatcher.register("user:setprofile",setUserProfile);
-    this.Dispatcher.register("user:setcredentials",setOAuthCredentials);
-    this.Dispatcher.register("user:bigpic",setUserBigPic);
 
-    function setOAuthCredentials(data){
-        user.oAuthCredentials = data.credentials;
-        localStorage.user = JSON.stringify(user);
+    this.Dispatcher.register("user:login:success",(data)=>{
+        sessionId=data.session_id;
+        users["me"]=data.profile_details.user;
+        users[users["me"].account_id]=users["me"];
+        localStorage.sid = sessionId;
+        localStorage.user = JSON.stringify(users["me"]);
+        this.emit("user:login:success");
+    });
+
+    this.Dispatcher.register("user:login:failure",(data)=>{
+        this.emit("user:login:failure");
+    });
+
+    this.Dispatcher.register("user:fetchprofile:success",(data)=>{
+        users[data.user.account_id]=data.user;
+        this.emit("user:profile:fetched");
+    });
+
+    this.getUserProfile=function(uid){
+        return users[uid];
     }
 
-    function setUserProfile(data){
-        user.userProfile = data.profile;
-        localStorage.user = JSON.stringify(user);
-    }
-
-    function setUserBigPic(data){
-        user.bigPic=data.bigpic;
-        localStorage.user = JSON.stringify(user);
-    }
-
-    this.getOAuthCredentials=function(){
-    	return user.oAuthCredentials;
-    }
-
-    this.getUserProfile=function(){
-        return user.userProfile;
-    }
-
-    this.getUserBigPic=function(){
-        return user.bigPic;
+    this.getSessionId=function(){
+        return sessionId;
     }
 
 }

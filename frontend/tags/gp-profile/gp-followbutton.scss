@@ -1,0 +1,25 @@
+gp-followbutton{
+	display: inline-block;
+	.icon-tick, .icon-add{
+		height: 15px;
+	}
+	.icon-tick, .icon-add, .text{
+		vertical-align: middle;
+	}
+	.text{
+		margin-left: 5px;
+	}
+	.follow{
+		background-color: #3F51B5;
+		border-color: transparent;
+		color:#fff;
+		font-size: 12px;
+		padding: 8px 16px;
+		border-radius: 3px;
+		text-align: center;
+		outline: 0px;
+		&.following{
+			background-color: #43A047;
+		}
+	}
+}

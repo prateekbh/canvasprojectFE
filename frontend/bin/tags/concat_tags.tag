@@ -68,7 +68,7 @@
 			context.fill();			
 		}
 
-		this.on("mount",function(e){
+		this.on("mount",(e)=>{
 			self.update({ispickerShown:false});
 			setTimeout(function(){
 				self.update({showWheel:true});
@@ -120,7 +120,7 @@
                 <path d="M7 14c-1.66 0-3 1.34-3 3 0 1.31-1.16 2-2 2 .92 1.22 2.49 2 4 2 2.21 0 4-1.79 4-4 0-1.66-1.34-3-3-3zm13.71-9.37l-1.34-1.34c-.39-.39-1.02-.39-1.41 0L9 12.25 11.75 15l8.96-8.96c.39-.39.39-1.02 0-1.41z" />
             </svg>
         </button>
-        <button class="btn-control save">
+        <button class="btn-control save" onclick={save}>
             <svg fill="#FFFFFF" height="24" viewBox="0 0 24 24" width="24">
                 <path d="M17 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V7l-4-4zm-5 16c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3zm3-10H5V5h10v4z" />
             </svg>
@@ -155,9 +155,11 @@
     </div>
     <script>
     var self = this;
+    var imageActions = veronica.flux.Actions.getAction("ImageActions");
+    var userStore = veronica.flux.Stores.getStore("UserStore");
 
     this.brushesList = [
-    		"Simple Pencil",
+    	"Simple Pencil",
         "Simple Brush",
         "Air Brush",
         "Slice Brush",
@@ -189,7 +191,8 @@
     	e.clientX=e.touches[0].clientX*factor;
     	e.clientY=(e.touches[0].clientY-66)*factor;
     	ctx.beginPath();
-    	ctx.strokeStyle = 'transparent';
+        ctx.storkeStyle=currentColor;
+    	ctx.fillStyle = currentColor;
     	ctx.moveTo(e.clientX,e.clientY);
     	ctx.lineJoin = ctx.lineCap = 'round';
     	ctx.shadowColor = 'transparent';
@@ -203,11 +206,8 @@
     		break;
     		case "Air Brush":
     			ctx.lineWidth = 10;
-					ctx.shadowBlur = 10;
-					ctx.shadowColor = currentColor;
-    		break;
-    		case "Radial Brush":
-    			//ctx.shadowColor = currentColor;
+				ctx.shadowBlur = 10;
+				ctx.shadowColor = currentColor;
     		break;
     		case "Pen Multi Stroke Brush":
     		case "Slice Brush":
@@ -332,10 +332,16 @@
     	self.closeSheet();
     }
 
+    this.save=function(e){
+        e.preventDefault();
+        imageActions.saveImage(el.toDataURL(),null,null,userStore.getSessionId());
+    }
+
+
     this.on("mount", function() {
     		setTimeout(function(){
     			self.update({showCanvas:true});
-					selectedBrush = "Simple Pencil";
+				selectedBrush = "Simple Pencil";
 			    document.body.classList.add("noscroll");
 			    el = document.getElementById('canvas');
 			    ctx = el.getContext('2d');
@@ -353,22 +359,24 @@
 </gp-draw>
 
 <gp-header>
-	<div class="nav">
-		<button class="menu {isBackEnabled?'back':''}" onclick={menuClick}>
-			<svg fill="#FFFFFF" height="24" viewBox="0 0 24 24" width="24">
-			    <path class="line line-first" d="M3 18h18v-2H3v2zm0-5h18v"></path>
-			    <path class="line line-second" d="M3 18h18v-2H3v2zm0-5h18v"></path>
-			    <path class="line line-third" d="M3 18h18v-2H3v2zm0-5h18v"></path>
+	<div class="header {currState}">
+		<div class="nav">
+			<button class="menu {isBackEnabled?'back':''}" onclick={menuClick}>
+				<svg fill="#FFFFFF" height="24" viewBox="0 0 24 24" width="24">
+				    <path class="line line-first" d="M3 18h18v-2H3v2zm0-5h18v"></path>
+				    <path class="line line-second" d="M3 18h18v-2H3v2zm0-5h18v"></path>
+				    <path class="line line-third" d="M3 18h18v-2H3v2zm0-5h18v"></path>
+				</svg>
+			</button>
+		</div>
+		<div class="title">
+			<h1 class="titlefont">kanvasProject</h1>
+		</div>
+		<div class="search">
+			<svg fill="#FFFFFF" height="24" viewBox="0 0 24 24" width="24" onclick={goToSearch}>
+			    <path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
 			</svg>
-		</button>
-	</div>
-	<div class="title">
-		<h1 class="titlefont">kanvasProject</h1>
-	</div>
-	<div class="search">
-		<svg fill="#FFFFFF" height="24" viewBox="0 0 24 24" width="24" onclick={goToSearch}>
-		    <path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
-		</svg>
+		</div>
 	</div>
 	<script>
 		var self=this;
@@ -376,13 +384,22 @@
 		var navActions=veronica.flux.Actions.getAction("NavigationActions");
 		var routeStore=veronica.flux.Stores.getStore("RouteStore");
 
+		this.currState="NA";
+
+
 		function checkBackButton(){
 			var currState=(routeStore.getCurrentRoute()||veronica.getCurrentState()).state;
 			if(window.history.state.state==="home"){
-				self.update({isBackEnabled:false});
+				self.update({
+					isBackEnabled:false,
+					currState:currState
+				});
 			}
 			else{
-				self.update({isBackEnabled:true});
+				self.update({
+					isBackEnabled:true,
+					currState:currState
+				});
 			}
 		}
 
@@ -413,12 +430,14 @@
 	</script>
 </gp-header>
 <gp-home>
-	<h1>KrowdKanvas</h1>
+	<gp-pictureunit></gp-pictureunit>
+	<gp-pictureunit></gp-pictureunit>
 	<script>
 		var userStore=veronica.flux.Stores.getStore("UserStore");
 		
 		this.on("mount",function(){
-			if(userStore.getUserProfile()===null)
+			console.log(userStore.getUserProfile("me"));
+			if(!userStore.getUserProfile("me"))
 			{
 				veronica.loc("/login",true);
 			}else{
@@ -427,6 +446,46 @@
 		});
 	</script>
 </gp-home>
+<icon-add>
+	<svg class="icon-add" fill="#FFFFFF" height="24" viewBox="0 0 24 24" width="24">
+	    <path d="M15 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm-9-2V7H4v3H1v2h3v3h2v-3h3v-2H6zm9 4c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+	</svg>
+</icon-add>
+<icon-chat>
+	<svg class="icon-chat" fill="#FFFFFF" height="24" viewBox="0 0 24 24" width="24">
+	    <path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/>
+	    <path d="M0 0h24v24H0z" fill="none"/>
+	</svg>
+</icon-chat>
+<icon-copy>
+	<svg class="icon-copy" fill="#FFFFFF" height="24" viewBox="0 0 24 24" width="24">
+	    <path d="M0 0h24v24H0z" fill="none"/>
+	    <path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/>
+	</svg>
+</icon-copy>
+<icon-heart>
+	<svg class="icon-heart" height="24" viewBox="0 0 24 24" width="24" fill="#fff">
+	    <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+	</svg>
+</icon-heart>
+<icon-pic>
+	<svg class="icon-pic" fill="#FFFFFF" height="24" viewBox="0 0 24 24" width="24">
+	    <path d="M0 0h24v24H0z" fill="none"/>
+	    <path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/>
+	</svg>
+</icon-pic>
+<icon-publish>
+	<svg class="icon-publish" fill="#FFFFFF" height="24" viewBox="0 0 24 24" width="24">
+	    <path d="M0 0h24v24H0z" fill="none"/>
+	    <path d="M5 4v2h14V4H5zm0 10h4v6h6v-6h4l-7-7-7 7z"/>
+	</svg>
+</icon-publish>
+<icon-tick>
+	<svg class="icon-tick" fill="#FFFFFF" height="24" viewBox="0 0 24 24" width="24">
+	    <path d="M0 0h24v24H0z" fill="none"/>
+	    <path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"/>
+	</svg>
+</icon-tick>
 <gp-login>
 	<div class="title titlefont">
 		KanvasProject
@@ -444,38 +503,37 @@
 		var userStore=veronica.flux.Stores.getStore("UserStore");
 		var userActions=veronica.flux.Actions.getAction("UserActions");
 		
-		this.userProfile=userStore.getUserProfile();
+		this.userProfile=userStore.getUserProfile("me");
 		this.loading=false;
 
 		this.startLoading=function(){
 			self.update({loading:true});
 			FB.login(function(res){
 				if(res.status==="connected"){
-					userActions.setAuthCredentials(res);
 					var url = '/me?fields=name,email,picture';
-					FB.api('/me/picture?type=large',function(imgRes){
-						var imgCaching=new Image();
-						imgCaching.src=imgRes.data.url;
-						userActions.setBigPic(imgRes.data.url);
-					})
 	                FB.api(url, function (response) {
-	                	userActions.setUserProfile(response);
-	                	veronica.loc("/",true);
+	                	userActions.loginUser(response,res);
 	                });
 				}
 			});
 		}
 
+		function logInSuccess(){
+			//show toast
+			veronica.loc("/",true);
+		}
+
 		this.on("mount",()=>{
 			if(this.userProfile){
 				veronica.loc("/",true);
+			}else{
+				userStore.subscribe("user:login:success", logInSuccess);
 			}
-
 		});
 
 		this.on("unmount",()=>{
-
-		})
+			userStore.unsubscribe("user:login:success", logInSuccess);
+		});
 	</script>
 </gp-login>
 <gp-modal>
@@ -512,7 +570,7 @@
 <gp-navbar>
 	<nav class="{isNavBarOpen?'opened':'closed'}" onswipeleft={closeNavBar}>
 		<div class="userinfo">
-			<img class="pic" width="60" height="60" src="{userProfile.picture.data.url}"></img>
+			<img class="pic" width="60" height="60" src="{userProfile.avatar_url}"></img>
 			<div class="name">{userProfile.name}</div>
 		</div>
 		<div class="navcontents">
@@ -537,19 +595,16 @@
 					<span class="text">New Canvas</span>
 				</a>
 			</div>
-			<div class="others">
-				<div class="othercontainers">
-					<a class="navlink" href="/search">
-						<svg class="icon" fill="#FFFFFF" height="24" viewBox="0 0 24 24" width="24">
-						    <path d="M0 0h24v24H0z" fill="none"/>
-						    <path d="M13 3h-2v10h2V3zm4.83 2.17l-1.42 1.42C17.99 7.86 19 9.81 19 12c0 3.87-3.13 7-7 7s-7-3.13-7-7c0-2.19 1.01-4.14 2.58-5.42L6.17 5.17C4.23 6.82 3 9.26 3 12c0 4.97 4.03 9 9 9s9-4.03 9-9c0-2.74-1.23-5.18-3.17-6.83z"/>
-						</svg>
-						<span class="text">Logout</span>
-					</a>
-				</div>
-			</div>
 		</div>
-		
+		<div class="settings">
+			<a class="navlink" href="/search">
+				<svg class="icon" fill="#FFFFFF" height="24" viewBox="0 0 24 24" width="24">
+				    <path d="M0 0h24v24H0z" fill="none"/>
+				    <path d="M13 3h-2v10h2V3zm4.83 2.17l-1.42 1.42C17.99 7.86 19 9.81 19 12c0 3.87-3.13 7-7 7s-7-3.13-7-7c0-2.19 1.01-4.14 2.58-5.42L6.17 5.17C4.23 6.82 3 9.26 3 12c0 4.97 4.03 9 9 9s9-4.03 9-9c0-2.74-1.23-5.18-3.17-6.83z"/>
+				</svg>
+				<span class="text">Logout</span>
+			</a>
+		</div>
 	</nav>
 	<script>
 		var self=this;
@@ -560,12 +615,17 @@
 		var navStore=veronica.flux.Stores.getStore("NavigationStore");
 		var userStore=veronica.flux.Stores.getStore("UserStore");
 
-		this.userProfile=userStore.getUserProfile();
+		this.userProfile=userStore.getUserProfile("me");
 
 		function changeNavBarStatus(){
 			self.update({ 
 				isNavBarOpen:navStore.getNavBarStatus()&&navStore.getModalStatus()
 			});
+			if(self.isNavBarOpen){
+				document.body.classList.add("noscroll");
+			} else {
+				document.body.classList.remove("noscroll");
+			}
 		}
 
 		this.closeNavBar=function(e){
@@ -578,12 +638,86 @@
 			navStore.subscribe("nav:modalchange",changeNavBarStatus);
 		});
 
-		this.on("usmount",function(){
+		this.on("unmount",function(){
 			navStore.unsubscribe("nav:statuschange",changeNavBarStatus);
 			navStore.unsubscribe("nav:modalchange",changeNavBarStatus);
 		});
 	</script>
 </gp-navbar>
+<gp-picture>
+	<img class="pic" height="{window.innerWidth}" src="https://scontent-sit4-1.cdninstagram.com/t51.2885-15/sh0.08/e35/p750x750/13696665_1563391050635241_1057925117_n.jpg"></img>
+</gp-picture>
+<gp-pictureunit>
+	<gp-picunitheader></gp-picunitheader>
+	<gp-picture></gp-picture>
+	<div class="desc">
+		Now. Me. Calmnessss...<br/>
+		Thanks to all the <a href="/tag/contributers">#contributers</a>
+	</div>
+	<gp-stats></gp-stats>
+</gp-pictureunit>
+<gp-picunitheader>
+	<div class="picsection">
+		<img class="pic" src="https://scontent.xx.fbcdn.net/v/t1.0-1/p200x200/13669817_1117113145017292_4920305262041128067_n.jpg?oh=32783654cad84190711280a5c377221d&oe=582970EA" height="40" width="40">
+		</img>
+	</div>
+	<div class="namesection">
+		<a href="/profile/112334">prateek</a> <span class="event-desc"> owns this image</span>
+	</div>
+	<div class="timesection">
+		15m
+	</div>
+</gp-picunitheader>
+<gp-stats>
+	<div class="stats">
+		<div class="copystats stat">
+			<button class="btn-action copy">
+				<icon-copy class="icon"></icon-copy>
+				<span class="copy-count count">{likeCount}</span>
+			</button>
+		</div>
+		<div class="commentstat stat">
+			<button class="btn-action comment">
+				<icon-chat class="icon icon-comment"></icon-chat>
+				<span class="comment-count count">{likeCount}</span>
+			</button>
+		</div>
+		<div class="likestat stat">
+			<button class="btn-action like" onclick={likePic}>
+				<icon-heart class="icon icon-like {isPicLiked?'liked':''}"></icon-heart>
+				<span class="like-count count">{likeCount}</span>
+			</button>
+			<div class="likers me">
+				<img class="liker me" src="https://scontent.xx.fbcdn.net/v/t1.0-1/p200x200/13669817_1117113145017292_4920305262041128067_n.jpg?oh=32783654cad84190711280a5c377221d&oe=582970EA" 
+					style="transform:{isPicLiked?'scale(1) translateX(10px)':'scale(0) translateX(0px)'}; z-index:{5} ">
+			</div>
+			<div class="likers others {isPicLiked?'liked':''}">
+				<img 
+					class="liker" each={img,index in likers} src="{img}" 
+					style="transform:translateX({(-10*index)-10}px) {isPicLiked&&index===3?'scale(0)':''}; z-index:{4-index}">
+			</div>
+		</div>
+	</div>
+	<script>
+		var self=this;
+
+		this.isPicLiked=false;
+		this.likers=[
+			"https://scontent.xx.fbcdn.net/v/t1.0-1/p200x200/13669817_1117113145017292_4920305262041128067_n.jpg?oh=32783654cad84190711280a5c377221d&oe=582970EA",
+			"https://scontent.xx.fbcdn.net/v/t1.0-1/p200x200/13669817_1117113145017292_4920305262041128067_n.jpg?oh=32783654cad84190711280a5c377221d&oe=582970EA",
+			"https://scontent.xx.fbcdn.net/v/t1.0-1/p200x200/13669817_1117113145017292_4920305262041128067_n.jpg?oh=32783654cad84190711280a5c377221d&oe=582970EA",
+			"https://scontent.xx.fbcdn.net/v/t1.0-1/p200x200/13669817_1117113145017292_4920305262041128067_n.jpg?oh=32783654cad84190711280a5c377221d&oe=582970EA"];
+		this.likeCount=4;
+
+		this.likePic=function(e){
+			e.preventDefault();
+			self.update({
+				isPicLiked:!self.isPicLiked,
+				likeCount:!self.isPicLiked?self.likeCount+1:self.likeCount-1
+			});
+		}
+	</script>
+</gp-stats>
 <gp-picunit>
 	<div class="userinfo">
 		
@@ -595,54 +729,154 @@
 		
 	</div>
 </gp-picunit>
+<gp-followbutton>
+	<button class="follow {opts.following?'following':''}">
+		<icon-add if={!opts.following}></icon-add>
+		<icon-tick if={opts.following}></icon-tick>
+		<span class="text">{opts.following?'following':'follow'}</span>
+	</button>
+</gp-followbutton>
+
 <gp-profile>
-	<div class="cover" style="background-image:url('{userProfile.picture.data.url}')">
+	<div class="profilepic {userPic?'loaded':''}" style="{userPic?'background-image:url(\''+userPic+'\')':''}">
+		<div class="username">{userProfile.name}</div>
+		<gp-followbutton 
+			following={true} 
+			if={userProfile&&ownerProfile&&ownerProfile.profile.id!==userProfile.profile.id}>
+		</gp-followbutton>
 	</div>
-	<div class="userinfo">
-			<img class="userpic" src="{userBigPic}" height="100" width="100"></img>
-			<div class="userdetails">
-				<div class="username">Prateek Bhatnagar</div>
-				<div class="stats">
-					<a class="stat">
-						<span class="count">22</span> <span class="label"> posts</span> 	
-					</a>
-					<a class="stat">
-						<span class="count">22</span> <span class="label"> following</span> 	
-					</a>
-					<a class="stat">
-						<span class="count">38</span> <span class="label"> followers</span> 
-					</a>
-				</div>
+	<div class="usercontent" if={userProfile}>
+		<material-tabs useLine="true" 
+			tabs="[\{title:'OWNED'\},\{title:'CONTRIBUTIONS'\}]" 
+			selected={selectedTab}
+			tabchanged={tabChanged}>	
+		</material-tabs>
+		<div 
+			class="tabcontent"
+			onswipeleft={incTabsIndex}
+			onswiperight={decTabsIndex}>
+			<div class="tab tab-owned">
+				
 			</div>
+			<div class="tab tab-contri">
+				
+			</div>
+		</div>
 	</div>
-	<div class="usercontent">
-		<material-tabs useLine="true" tabs="[\{title:'OWNED'\},\{title:'CLONED'\}]"></material-tabs>
+	<div class="usercontent" if={!userProfile}>
+		<div class="loader">
+			<material-spinner></material-spinner>	
+		</div>
 	</div>
 	<script>
 		var self = this;
 		var userStore = veronica.flux.Stores.getStore("UserStore");
+		var userAction = veronica.flux.Actions.getAction("UserActions");
+		var pid=veronica.getCurrentState().data[':pid'];
+		var userProfileEventSubscribed=false;
 
-		this.userProfile = userStore.getUserProfile();
-		this.userBigPic = userStore.getUserBigPic();
-				
-		this.on("mount",function(){
+		this.userProfile = userStore.getUserProfile(pid);
+		this.ownerProfile = userStore.getUserProfile("me");
+		this.userPic = null;
+		this.selectedTab=0;
+
+		function setUserPic(profile){
+			var img = new Image();
+			img.onload=function(){
+				self.update({userPic : img.src});
+			}
+			img.src=profile.full_profile_url;
+		}
+
+		function setUserProfile(){
+			self.update({
+				userProfile:userStore.getUserProfile(pid)
+			});
+			setUserPic(userStore.getUserProfile(pid));
+		}
+
+		this.incTabsIndex=function(e){
+			console.log("swipe inc");
+			if(this.selectedTab<1){
+				self.update({selectedTab:this.selectedTab+1});
+			}
+		}
+		this.decTabsIndex=function(e){
+			console.log("swipe dec");
+			if(this.selectedTab>0){
+				self.update({selectedTab:this.selectedTab-1});
+			}
+		}
+
+		this.tabChanged=function(){
+			console.log("tab changed");
+		}
+
+		this.on("mount",()=>{
+			userAction.fetchUserProfile(pid, userStore.getSessionId());
+			if(!this.userProfile){
+				userProfileEventSubscribed=true;
+				userStore.subscribe("user:profile:fetched",setUserProfile);
+			}else{
+				setUserPic(this.userProfile);
+			}
 
 		});
+
+		this.on("unmount",(e)=>{
+			if(userProfileEventSubscribed){
+				userStore.unsubscribe("user:profile:fetched",setUserProfile);
+			}
+		})
 	</script>
 </gp-profile>
 
 function UserAction(){
+
+	this.fetchUserProfile=function(uid, sid){
+		fetch(apiBase+"/user/profile/details/"+uid,{
+			headers: Object.assign({}, defaultHeaders, {'x-session-id': sid, 'x-account-id': sid})
+		})
+		.then(res=>res.json())
+		.then(data=>{
+			this.Dispatcher.trigger("user:fetchprofile:success",data);
+		}).catch(e=>{
+			this.Dispatcher.trigger("user:fetchprofile:failed",e);
+		});
+	}
+
+	this.loginUser=(fbprofile,oauth)=>{
+		var user={};
+		fetch(window.apiBase+"/user/signIn",{
+			headers:window.defaultHeaders,
+			method:"POST",
+			body:JSON.stringify(
+			{
+			  "user_details": {
+				"avatar_url": fbprofile.picture.data.url,
+				"name": fbprofile.name,
+				"email": fbprofile.email,
+				"id": fbprofile.id
+			  },
+			  "oauth_credentials": {
+				"oauth_response": {
+			  	"access_token": oauth.authResponse.accessToken
+				}
+			  }
+			})
+		})
+		.then(res=>res.json())
+		.then(data=>{
+			this.Dispatcher.trigger("user:login:success",data);
+		}).catch(e=>{
+			this.Dispatcher.trigger("user:login:failure",{data:e});
+		})
+	}
+
     this.setUserProfile=function(profile){
         this.Dispatcher.trigger("user:setprofile",{profile:profile});
     }
 
-    this.setAuthCredentials=function(authcredentials){
-        this.Dispatcher.trigger("user:setcredentials",{credentials:authcredentials});
-    }
-
-	this.setBigPic=function(bigpicurl){
-	    this.Dispatcher.trigger("user:bigpic",{bigpic:bigpicurl});
-	}    
 }
 
 veronica.flux.Actions.createAction("UserActions",UserAction); 
@@ -668,51 +902,69 @@ function NavigationActions(){
 
 veronica.flux.Actions.createAction("NavigationActions",NavigationActions); 
  
+function ImageActions(){
+    this.saveImage=function(img,tags,description,sessionId){
+        console.log(LZW.encode(img).length,img.length);
+        fetch(window.apiBase+"/image/save",{
+            headers: Object.assign({},window.defaultHeaders,{'x-session-id': sessionId}),
+            method: "POST",
+            body: JSON.stringify({
+              "image": LZW.encode(img),
+              "tags": [
+                "string"
+              ],
+              "account_id": sessionId,
+              "description": "string",
+              "title": "string"
+            })
+        })
+        //this.Dispatcher.trigger("img:save",{});
+    }
+   
+}
+
+veronica.flux.Actions.createAction("ImageActions",ImageActions); 
+ 
 function UserStore(){
-    var user={
-        oAuthCredentials:null,
-        userProfile:null,
-        bigPic:null,
-    };
 
-    user=localStorage.user&&JSON.parse(localStorage.user)||user;
+    var sessionId=localStorage.sid||null;
+    var users={};
 
+    users["me"]=localStorage.user&&JSON.parse(localStorage.user)||null;
+    users[users["me"].account_id]=users["me"];
     //Register for actions
-    this.Dispatcher.register("user:setprofile",setUserProfile);
-    this.Dispatcher.register("user:setcredentials",setOAuthCredentials);
-    this.Dispatcher.register("user:bigpic",setUserBigPic);
 
-    function setOAuthCredentials(data){
-        user.oAuthCredentials = data.credentials;
-        localStorage.user = JSON.stringify(user);
+    this.Dispatcher.register("user:login:success",(data)=>{
+        sessionId=data.session_id;
+        users["me"]=data.profile_details.user;
+        users[users["me"].account_id]=users["me"];
+        localStorage.sid = sessionId;
+        localStorage.user = JSON.stringify(users["me"]);
+        this.emit("user:login:success");
+    });
+
+    this.Dispatcher.register("user:login:failure",(data)=>{
+        this.emit("user:login:failure");
+    });
+
+    this.Dispatcher.register("user:fetchprofile:success",(data)=>{
+        users[data.user.account_id]=data.user;
+        this.emit("user:profile:fetched");
+    });
+
+    this.getUserProfile=function(uid){
+        return users[uid];
     }
 
-    function setUserProfile(data){
-        user.userProfile = data.profile;
-        localStorage.user = JSON.stringify(user);
-    }
-
-    function setUserBigPic(data){
-        user.bigPic=data.bigpic;
-        localStorage.user = JSON.stringify(user);
-    }
-
-    this.getOAuthCredentials=function(){
-    	return user.oAuthCredentials;
-    }
-
-    this.getUserProfile=function(){
-        return user.userProfile;
-    }
-
-    this.getUserBigPic=function(){
-        return user.bigPic;
+    this.getSessionId=function(){
+        return sessionId;
     }
 
 }
  
 //creating an store 
 veronica.flux.Stores.createStore("UserStore",UserStore);  
+
 function RouteStore(){
     var prevRoute=null;
     var currRoute=null;

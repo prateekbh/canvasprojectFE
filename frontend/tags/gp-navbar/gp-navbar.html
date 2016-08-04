@@ -1,7 +1,7 @@
 <gp-navbar>
 	<nav class="{isNavBarOpen?'opened':'closed'}" onswipeleft={closeNavBar}>
 		<div class="userinfo">
-			<img class="pic" width="60" height="60" src="{userProfile.picture.data.url}"></img>
+			<img class="pic" width="60" height="60" src="{userProfile.avatar_url}"></img>
 			<div class="name">{userProfile.name}</div>
 		</div>
 		<div class="navcontents">
@@ -26,19 +26,16 @@
 					<span class="text">New Canvas</span>
 				</a>
 			</div>
-			<div class="others">
-				<div class="othercontainers">
-					<a class="navlink" href="/search">
-						<svg class="icon" fill="#FFFFFF" height="24" viewBox="0 0 24 24" width="24">
-						    <path d="M0 0h24v24H0z" fill="none"/>
-						    <path d="M13 3h-2v10h2V3zm4.83 2.17l-1.42 1.42C17.99 7.86 19 9.81 19 12c0 3.87-3.13 7-7 7s-7-3.13-7-7c0-2.19 1.01-4.14 2.58-5.42L6.17 5.17C4.23 6.82 3 9.26 3 12c0 4.97 4.03 9 9 9s9-4.03 9-9c0-2.74-1.23-5.18-3.17-6.83z"/>
-						</svg>
-						<span class="text">Logout</span>
-					</a>
-				</div>
-			</div>
 		</div>
-		
+		<div class="settings">
+			<a class="navlink" href="/search">
+				<svg class="icon" fill="#FFFFFF" height="24" viewBox="0 0 24 24" width="24">
+				    <path d="M0 0h24v24H0z" fill="none"/>
+				    <path d="M13 3h-2v10h2V3zm4.83 2.17l-1.42 1.42C17.99 7.86 19 9.81 19 12c0 3.87-3.13 7-7 7s-7-3.13-7-7c0-2.19 1.01-4.14 2.58-5.42L6.17 5.17C4.23 6.82 3 9.26 3 12c0 4.97 4.03 9 9 9s9-4.03 9-9c0-2.74-1.23-5.18-3.17-6.83z"/>
+				</svg>
+				<span class="text">Logout</span>
+			</a>
+		</div>
 	</nav>
 	<script>
 		var self=this;
@@ -49,12 +46,17 @@
 		var navStore=veronica.flux.Stores.getStore("NavigationStore");
 		var userStore=veronica.flux.Stores.getStore("UserStore");
 
-		this.userProfile=userStore.getUserProfile();
+		this.userProfile=userStore.getUserProfile("me");
 
 		function changeNavBarStatus(){
 			self.update({ 
 				isNavBarOpen:navStore.getNavBarStatus()&&navStore.getModalStatus()
 			});
+			if(self.isNavBarOpen){
+				document.body.classList.add("noscroll");
+			} else {
+				document.body.classList.remove("noscroll");
+			}
 		}
 
 		this.closeNavBar=function(e){
@@ -67,7 +69,7 @@
 			navStore.subscribe("nav:modalchange",changeNavBarStatus);
 		});
 
-		this.on("usmount",function(){
+		this.on("unmount",function(){
 			navStore.unsubscribe("nav:statuschange",changeNavBarStatus);
 			navStore.unsubscribe("nav:modalchange",changeNavBarStatus);
 		});

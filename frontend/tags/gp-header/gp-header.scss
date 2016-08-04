@@ -1,14 +1,22 @@
 gp-header{
-	display: flex;
-	align-items:center;
 	position: fixed;
 	z-index: 10;
 	left: 0px;
 	top:0px;
-	background-color: #3F51B5;
 	width: 100%;
-	padding: 15px 0;
-	height: 66px;
+	.header{
+		display: flex;
+		align-items: center;
+		background-color: #3F51B5;
+		padding: 15px 0;
+		height: 66px;
+		&.profile{
+			background-color: transparent;
+			.title{
+				opacity: 0;
+			}
+		}
+	}
 
 	.nav{
 		flex:1;

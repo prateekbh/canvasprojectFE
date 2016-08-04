@@ -1,10 +1,12 @@
 <gp-home>
-	<h1>KrowdKanvas</h1>
+	<gp-pictureunit></gp-pictureunit>
+	<gp-pictureunit></gp-pictureunit>
 	<script>
 		var userStore=veronica.flux.Stores.getStore("UserStore");
 		
 		this.on("mount",function(){
-			if(userStore.getUserProfile()===null)
+			console.log(userStore.getUserProfile("me"));
+			if(!userStore.getUserProfile("me"))
 			{
 				veronica.loc("/login",true);
 			}else{

@@ -68,7 +68,7 @@
 			context.fill();			
 		}
 
-		this.on("mount",function(e){
+		this.on("mount",(e)=>{
 			self.update({ispickerShown:false});
 			setTimeout(function(){
 				self.update({showWheel:true});

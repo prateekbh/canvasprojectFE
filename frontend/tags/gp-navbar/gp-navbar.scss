@@ -1,6 +1,8 @@
 gp-navbar{
 	display: block;
 	nav{
+		display: flex;
+		flex-direction:column;
 		position: fixed;
 		left: 0px;
 		top:0px;
@@ -53,20 +55,11 @@ gp-navbar{
 		}
 	}
 	.navcontents{
-		display: flex;
+		flex:1;
 		flex-direction:column;
 		height: 100%;
 	}
-	.navlinks{
-		flex:8;
-	}
-	.others{
-		flex:2.4;
-	}
-	.othercontainers{
-		border-top: 1px solid #aaa;
-		display: flex;
-		height: 100%;
-		flex-direction: column;
+	.settings{
+		border-top:1px solid #455A64;
 	}
 }

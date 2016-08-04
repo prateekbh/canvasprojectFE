@@ -1,11 +1,13 @@
 var fluxFiles = [
     "./actions/userActions.js",
     "./actions/navigationActions.js",
+    "./actions/imageActions.js",
     "./stores/userStore.js",
     "./stores/routeStore.js",
     "./stores/navigationStore.js"
 ];
 var vendorFiles = [
+    "./node_modules/node-lzw/lib/lzw.js", 
     "./node_modules/riot/riot.js", 
     "./node_modules/riot-mui/build/js/riot-mui.js",
     "./node_modules/veronica-x/veronica.js",
@@ -62,6 +64,18 @@ module.exports = function(grunt) {
             }
         },
 
+        babel: {
+            options: {
+                sourceMap: true,
+                presets: ['es2015-riot']
+            },
+            dist: {
+                files: {
+                    './bin/tags/tags.es5.js':'./bin/tags/tags.js'
+                }
+            }
+        },
+
         watch: {
           scripts: {
             files: ['./styles/*', './actions/*','./stores/*','./tags/**/*'],
@@ -82,6 +96,9 @@ module.exports = function(grunt) {
     // Load the grunt riot so that transformation of tags is done on server itself
     grunt.loadNpmTasks('grunt-riot');
 
+    // Load the plugin that provides the "babel" task.
+    grunt.loadNpmTasks('grunt-babel');
+
     // Load the plugin that provides the "watch" task.
     grunt.loadNpmTasks('grunt-contrib-watch');
 
@@ -89,7 +106,7 @@ module.exports = function(grunt) {
     grunt.registerTask("make-css", ["concat:concat_scss", "sass"]);
 
     //Task for building javascript static contents of the application
-    grunt.registerTask("make-js", ["concat:concat_js", "concat:concat_tags", "riot"]);
+    grunt.registerTask("make-js", ["concat:concat_js", "concat:concat_tags", "riot", "babel"]);
 
     //Task for building the static contents of the application
     grunt.registerTask("default", ["make-css", "make-js"]);

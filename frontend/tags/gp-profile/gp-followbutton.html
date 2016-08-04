@@ -1,0 +1,7 @@
+<gp-followbutton>
+	<button class="follow {opts.following?'following':''}">
+		<icon-add if={!opts.following}></icon-add>
+		<icon-tick if={opts.following}></icon-tick>
+		<span class="text">{opts.following?'following':'follow'}</span>
+	</button>
+</gp-followbutton>
