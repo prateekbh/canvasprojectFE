@@ -752,14 +752,14 @@
 			tabchanged={tabChanged}>	
 		</material-tabs>
 		<div 
-			class="tabcontent"
+			class="tabcontent tab{selectedTab}"
 			onswipeleft={incTabsIndex}
 			onswiperight={decTabsIndex}>
 			<div class="tab tab-owned">
-				
+				Tab1
 			</div>
 			<div class="tab tab-contri">
-				
+				Tab2
 			</div>
 		</div>
 	</div>
@@ -774,7 +774,7 @@
 		var userAction = veronica.flux.Actions.getAction("UserActions");
 		var pid=veronica.getCurrentState().data[':pid'];
 		var userProfileEventSubscribed=false;
-
+		var $tabs=null;
 		this.userProfile = userStore.getUserProfile(pid);
 		this.ownerProfile = userStore.getUserProfile("me");
 		this.userPic = null;
@@ -796,24 +796,25 @@
 		}
 
 		this.incTabsIndex=function(e){
-			console.log("swipe inc");
 			if(this.selectedTab<1){
 				self.update({selectedTab:this.selectedTab+1});
+				$tabs._tag.changeTab(this.selectedTab);
 			}
 		}
 		this.decTabsIndex=function(e){
-			console.log("swipe dec");
 			if(this.selectedTab>0){
 				self.update({selectedTab:this.selectedTab-1});
+				$tabs._tag.changeTab(this.selectedTab);
 			}
 		}
 
 		this.tabChanged=function(){
-			console.log("tab changed");
+			self.update({selectedTab:$tabs._tag.selected});
 		}
 
 		this.on("mount",()=>{
 			userAction.fetchUserProfile(pid, userStore.getSessionId());
+			$tabs=this.root.querySelector("material-tabs");
 			if(!this.userProfile){
 				userProfileEventSubscribed=true;
 				userStore.subscribe("user:profile:fetched",setUserProfile);
@@ -931,10 +932,18 @@ function UserStore(){
     var users={};
 
     users["me"]=localStorage.user&&JSON.parse(localStorage.user)||null;
-    users[users["me"].account_id]=users["me"];
+    
+    if(users["me"]){
+        users[users["me"].account_id]=users["me"];    
+    }
+    
     //Register for actions
 
     this.Dispatcher.register("user:login:success",(data)=>{
+        //start caching big image 
+        var img=new Image();
+        img.src=data.profile_details.user.full_profile_url;
+        
         sessionId=data.session_id;
         users["me"]=data.profile_details.user;
         users[users["me"].account_id]=users["me"];
@@ -963,8 +972,7 @@ function UserStore(){
 }
  
 //creating an store 
-veronica.flux.Stores.createStore("UserStore",UserStore);  
-
+veronica.flux.Stores.createStore("UserStore",UserStore);
 function RouteStore(){
     var prevRoute=null;
     var currRoute=null;

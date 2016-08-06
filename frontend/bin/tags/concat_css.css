@@ -1595,7 +1595,12 @@ gp-profile {
     max-width: 100%;
     overflow: hidden; }
   gp-profile .tabcontent {
-    white-space: nowrap; }
+    white-space: nowrap;
+    will-change: transform;
+    transition-duration: 300ms;
+    transition-property: transform; }
+    gp-profile .tabcontent.tab1 {
+      transform: translateX(-100vw); }
   gp-profile .tab {
     display: inline-block;
     width: 100vw;

@@ -4,10 +4,18 @@ function UserStore(){
     var users={};
 
     users["me"]=localStorage.user&&JSON.parse(localStorage.user)||null;
-    users[users["me"].account_id]=users["me"];
+    
+    if(users["me"]){
+        users[users["me"].account_id]=users["me"];    
+    }
+    
     //Register for actions
 
     this.Dispatcher.register("user:login:success",(data)=>{
+        //start caching big image 
+        var img=new Image();
+        img.src=data.profile_details.user.full_profile_url;
+        
         sessionId=data.session_id;
         users["me"]=data.profile_details.user;
         users[users["me"].account_id]=users["me"];
@@ -36,4 +44,4 @@ function UserStore(){
 }
  
 //creating an store 
-veronica.flux.Stores.createStore("UserStore",UserStore);  
+veronica.flux.Stores.createStore("UserStore",UserStore);

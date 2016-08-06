@@ -783,6 +783,12 @@ gp-profile{
 	}
 	.tabcontent{
 		white-space: nowrap;
+		will-change: transform;
+		transition-duration: 300ms;
+		transition-property: transform;
+		&.tab1{
+			transform:translateX(-100vw);
+		}
 	}
 	.tab{
 		display: inline-block;

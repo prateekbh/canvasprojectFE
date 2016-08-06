@@ -3333,10 +3333,6 @@ this.on('mount', function () {
     _this.setLinePosition();
 });
 
-this.on('update',(val)=>{
-    this.changeTab(opts.__selected);
-});
-
 this.setWidth = function () {
     [].forEach.call(_this.root.querySelectorAll('material-button'), function (node) {
         node.style.width = _this.line.style.width = (100 / _this.tabs.length).toFixed(2) + '%';

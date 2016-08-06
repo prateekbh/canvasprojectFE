@@ -485,13 +485,13 @@ riot.tag2('gp-picunit', '<div class="userinfo"></div><div class="container-pic">
 riot.tag2('gp-followbutton', '<button class="follow {opts.following?\'following\':\'\'}"><icon-add if="{!opts.following}"></icon-add><icon-tick if="{opts.following}"></icon-tick><span class="text">{opts.following?\'following\':\'follow\'}</span></button>', '', '', function(opts) {
 });
 
-riot.tag2('gp-profile', '<div class="profilepic {userPic?\'loaded\':\'\'}" riot-style="{userPic?\'background-image:url(\\\'\'+userPic+\'\\\')\':\'\'}"><div class="username">{userProfile.name}</div><gp-followbutton following="{true}" if="{userProfile&&ownerProfile&&ownerProfile.profile.id!==userProfile.profile.id}"></gp-followbutton></div><div class="usercontent" if="{userProfile}"><material-tabs useline="true" tabs="[\\{title:\'OWNED\'\\},\\{title:\'CONTRIBUTIONS\'\\}]" __selected="{selectedTab}" tabchanged="{tabChanged}"></material-tabs><div class="tabcontent" onswipeleft="{incTabsIndex}" onswiperight="{decTabsIndex}"><div class="tab tab-owned"></div><div class="tab tab-contri"></div></div></div><div class="usercontent" if="{!userProfile}"><div class="loader"><material-spinner></material-spinner></div></div>', '', '', function(opts) {
+riot.tag2('gp-profile', '<div class="profilepic {userPic?\'loaded\':\'\'}" riot-style="{userPic?\'background-image:url(\\\'\'+userPic+\'\\\')\':\'\'}"><div class="username">{userProfile.name}</div><gp-followbutton following="{true}" if="{userProfile&&ownerProfile&&ownerProfile.profile.id!==userProfile.profile.id}"></gp-followbutton></div><div class="usercontent" if="{userProfile}"><material-tabs useline="true" tabs="[\\{title:\'OWNED\'\\},\\{title:\'CONTRIBUTIONS\'\\}]" __selected="{selectedTab}" tabchanged="{tabChanged}"></material-tabs><div class="tabcontent tab{selectedTab}" onswipeleft="{incTabsIndex}" onswiperight="{decTabsIndex}"><div class="tab tab-owned"> Tab1 </div><div class="tab tab-contri"> Tab2 </div></div></div><div class="usercontent" if="{!userProfile}"><div class="loader"><material-spinner></material-spinner></div></div>', '', '', function(opts) {
 		var self = this;
 		var userStore = veronica.flux.Stores.getStore("UserStore");
 		var userAction = veronica.flux.Actions.getAction("UserActions");
 		var pid=veronica.getCurrentState().data[':pid'];
 		var userProfileEventSubscribed=false;
-
+		var $tabs=null;
 		this.userProfile = userStore.getUserProfile(pid);
 		this.ownerProfile = userStore.getUserProfile("me");
 		this.userPic = null;
@@ -513,24 +513,25 @@ riot.tag2('gp-profile', '<div class="profilepic {userPic?\'loaded\':\'\'}" riot-
 		}
 
 		this.incTabsIndex=function(e){
-			console.log("swipe inc");
 			if(this.selectedTab<1){
 				self.update({selectedTab:this.selectedTab+1});
+				$tabs._tag.changeTab(this.selectedTab);
 			}
 		}
 		this.decTabsIndex=function(e){
-			console.log("swipe dec");
 			if(this.selectedTab>0){
 				self.update({selectedTab:this.selectedTab-1});
+				$tabs._tag.changeTab(this.selectedTab);
 			}
 		}
 
 		this.tabChanged=function(){
-			console.log("tab changed");
+			self.update({selectedTab:$tabs._tag.selected});
 		}
 
 		this.on("mount",()=>{
 			userAction.fetchUserProfile(pid, userStore.getSessionId());
+			$tabs=this.root.querySelector("material-tabs");
 			if(!this.userProfile){
 				userProfileEventSubscribed=true;
 				userStore.subscribe("user:profile:fetched",setUserProfile);
@@ -647,10 +648,18 @@ function UserStore(){
     var users={};
 
     users["me"]=localStorage.user&&JSON.parse(localStorage.user)||null;
-    users[users["me"].account_id]=users["me"];
+    
+    if(users["me"]){
+        users[users["me"].account_id]=users["me"];    
+    }
+    
     //Register for actions
 
     this.Dispatcher.register("user:login:success",(data)=>{
+        //start caching big image 
+        var img=new Image();
+        img.src=data.profile_details.user.full_profile_url;
+        
         sessionId=data.session_id;
         users["me"]=data.profile_details.user;
         users[users["me"].account_id]=users["me"];
@@ -679,8 +688,7 @@ function UserStore(){
 }
  
 //creating an store 
-veronica.flux.Stores.createStore("UserStore",UserStore);  
-
+veronica.flux.Stores.createStore("UserStore",UserStore);
 function RouteStore(){
     var prevRoute=null;
     var currRoute=null;
