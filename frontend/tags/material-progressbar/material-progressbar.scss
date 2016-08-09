@@ -1,0 +1,36 @@
+material-progressbar{
+	display: inline-block;
+	height: 2px;
+	.bar{
+		height: 2px;
+		position: relative;
+		display: inline-block;
+		width: 100%;
+		background-color: #CFD8DC;
+		overflow: hidden;
+	}
+	.progress{
+		position: absolute;
+		background-color: #f43137;
+		height: 2px;
+		top: 0;
+		bottom: 0;
+		left: 0;
+		margin: auto;
+		will-change:transform;
+		&.moving{
+			animation-name:movingbar;
+			animation-duration: 1200ms;
+			animation-iteration-count: infinite;
+		}
+	}
+}
+
+@keyframes movingbar{
+	0%{
+		transform: translateX( -100% ) scaleX( 0.2 );
+	}
+	100%{
+		transform: translateX( 200% ) scaleX( 1 );
+	}
+}

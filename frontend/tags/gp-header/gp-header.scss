@@ -10,11 +10,21 @@ gp-header{
 		background-color: #3F51B5;
 		padding: 15px 0;
 		height: 66px;
+		will-change: background-color;
+		transition-property: background-color;
+		transition-duration: 300ms;
+		
 		&.profile{
 			background-color: transparent;
 			.title{
 				opacity: 0;
 			}
+		}
+		&.profile.forceshow{
+			background-color: #3F51B5;
+			.title{
+				opacity: 1;
+			}	
 		}
 	}
 

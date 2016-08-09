@@ -4,7 +4,8 @@ var fluxFiles = [
     "./actions/imageActions.js",
     "./stores/userStore.js",
     "./stores/routeStore.js",
-    "./stores/navigationStore.js"
+    "./stores/navigationStore.js",
+    "./stores/imageStore.js",
 ];
 var vendorFiles = [
     "./node_modules/node-lzw/lib/lzw.js", 

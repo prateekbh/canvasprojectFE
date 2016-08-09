@@ -1,8 +1,8 @@
 <gp-navbar>
 	<nav class="{isNavBarOpen?'opened':'closed'}" onswipeleft={closeNavBar}>
 		<div class="userinfo">
-			<img class="pic" width="60" height="60" src="{userProfile.avatar_url}"></img>
-			<div class="name">{userProfile.name}</div>
+			<img class="pic" width="60" height="60" src="{userProfile.user.avatar_url}"></img>
+			<div class="name">{userProfile.user.name}</div>
 		</div>
 		<div class="navcontents">
 			<div class="navlinks">

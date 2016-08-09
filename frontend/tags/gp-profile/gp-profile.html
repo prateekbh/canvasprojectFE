@@ -3,12 +3,12 @@
 		<div class="username">{userProfile.name}</div>
 		<gp-followbutton 
 			following={true} 
-			if={userProfile&&ownerProfile&&ownerProfile.profile.id!==userProfile.profile.id}>
+			if={userProfile&&ownerProfile&&ownerProfile.user.profile.id!==userProfile.user.profile.id}>
 		</gp-followbutton>
 	</div>
 	<div class="usercontent" if={userProfile}>
 		<material-tabs useLine="true" 
-			tabs="[\{title:'OWNED'\},\{title:'CONTRIBUTIONS'\}]" 
+			tabs={tabs} 
 			selected={selectedTab}
 			tabchanged={tabChanged}>	
 		</material-tabs>
@@ -17,7 +17,10 @@
 			onswipeleft={incTabsIndex}
 			onswiperight={decTabsIndex}>
 			<div class="tab tab-owned">
-				Tab1
+				<div class="ownedcontainer">
+					<img each={pic, index in userProfile.owned_images} height={(window.innerWidth/3)-2} class="ownedpic" src="{pic.url}"></img>	
+				</div>
+				
 			</div>
 			<div class="tab tab-contri">
 				Tab2
@@ -36,24 +39,32 @@
 		var pid=veronica.getCurrentState().data[':pid'];
 		var userProfileEventSubscribed=false;
 		var $tabs=null;
+
 		this.userProfile = userStore.getUserProfile(pid);
 		this.ownerProfile = userStore.getUserProfile("me");
 		this.userPic = null;
 		this.selectedTab=0;
+		this.tabs=[
+			{title:'OWNED'},
+			{title:'CONTRIBUTIONS'}
+		];
 
 		function setUserPic(profile){
 			var img = new Image();
 			img.onload=function(){
 				self.update({userPic : img.src});
 			}
-			img.src=profile.full_profile_url;
+			img.src=profile.user.full_profile_url;
 		}
 
 		function setUserProfile(){
+			var userProfile = userStore.getUserProfile(pid);
 			self.update({
-				userProfile:userStore.getUserProfile(pid)
+				userProfile:userProfile,
+				tabs:[{title:'OWNED (' + userProfile.owned_images.length + ')'},{title:'CONTRIBUTIONS (' + userProfile.cloned_images.length + ')'}]
 			});
 			setUserPic(userStore.getUserProfile(pid));
+			$tabs=self.root.querySelector("material-tabs");
 		}
 
 		this.incTabsIndex=function(e){

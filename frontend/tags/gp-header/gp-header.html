@@ -1,5 +1,5 @@
 <gp-header>
-	<div class="header {currState}">
+	<div class="header {currState} {forceShow?'forceshow':''}">
 		<div class="nav">
 			<button class="menu {isBackEnabled?'back':''}" onclick={menuClick}>
 				<svg fill="#FFFFFF" height="24" viewBox="0 0 24 24" width="24">
@@ -23,8 +23,18 @@
 
 		var navActions=veronica.flux.Actions.getAction("NavigationActions");
 		var routeStore=veronica.flux.Stores.getStore("RouteStore");
+		var scrollThrottler=null;
 
+		this.forceShow=false;
 		this.currState="NA";
+
+		function scrollListener(){
+			if(window.scrollY>420){
+				self.update({ forceShow: true});
+			}else{
+				self.update({ forceShow: false});
+			}
+		}
 
 
 		function checkBackButton(){
@@ -41,6 +51,15 @@
 					currState:currState
 				});
 			}
+
+			window.addEventListener('scroll',(e)=>{
+				if(self.currState==='profile'){
+					if(scrollThrottler){
+						clearTimeout(scrollThrottler);
+					}
+					scrollThrottler = setTimeout(scrollListener,300);
+				}
+			},false);
 		}
 
 		this.isBackEnabled=false;

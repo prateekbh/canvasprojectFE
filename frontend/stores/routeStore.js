@@ -13,11 +13,19 @@ function RouteStore(){
     /* hack for push state */
     (function(history){
         var pushState = history.pushState;
+        var replaceState = history.replaceState;
         history.pushState = function(state) {
             if (typeof history.onpushstate == "function") {
                 history.onpushstate({state: state});
             }
             pushState.apply(history, arguments);
+            prevRoute=currRoute;
+            currRoute=state;
+            self.emit("route:changed");
+        }
+        
+        history.replaceState = function(state) {
+            replaceState.apply(history, arguments);
             prevRoute=currRoute;
             currRoute=state;
             self.emit("route:changed");

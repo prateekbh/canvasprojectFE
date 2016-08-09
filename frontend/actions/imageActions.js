@@ -1,6 +1,5 @@
 function ImageActions(){
     this.saveImage=function(img,tags,description,sessionId){
-        console.log(LZW.encode(img).length,img.length);
         fetch(window.apiBase+"/image/save",{
             headers: Object.assign({},window.defaultHeaders,{'x-session-id': sessionId}),
             method: "POST",
@@ -9,14 +8,17 @@ function ImageActions(){
               "tags": [
                 "string"
               ],
-              "account_id": sessionId,
               "description": "string",
               "title": "string"
             })
         })
-        //this.Dispatcher.trigger("img:save",{});
+        .then(res=>res.json())
+        .then(data=>{
+          this.Dispatcher.trigger("img:save:success",data);  
+        }).catch(e=>{
+          this.Dispatcher.trigger("img:save:failed",{});  
+        });
     }
-   
 }
 
 veronica.flux.Actions.createAction("ImageActions",ImageActions); 

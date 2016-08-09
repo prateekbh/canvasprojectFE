@@ -17,7 +17,7 @@ function UserStore(){
         img.src=data.profile_details.user.full_profile_url;
         
         sessionId=data.session_id;
-        users["me"]=data.profile_details.user;
+        users["me"]=data.profile_details;
         users[users["me"].account_id]=users["me"];
         localStorage.sid = sessionId;
         localStorage.user = JSON.stringify(users["me"]);
@@ -29,7 +29,7 @@ function UserStore(){
     });
 
     this.Dispatcher.register("user:fetchprofile:success",(data)=>{
-        users[data.user.account_id]=data.user;
+        users[data.user.account_id]=data;
         this.emit("user:profile:fetched");
     });
 

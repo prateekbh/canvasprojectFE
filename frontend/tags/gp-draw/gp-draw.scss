@@ -8,6 +8,17 @@ gp-draw{
 		animation-duration:300ms;
 		animation-fill-mode:forwards;
 	}
+	material-progressbar{
+		width: 50%;
+	}
+	.pbar{
+		text-align: center;
+		position: absolute;
+    top: 100px;
+    left: 0;
+    height: 10px;
+    width: 100%;
+	}
 	.controls{
 		position: absolute;
 		right: 15px;
