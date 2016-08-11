@@ -1,5 +1,5 @@
 function ImageActions(){
-    this.saveImage=function(img,tags,description,sessionId){
+    this.saveImage=function(imgId, img,tags,description,sessionId){
         fetch(window.apiBase+"/image/save",{
             headers: Object.assign({},window.defaultHeaders,{'x-session-id': sessionId}),
             method: "POST",
@@ -9,7 +9,8 @@ function ImageActions(){
                 "string"
               ],
               "description": "string",
-              "title": "string"
+              "title": "string",
+              "image_id": imgId
             })
         })
         .then(res=>res.json())
@@ -20,7 +21,11 @@ function ImageActions(){
         });
     }
 
-    this.getImage = function (imageId){
+    this.publishImage=function(imageId){
+      //implement fetch here
+    }
+
+    this.fetchImage = function (imageId){
       fetch(window.apiBase+"/image/details/"+imageId)
       .then(res=>res.json())
       .then(data=>{

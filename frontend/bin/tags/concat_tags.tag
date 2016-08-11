@@ -176,10 +176,14 @@
                 </div>
             </div>
         </div>
-        <material-dialog title="Publish image" shown={isPublishPopupShown} actions={['NO','YES']} onaction={popupaction}>
+        <material-dialog 
+          title="Publish image" 
+          shown={isPublishPopupShown} 
+          actions={['CANCEL','PUBLISH']} 
+          onaction={popupaction}>
           <div>
-            <material-input placeholder="enter title" onchange={changeTitle}></material-input>
-            <material-input placeholder="enter description"></material-input>
+            <material-input placeholder="enter title" required valuechanged={this.parent.changeTitle}></material-input>
+            <material-input placeholder="enter description" required valuechanged={this.parent.changeDesc}></material-input>
           </div>
         </material-dialog>
     </div>
@@ -206,6 +210,11 @@
     this.sheetTitle = "";
     this.showingTitleInput = false;
     this.isPublishPopupShown = false;
+    this.imgId = null;
+
+    //image properties
+    this.title="";
+    this.description="";
 
     // Brush Variables
     var el, ctx;
@@ -319,9 +328,9 @@
 
     function imageSaved() {
         var imgId = imgStore.getCurrentPicId();
-        console.log(imgId);
         self.update({
-            isSaving: false
+            isSaving: false,
+            imgId: imgId
         });
         //show toast
     }
@@ -334,7 +343,7 @@
     }
 
     function saveImage(){
-      imageActions.saveImage(el.toDataURL(), null, null, userStore.getSessionId());
+      imageActions.saveImage(this.imgId, el.toDataURL(), self.title, self.description, userStore.getSessionId());
     }
 
 
@@ -405,12 +414,26 @@
     }
 
     this.changeTitle=function(e){
-      console.log(e);
+      self.update({
+        title:e
+      });
+    }
+
+    this.changeDesc=function(e){
+      self.update({
+        description:e
+      });
     }
 
 
     this.popupaction=function(btnText){
-      console.log("BTN:",btnText);
+      switch(btnText){
+        case "CANCEL":
+          self.update({isPublishPopupShown: false});
+        case "PUBLISH":
+          saveImage();
+          imageActions.publishImage();
+      }
     }
 
 
@@ -608,7 +631,7 @@
 
 		this.on('mount',(e)=>{
 			imgStore.subscribe("img:detailsfetch:success",imageFetchSuccess);
-			imgActions.getImage(veronica.getCurrentState().data[':imageid']);
+			imgActions.fetchImage(veronica.getCurrentState().data[':imageid']);
 		});
 
 		this.on('unmount',(e)=>{
@@ -985,8 +1008,8 @@
 </gp-profile>
 
 <material-dialog>
-	<div>
-		<div if={opts.shown} class="bg"></div>
+	<div if={opts.shown}>
+		<div class="bg"></div>
 		<div class="dialog {shown:opts.shown}">
 			<div class="title">{opts.title}</div>
 			<div class="desc">
@@ -1089,7 +1112,7 @@ function NavigationActions(){
 veronica.flux.Actions.createAction("NavigationActions",NavigationActions); 
  
 function ImageActions(){
-    this.saveImage=function(img,tags,description,sessionId){
+    this.saveImage=function(imgId, img,tags,description,sessionId){
         fetch(window.apiBase+"/image/save",{
             headers: Object.assign({},window.defaultHeaders,{'x-session-id': sessionId}),
             method: "POST",
@@ -1099,7 +1122,8 @@ function ImageActions(){
                 "string"
               ],
               "description": "string",
-              "title": "string"
+              "title": "string",
+              "image_id": imgId
             })
         })
         .then(res=>res.json())
@@ -1110,7 +1134,11 @@ function ImageActions(){
         });
     }
 
-    this.getImage = function (imageId){
+    this.publishImage=function(imageId){
+      //implement fetch here
+    }
+
+    this.fetchImage = function (imageId){
       fetch(window.apiBase+"/image/details/"+imageId)
       .then(res=>res.json())
       .then(data=>{

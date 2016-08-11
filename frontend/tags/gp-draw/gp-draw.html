@@ -57,10 +57,14 @@
                 </div>
             </div>
         </div>
-        <material-dialog title="Publish image" shown={isPublishPopupShown} actions={['NO','YES']} onaction={popupaction}>
+        <material-dialog 
+          title="Publish image" 
+          shown={isPublishPopupShown} 
+          actions={['CANCEL','PUBLISH']} 
+          onaction={popupaction}>
           <div>
-            <material-input placeholder="enter title" onchange={changeTitle}></material-input>
-            <material-input placeholder="enter description"></material-input>
+            <material-input placeholder="enter title" required valuechanged={this.parent.changeTitle}></material-input>
+            <material-input placeholder="enter description" required valuechanged={this.parent.changeDesc}></material-input>
           </div>
         </material-dialog>
     </div>
@@ -87,6 +91,11 @@
     this.sheetTitle = "";
     this.showingTitleInput = false;
     this.isPublishPopupShown = false;
+    this.imgId = null;
+
+    //image properties
+    this.title="";
+    this.description="";
 
     // Brush Variables
     var el, ctx;
@@ -200,9 +209,9 @@
 
     function imageSaved() {
         var imgId = imgStore.getCurrentPicId();
-        console.log(imgId);
         self.update({
-            isSaving: false
+            isSaving: false,
+            imgId: imgId
         });
         //show toast
     }
@@ -215,7 +224,7 @@
     }
 
     function saveImage(){
-      imageActions.saveImage(el.toDataURL(), null, null, userStore.getSessionId());
+      imageActions.saveImage(this.imgId, el.toDataURL(), self.title, self.description, userStore.getSessionId());
     }
 
 
@@ -286,12 +295,26 @@
     }
 
     this.changeTitle=function(e){
-      console.log(e);
+      self.update({
+        title:e
+      });
+    }
+
+    this.changeDesc=function(e){
+      self.update({
+        description:e
+      });
     }
 
 
     this.popupaction=function(btnText){
-      console.log("BTN:",btnText);
+      switch(btnText){
+        case "CANCEL":
+          self.update({isPublishPopupShown: false});
+        case "PUBLISH":
+          saveImage();
+          imageActions.publishImage();
+      }
     }
 
 

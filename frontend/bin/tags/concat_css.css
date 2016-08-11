@@ -1725,7 +1725,6 @@ material-dialog .bg {
   background-color: rgba(0, 0, 0, 0.8); }
 
 material-dialog .dialog {
-  display: none;
   position: fixed;
   top: 50%;
   left: 0;
@@ -1743,7 +1742,6 @@ material-dialog .dialog {
   transition-property: transform;
   transform: translateY(-80%) scale(0.8); }
   material-dialog .dialog.shown {
-    display: inline-block;
     transform: translateY(-50%) scale(1); }
   material-dialog .dialog .title {
     font-size: 24px; }

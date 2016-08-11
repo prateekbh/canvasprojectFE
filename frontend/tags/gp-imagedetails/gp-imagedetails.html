@@ -18,7 +18,7 @@
 
 		this.on('mount',(e)=>{
 			imgStore.subscribe("img:detailsfetch:success",imageFetchSuccess);
-			imgActions.getImage(veronica.getCurrentState().data[':imageid']);
+			imgActions.fetchImage(veronica.getCurrentState().data[':imageid']);
 		});
 
 		this.on('unmount',(e)=>{
