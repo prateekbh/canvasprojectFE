@@ -330,7 +330,7 @@
         var imgId = imgStore.getCurrentPicId();
         self.update({
             isSaving: false,
-            imgId: imgId
+            imgId: imgId.image_id
         });
         //show toast
     }
@@ -343,7 +343,7 @@
     }
 
     function saveImage(){
-      imageActions.saveImage(this.imgId, el.toDataURL(), self.title, self.description, userStore.getSessionId());
+      imageActions.saveImage(self.imgId, el.toDataURL(), self.title, self.description, userStore.getSessionId());
     }
 
 
@@ -781,6 +781,10 @@
 			}
 		}
 
+		function getUserProfile(){
+			self.update({userProfile: userStore.getUserProfile("me")});
+		}
+
 		this.closeNavBar=function(e){
 			navActions.closeNavBar();
 			navActions.hideModal();
@@ -789,11 +793,14 @@
 		this.on("mount",function(){
 			navStore.subscribe("nav:statuschange",changeNavBarStatus);
 			navStore.subscribe("nav:modalchange",changeNavBarStatus);
+			userStore.subscribe("user:login:success",getUserProfile);
+			
 		});
 
 		this.on("unmount",function(){
 			navStore.unsubscribe("nav:statuschange",changeNavBarStatus);
 			navStore.unsubscribe("nav:modalchange",changeNavBarStatus);
+			userStore.unsubscribe("user:login:success",getUserProfile);
 		});
 	</script>
 </gp-navbar>

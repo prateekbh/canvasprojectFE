@@ -211,7 +211,7 @@
         var imgId = imgStore.getCurrentPicId();
         self.update({
             isSaving: false,
-            imgId: imgId
+            imgId: imgId.image_id
         });
         //show toast
     }
@@ -224,7 +224,7 @@
     }
 
     function saveImage(){
-      imageActions.saveImage(this.imgId, el.toDataURL(), self.title, self.description, userStore.getSessionId());
+      imageActions.saveImage(self.imgId, el.toDataURL(), self.title, self.description, userStore.getSessionId());
     }
 
 

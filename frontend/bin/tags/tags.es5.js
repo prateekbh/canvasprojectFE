@@ -218,7 +218,7 @@ riot.tag2('gp-draw', '<div class="canvascontainer"><canvas if="{showCanvas}" id=
     var imgId = imgStore.getCurrentPicId();
     self.update({
       isSaving: false,
-      imgId: imgId
+      imgId: imgId.image_id
     });
   }
 
@@ -229,7 +229,7 @@ riot.tag2('gp-draw', '<div class="canvascontainer"><canvas if="{showCanvas}" id=
   }
 
   function saveImage() {
-    imageActions.saveImage(this.imgId, el.toDataURL(), self.title, self.description, userStore.getSessionId());
+    imageActions.saveImage(self.imgId, el.toDataURL(), self.title, self.description, userStore.getSessionId());
   }
 
   this.openControls = function (e) {
@@ -536,6 +536,10 @@ riot.tag2('gp-navbar', '<nav class="{isNavBarOpen?\'opened\':\'closed\'}" onswip
     }
   }
 
+  function getUserProfile() {
+    self.update({ userProfile: userStore.getUserProfile("me") });
+  }
+
   this.closeNavBar = function (e) {
     navActions.closeNavBar();
     navActions.hideModal();
@@ -544,11 +548,13 @@ riot.tag2('gp-navbar', '<nav class="{isNavBarOpen?\'opened\':\'closed\'}" onswip
   this.on("mount", function () {
     navStore.subscribe("nav:statuschange", changeNavBarStatus);
     navStore.subscribe("nav:modalchange", changeNavBarStatus);
+    userStore.subscribe("user:login:success", getUserProfile);
   });
 
   this.on("unmount", function () {
     navStore.unsubscribe("nav:statuschange", changeNavBarStatus);
     navStore.unsubscribe("nav:modalchange", changeNavBarStatus);
+    userStore.unsubscribe("user:login:success", getUserProfile);
   });
 });
 riot.tag2('gp-picture', '<img class="pic {isloading?\'loading\':\'\'}" height="{window.innerWidth}" riot-src="{opts.img}" onload="{loaded}"></img><icon-pic class="loader"></icon-pic>', '', '', function (opts) {
