@@ -1,7 +1,9 @@
 <gp-draw>
-    <canvas if={showCanvas} id="canvas" width="800" height="800"></canvas>
+    <div class="canvascontainer">
+      <canvas if={showCanvas} id="canvas" width="800" height="800"></canvas>
+    </div>
     <div class="pbar" if={isSaving}>
-        <material-progressbar progress={0.5} moving={true}></material-progressbar>    
+        <material-progressbar progress={0.5} moving={true}></material-progressbar>
     </div>
     <div if={!isSaving} class="controls {isControlsOpen?'controlsshown':''}">
         <button class="btn-control colors" onclick={showColors}>
@@ -19,6 +21,14 @@
             <svg fill="#FFFFFF" height="24" viewBox="0 0 24 24" width="24">
                 <path d="M17 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V7l-4-4zm-5 16c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3zm3-10H5V5h10v4z" />
             </svg>
+        </button>
+        <button class="btn-control save" onclick={save}>
+            <svg fill="#FFFFFF" height="24" viewBox="0 0 24 24" width="24">
+                <path d="M17 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V7l-4-4zm-5 16c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3zm3-10H5V5h10v4z" />
+            </svg>
+        </button>
+        <button class="btn-control publish" onclick={publish}>
+            <icon-publish></icon-publish>
         </button>
         <button class="btn-control options {isControlsOpen?'controlsshown':''}" onclick={openControls}>
             <svg class="firstleg leg" fill="#FFFFFF" height="24" viewBox="0 0 24 24" width="24">
@@ -47,13 +57,19 @@
                 </div>
             </div>
         </div>
+        <material-dialog title="Publish image" shown={isPublishPopupShown} actions={['NO','YES']} onaction={popupaction}>
+          <div>
+            <material-input placeholder="enter title" onchange={changeTitle}></material-input>
+            <material-input placeholder="enter description"></material-input>
+          </div>
+        </material-dialog>
     </div>
     <script>
     var self = this;
     var imageActions = veronica.flux.Actions.getAction("ImageActions");
     var userStore = veronica.flux.Stores.getStore("UserStore");
     var imgStore = veronica.flux.Stores.getStore("ImageStore");
-    
+
     this.brushesList = [
         "Simple Pencil",
         "Simple Brush",
@@ -69,6 +85,8 @@
     this.isBottomsheetShown = false;
     this.currentControl = "";
     this.sheetTitle = "";
+    this.showingTitleInput = false;
+    this.isPublishPopupShown = false;
 
     // Brush Variables
     var el, ctx;
@@ -180,8 +198,8 @@
         ctx.closePath();
     }
 
-    function imageSaved(){
-        var imgId=imgStore.getCurrentPicId();
+    function imageSaved() {
+        var imgId = imgStore.getCurrentPicId();
         console.log(imgId);
         self.update({
             isSaving: false
@@ -189,11 +207,15 @@
         //show toast
     }
 
-    function imageSaveFailed(){
+    function imageSaveFailed() {
         self.update({
             isSaving: false
         });
         //show toast
+    }
+
+    function saveImage(){
+      imageActions.saveImage(el.toDataURL(), null, null, userStore.getSessionId());
     }
 
 
@@ -250,13 +272,32 @@
             isSaving: true,
             isControlsOpen: false
         });
-        imageActions.saveImage(el.toDataURL(), null, null, userStore.getSessionId());
+        saveImage();
+    }
+
+    this.publish = function(e){
+      e.preventDefault();
+      this.closeSheet(e);
+      self.update({
+          isPublishPopupShown: true,
+          isControlsOpen: false
+      });
+      saveImage();
+    }
+
+    this.changeTitle=function(e){
+      console.log(e);
+    }
+
+
+    this.popupaction=function(btnText){
+      console.log("BTN:",btnText);
     }
 
 
     this.on("mount", function() {
-        imgStore.subscribe("img:save:success",imageSaved);
-        imgStore.subscribe("img:save:failed",imageSaveFailed);
+        imgStore.subscribe("img:save:success", imageSaved);
+        imgStore.subscribe("img:save:failed", imageSaveFailed);
 
         setTimeout(function() {
             self.update({
@@ -275,8 +316,8 @@
 
     this.on("unmount", function() {
         document.body.classList.remove("noscroll");
-        imgStore.unsubscribe("img:save:success",imageSaved);
-        imgStore.unsubscribe("img:save:failed",imageSaveFailed);
+        imgStore.unsubscribe("img:save:success", imageSaved);
+        imgStore.unsubscribe("img:save:failed", imageSaveFailed);
     });
     </script>
 </gp-draw>

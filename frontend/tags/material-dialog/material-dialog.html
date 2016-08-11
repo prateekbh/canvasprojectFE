@@ -1,0 +1,28 @@
+<material-dialog>
+	<div>
+		<div if={opts.shown} class="bg"></div>
+		<div class="dialog {shown:opts.shown}">
+			<div class="title">{opts.title}</div>
+			<div class="desc">
+				<yield></yield>
+			</div>
+			<div class="actions">
+				<material-button class="action" each={action in opts.actions} onclick={actionSelected}>{action}</material-button>
+			</div>
+		</div>
+	</div>
+	<script>
+		var self=this;
+
+		this.on('mount',(e)=>{
+			//to avoid any parent positiong conflicts
+			document.body.appendChild(this.root);
+		});
+
+		this.actionSelected=function(e){
+			if(self.opts.onaction){
+				self.opts.onaction(e.target.parentElement.parentElement.innerText.trim());
+			}
+		}
+	</script>
+</material-dialog>

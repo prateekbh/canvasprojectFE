@@ -27,9 +27,18 @@
 		veronica.addRoute(veronica.createRoute("login","/login","gp-login"));
 		veronica.addRoute(veronica.createRoute("search","/search","gp-search"));
 		veronica.addRoute(veronica.createRoute("profile","/profile/:pid","gp-profile"));
+		veronica.addRoute(veronica.createRoute("imagedetails","/image/:imageid","gp-imagedetails"));
 		veronica.addRoute(veronica.createRoute("draw","/draw","gp-draw"));
 	</script>
 	<script>
+		function prettyDate(date, startDate) {
+		  var secs = Math.floor((date.getTime() - startDate.getTime()) / 1000);
+		  if (secs < 60) return secs + "s";
+		  if (secs < 3600) return Math.floor(secs / 60) + "m";
+		  if (secs < 86400) return Math.floor(secs / 3600) + "h";
+		  if (secs < 604800) return Math.floor(secs / 86400) + "d";
+		  return date.toDateString();
+		}
 		(function(d, s, id) {
 		    var js, fjs = d.getElementsByTagName(s)[0];
 		    if (d.getElementById(id)) return;

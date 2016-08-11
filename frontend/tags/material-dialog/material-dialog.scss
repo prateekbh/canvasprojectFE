@@ -1,0 +1,57 @@
+material-dialog{
+	.bg{
+		position: fixed;
+		top:0;
+		bottom: 0;
+		left: 0;
+		right: 0;
+		margin: auto;
+		z-index: 1000;
+		background-color: rgba(0,0,0,0.8);
+	}
+	.dialog{
+		display: none;
+		position: fixed;
+		top:50%;
+		left: 0;
+		right: 0;
+		margin: auto;
+		z-index: 1001;
+		background-color: #fff;
+		width: 80%;
+		max-width: 480px;
+		max-height: 70%;
+		padding: 24px 24px 0 24px;
+		will-change: transform;
+		transition-delay:300ms;
+		transition-duration:300ms;
+		transition-property: transform;
+		transform: translateY(-80%) scale(0.8);
+		&.shown{
+			display: inline-block;
+			transform: translateY(-50%) scale(1);
+		}
+		.title{
+			font-size: 24px;
+		}
+		.desc{
+			@extend .thinfont;
+			padding: 20px 0 24px 0;
+			color: #999;
+			font-size: 20px;
+			font-weight: 300;
+			min-height: 100px;
+		}
+		.actions{
+			margin: 0 -24px;
+			padding: 8px 0;
+			text-align: right;
+		}
+	}
+	material-button{
+		background-color: transparent;
+		color: #61bdcc;
+		padding: 0 8px;
+		min-width: 64px;
+	}
+}

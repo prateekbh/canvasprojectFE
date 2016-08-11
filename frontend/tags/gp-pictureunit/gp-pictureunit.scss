@@ -3,7 +3,13 @@ gp-pictureunit{
 	margin-bottom: 35px;
 	.desc{
 		@extend .thinfont;
-		padding:8px;
+		text-transform: capitalize;
+		padding:4px 8px;
+		font-size: 18px;
+	}
+	.taglink{
+		@extend .thinfont;
+		padding:2px 8px;
 		font-size: 14px;
 	}
 }

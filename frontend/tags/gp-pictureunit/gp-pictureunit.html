@@ -1,9 +1,9 @@
 <gp-pictureunit>
-	<gp-picunitheader></gp-picunitheader>
-	<gp-picture></gp-picture>
-	<div class="desc">
-		Now. Me. Calmnessss...<br/>
-		Thanks to all the <a href="/tag/contributers">#contributers</a>
+	<gp-picunitheader details={opts.img} isloading={opts.isloading}></gp-picunitheader>
+	<gp-picture img={opts.img.image}></gp-picture>
+	<div class="desc" if={!opts.isloading}>
+		{opts.img.description}
 	</div>
-	<gp-stats></gp-stats>
+	<a class="taglink" each={tag in opts.img.tags} href="/tag/{tag.tag}">#{tag.tag}</a>
+	<gp-stats details={opts.img} if={!opts.isloading}></gp-stats>
 </gp-pictureunit>

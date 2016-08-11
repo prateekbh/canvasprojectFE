@@ -1,0 +1,28 @@
+<gp-imagedetails>
+	<gp-pictureunit isloading={isLoading} img={image}></gp-pictureunit>
+	<script>
+		var self=this;
+		var imgActions = veronica.flux.Actions.getAction("ImageActions");
+		var imgStore = veronica.flux.Stores.getStore("ImageStore");
+
+		this.isLoading = true;
+		this.image=null;
+
+		function imageFetchSuccess(){
+			var imgDetails=imgStore.getPicDetails(veronica.getCurrentState().data[':imageid']);
+			self.update({
+				isLoading: false,
+				image: imgDetails
+			});
+		}
+
+		this.on('mount',(e)=>{
+			imgStore.subscribe("img:detailsfetch:success",imageFetchSuccess);
+			imgActions.getImage(veronica.getCurrentState().data[':imageid']);
+		});
+
+		this.on('unmount',(e)=>{
+			imgStore.unsubscribe("img:detailsfetch:success",imageFetchSuccess);
+		})
+	</script>
+</gp-imagedetails>

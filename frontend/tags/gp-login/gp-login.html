@@ -20,7 +20,7 @@
 
 		this.startLoading=function(){
 			self.update({loading:true});
-			FB.login(function(res){
+			window.FB&&FB.login(function(res){
 				if(res.status==="connected"){
 					var url = '/me?fields=name,email,picture';
 	                FB.api(url, function (response) {

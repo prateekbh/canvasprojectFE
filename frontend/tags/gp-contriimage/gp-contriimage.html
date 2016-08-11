@@ -1,0 +1,11 @@
+<gp-contriimage>
+	<img if={loadedImagesCount===2} src={opts.bgImage} class="foreground" height={opts.height}></img>
+	<img if={loadedImagesCount===2} src={opts.editImage} class="background" height={opts.height}></img>
+	<icon-pic></icon-pic>
+	<script>
+		this.loadedImagesCount=0;
+		this.imgLoaded=function(e){
+			self.update({loadedImagesCount:loadedImagesCount+1});
+		}
+	</script>
+</gp-contriimage>

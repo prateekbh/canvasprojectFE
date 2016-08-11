@@ -1,15 +1,15 @@
 <gp-stats>
 	<div class="stats">
-		<div class="copystats stat">
+		<!--<div class="copystats stat">
 			<button class="btn-action copy">
 				<icon-copy class="icon"></icon-copy>
 				<span class="copy-count count">{likeCount}</span>
 			</button>
-		</div>
+		</div>-->
 		<div class="commentstat stat">
 			<button class="btn-action comment">
 				<icon-chat class="icon icon-comment"></icon-chat>
-				<span class="comment-count count">{likeCount}</span>
+				<span class="comment-count count">{opts.details.num_of_comments}</span>
 			</button>
 		</div>
 		<div class="likestat stat">
@@ -37,7 +37,7 @@
 			"https://scontent.xx.fbcdn.net/v/t1.0-1/p200x200/13669817_1117113145017292_4920305262041128067_n.jpg?oh=32783654cad84190711280a5c377221d&oe=582970EA",
 			"https://scontent.xx.fbcdn.net/v/t1.0-1/p200x200/13669817_1117113145017292_4920305262041128067_n.jpg?oh=32783654cad84190711280a5c377221d&oe=582970EA",
 			"https://scontent.xx.fbcdn.net/v/t1.0-1/p200x200/13669817_1117113145017292_4920305262041128067_n.jpg?oh=32783654cad84190711280a5c377221d&oe=582970EA"];
-		this.likeCount=4;
+		this.likeCount=opts.details&&parseInt(opts.details.num_of_likes)||0;
 
 		this.likePic=function(e){
 			e.preventDefault();

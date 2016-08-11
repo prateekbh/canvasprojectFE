@@ -1,9 +1,9 @@
 <gp-profile>
 	<div class="profilepic {userPic?'loaded':''}" style="{userPic?'background-image:url(\''+userPic+'\')':''}">
-		<div class="username">{userProfile.name}</div>
+		<div class="username">{userProfile.user.name}</div>
 		<gp-followbutton 
-			following={true} 
-			if={userProfile&&ownerProfile&&ownerProfile.user.profile.id!==userProfile.user.profile.id}>
+			following={userProfile.is_follower}
+			if={userProfile&&ownerProfile&&ownerProfile.user.user_id!==userProfile.user.user_id}>
 		</gp-followbutton>
 	</div>
 	<div class="usercontent" if={userProfile}>
@@ -18,7 +18,9 @@
 			onswiperight={decTabsIndex}>
 			<div class="tab tab-owned">
 				<div class="ownedcontainer">
-					<img each={pic, index in userProfile.owned_images} height={(window.innerWidth/3)-2} class="ownedpic" src="{pic.url}"></img>	
+					<a class="piclink" each={pic, index in userProfile.owned_images} href="/image/{pic.id}">
+						<img height={(window.innerWidth/3)-2} class="ownedpic" src="{pic.url}"></img>
+					</a>
 				</div>
 				
 			</div>

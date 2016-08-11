@@ -21,6 +21,7 @@
     "grunt-riot": "^0.1.6",
     "grunt-sass": "^1.2.0",
     "morgan": "~1.7.0",
+    "mustache-express": "^1.2.2",
     "node-lzw": "^0.3.1",
     "riot": "^2.5.0",
     "riot-mui": "0.0.17",

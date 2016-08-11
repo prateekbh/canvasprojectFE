@@ -106,10 +106,23 @@
 		}
 	</script>
 </gp-colorpicker>
+<gp-contriimage>
+	<img if={loadedImagesCount===2} src={opts.bgImage} class="foreground" height={opts.height}></img>
+	<img if={loadedImagesCount===2} src={opts.editImage} class="background" height={opts.height}></img>
+	<icon-pic></icon-pic>
+	<script>
+		this.loadedImagesCount=0;
+		this.imgLoaded=function(e){
+			self.update({loadedImagesCount:loadedImagesCount+1});
+		}
+	</script>
+</gp-contriimage>
 <gp-draw>
-    <canvas if={showCanvas} id="canvas" width="800" height="800"></canvas>
+    <div class="canvascontainer">
+      <canvas if={showCanvas} id="canvas" width="800" height="800"></canvas>
+    </div>
     <div class="pbar" if={isSaving}>
-        <material-progressbar progress={0.5} moving={true}></material-progressbar>    
+        <material-progressbar progress={0.5} moving={true}></material-progressbar>
     </div>
     <div if={!isSaving} class="controls {isControlsOpen?'controlsshown':''}">
         <button class="btn-control colors" onclick={showColors}>
@@ -127,6 +140,14 @@
             <svg fill="#FFFFFF" height="24" viewBox="0 0 24 24" width="24">
                 <path d="M17 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V7l-4-4zm-5 16c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3zm3-10H5V5h10v4z" />
             </svg>
+        </button>
+        <button class="btn-control save" onclick={save}>
+            <svg fill="#FFFFFF" height="24" viewBox="0 0 24 24" width="24">
+                <path d="M17 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V7l-4-4zm-5 16c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3zm3-10H5V5h10v4z" />
+            </svg>
+        </button>
+        <button class="btn-control publish" onclick={publish}>
+            <icon-publish></icon-publish>
         </button>
         <button class="btn-control options {isControlsOpen?'controlsshown':''}" onclick={openControls}>
             <svg class="firstleg leg" fill="#FFFFFF" height="24" viewBox="0 0 24 24" width="24">
@@ -155,13 +176,19 @@
                 </div>
             </div>
         </div>
+        <material-dialog title="Publish image" shown={isPublishPopupShown} actions={['NO','YES']} onaction={popupaction}>
+          <div>
+            <material-input placeholder="enter title" onchange={changeTitle}></material-input>
+            <material-input placeholder="enter description"></material-input>
+          </div>
+        </material-dialog>
     </div>
     <script>
     var self = this;
     var imageActions = veronica.flux.Actions.getAction("ImageActions");
     var userStore = veronica.flux.Stores.getStore("UserStore");
     var imgStore = veronica.flux.Stores.getStore("ImageStore");
-    
+
     this.brushesList = [
         "Simple Pencil",
         "Simple Brush",
@@ -177,6 +204,8 @@
     this.isBottomsheetShown = false;
     this.currentControl = "";
     this.sheetTitle = "";
+    this.showingTitleInput = false;
+    this.isPublishPopupShown = false;
 
     // Brush Variables
     var el, ctx;
@@ -288,8 +317,8 @@
         ctx.closePath();
     }
 
-    function imageSaved(){
-        var imgId=imgStore.getCurrentPicId();
+    function imageSaved() {
+        var imgId = imgStore.getCurrentPicId();
         console.log(imgId);
         self.update({
             isSaving: false
@@ -297,11 +326,15 @@
         //show toast
     }
 
-    function imageSaveFailed(){
+    function imageSaveFailed() {
         self.update({
             isSaving: false
         });
         //show toast
+    }
+
+    function saveImage(){
+      imageActions.saveImage(el.toDataURL(), null, null, userStore.getSessionId());
     }
 
 
@@ -358,13 +391,32 @@
             isSaving: true,
             isControlsOpen: false
         });
-        imageActions.saveImage(el.toDataURL(), null, null, userStore.getSessionId());
+        saveImage();
+    }
+
+    this.publish = function(e){
+      e.preventDefault();
+      this.closeSheet(e);
+      self.update({
+          isPublishPopupShown: true,
+          isControlsOpen: false
+      });
+      saveImage();
+    }
+
+    this.changeTitle=function(e){
+      console.log(e);
+    }
+
+
+    this.popupaction=function(btnText){
+      console.log("BTN:",btnText);
     }
 
 
     this.on("mount", function() {
-        imgStore.subscribe("img:save:success",imageSaved);
-        imgStore.subscribe("img:save:failed",imageSaveFailed);
+        imgStore.subscribe("img:save:success", imageSaved);
+        imgStore.subscribe("img:save:failed", imageSaveFailed);
 
         setTimeout(function() {
             self.update({
@@ -383,8 +435,8 @@
 
     this.on("unmount", function() {
         document.body.classList.remove("noscroll");
-        imgStore.unsubscribe("img:save:success",imageSaved);
-        imgStore.unsubscribe("img:save:failed",imageSaveFailed);
+        imgStore.unsubscribe("img:save:success", imageSaved);
+        imgStore.unsubscribe("img:save:failed", imageSaveFailed);
     });
     </script>
 </gp-draw>
@@ -536,6 +588,34 @@
 	    <path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"/>
 	</svg>
 </icon-tick>
+<gp-imagedetails>
+	<gp-pictureunit isloading={isLoading} img={image}></gp-pictureunit>
+	<script>
+		var self=this;
+		var imgActions = veronica.flux.Actions.getAction("ImageActions");
+		var imgStore = veronica.flux.Stores.getStore("ImageStore");
+
+		this.isLoading = true;
+		this.image=null;
+
+		function imageFetchSuccess(){
+			var imgDetails=imgStore.getPicDetails(veronica.getCurrentState().data[':imageid']);
+			self.update({
+				isLoading: false,
+				image: imgDetails
+			});
+		}
+
+		this.on('mount',(e)=>{
+			imgStore.subscribe("img:detailsfetch:success",imageFetchSuccess);
+			imgActions.getImage(veronica.getCurrentState().data[':imageid']);
+		});
+
+		this.on('unmount',(e)=>{
+			imgStore.unsubscribe("img:detailsfetch:success",imageFetchSuccess);
+		})
+	</script>
+</gp-imagedetails>
 <gp-login>
 	<div class="title titlefont">
 		KanvasProject
@@ -558,7 +638,7 @@
 
 		this.startLoading=function(){
 			self.update({loading:true});
-			FB.login(function(res){
+			window.FB&&FB.login(function(res){
 				if(res.status==="connected"){
 					var url = '/me?fields=name,email,picture';
 	                FB.api(url, function (response) {
@@ -631,7 +711,7 @@
 					</svg>
 					<span class="text">Search</span>
 				</a>
-				<a class="navlink" onclick={closeNavBar} href="/user/me">
+				<a class="navlink" onclick={closeNavBar} href="/profile/{userProfile.user.account_id}">
 					<svg class="icon" fill="#FFFFFF" height="24" viewBox="0 0 24 24" width="24">
 					    <path d="M12 5.9c1.16 0 2.1.94 2.1 2.1s-.94 2.1-2.1 2.1S9.9 9.16 9.9 8s.94-2.1 2.1-2.1m0 9c2.97 0 6.1 1.46 6.1 2.1v1.1H5.9V17c0-.64 3.13-2.1 6.1-2.1M12 4C9.79 4 8 5.79 8 8s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm0 9c-2.67 0-8 1.34-8 4v3h16v-3c0-2.66-5.33-4-8-4z"/>
 					</svg>
@@ -695,41 +775,50 @@
 	</script>
 </gp-navbar>
 <gp-picture>
-	<img class="pic" height="{window.innerWidth}" src="https://scontent-sit4-1.cdninstagram.com/t51.2885-15/sh0.08/e35/p750x750/13696665_1563391050635241_1057925117_n.jpg"></img>
+	<img class="pic {isloading?'loading':''}" height="{window.innerWidth}" src="{opts.img}" onload={loaded}></img>
+	<icon-pic class="loader"></icon-pic>
+	<script>
+		var self=this;
+		this.isloading=true;
+		this.loaded=function(){
+			self.update({isloading: false});
+		}
+	</script>
 </gp-picture>
 <gp-pictureunit>
-	<gp-picunitheader></gp-picunitheader>
-	<gp-picture></gp-picture>
-	<div class="desc">
-		Now. Me. Calmnessss...<br/>
-		Thanks to all the <a href="/tag/contributers">#contributers</a>
+	<gp-picunitheader details={opts.img} isloading={opts.isloading}></gp-picunitheader>
+	<gp-picture img={opts.img.image}></gp-picture>
+	<div class="desc" if={!opts.isloading}>
+		{opts.img.description}
 	</div>
-	<gp-stats></gp-stats>
+	<a class="taglink" each={tag in opts.img.tags} href="/tag/{tag.tag}">#{tag.tag}</a>
+	<gp-stats details={opts.img} if={!opts.isloading}></gp-stats>
 </gp-pictureunit>
 <gp-picunitheader>
 	<div class="picsection">
-		<img class="pic" src="https://scontent.xx.fbcdn.net/v/t1.0-1/p200x200/13669817_1117113145017292_4920305262041128067_n.jpg?oh=32783654cad84190711280a5c377221d&oe=582970EA" height="40" width="40">
-		</img>
+		<img if={!opts.isloading} class="pic" src="" height="40" width="40"></img>
+		<span if={opts.isloading} class="picloader"></span>
 	</div>
 	<div class="namesection">
-		<a href="/profile/112334">prateek</a> <span class="event-desc"> owns this image</span>
+		<a if={!opts.isloading} href="/profile/{opts.details.account_id}">prateek</a> <span if={!opts.isloading} class="event-desc"> owns this image</span>
+		<span class="nameloader animated-background" if={opts.isloading}></span>
 	</div>
-	<div class="timesection">
-		15m
+	<div class="timesection" if={!opts.isloading}>
+		{prettyDate(new Date(),new Date(opts.details.updated_at||opts.details.created_at))}
 	</div>
 </gp-picunitheader>
 <gp-stats>
 	<div class="stats">
-		<div class="copystats stat">
+		<!--<div class="copystats stat">
 			<button class="btn-action copy">
 				<icon-copy class="icon"></icon-copy>
 				<span class="copy-count count">{likeCount}</span>
 			</button>
-		</div>
+		</div>-->
 		<div class="commentstat stat">
 			<button class="btn-action comment">
 				<icon-chat class="icon icon-comment"></icon-chat>
-				<span class="comment-count count">{likeCount}</span>
+				<span class="comment-count count">{opts.details.num_of_comments}</span>
 			</button>
 		</div>
 		<div class="likestat stat">
@@ -757,7 +846,7 @@
 			"https://scontent.xx.fbcdn.net/v/t1.0-1/p200x200/13669817_1117113145017292_4920305262041128067_n.jpg?oh=32783654cad84190711280a5c377221d&oe=582970EA",
 			"https://scontent.xx.fbcdn.net/v/t1.0-1/p200x200/13669817_1117113145017292_4920305262041128067_n.jpg?oh=32783654cad84190711280a5c377221d&oe=582970EA",
 			"https://scontent.xx.fbcdn.net/v/t1.0-1/p200x200/13669817_1117113145017292_4920305262041128067_n.jpg?oh=32783654cad84190711280a5c377221d&oe=582970EA"];
-		this.likeCount=4;
+		this.likeCount=opts.details&&parseInt(opts.details.num_of_likes)||0;
 
 		this.likePic=function(e){
 			e.preventDefault();
@@ -789,10 +878,10 @@
 
 <gp-profile>
 	<div class="profilepic {userPic?'loaded':''}" style="{userPic?'background-image:url(\''+userPic+'\')':''}">
-		<div class="username">{userProfile.name}</div>
+		<div class="username">{userProfile.user.name}</div>
 		<gp-followbutton 
-			following={true} 
-			if={userProfile&&ownerProfile&&ownerProfile.user.profile.id!==userProfile.user.profile.id}>
+			following={userProfile.is_follower}
+			if={userProfile&&ownerProfile&&ownerProfile.user.user_id!==userProfile.user.user_id}>
 		</gp-followbutton>
 	</div>
 	<div class="usercontent" if={userProfile}>
@@ -807,7 +896,9 @@
 			onswiperight={decTabsIndex}>
 			<div class="tab tab-owned">
 				<div class="ownedcontainer">
-					<img each={pic, index in userProfile.owned_images} height={(window.innerWidth/3)-2} class="ownedpic" src="{pic.url}"></img>	
+					<a class="piclink" each={pic, index in userProfile.owned_images} href="/image/{pic.id}">
+						<img height={(window.innerWidth/3)-2} class="ownedpic" src="{pic.url}"></img>
+					</a>
 				</div>
 				
 			</div>
@@ -893,6 +984,34 @@
 	</script>
 </gp-profile>
 
+<material-dialog>
+	<div>
+		<div if={opts.shown} class="bg"></div>
+		<div class="dialog {shown:opts.shown}">
+			<div class="title">{opts.title}</div>
+			<div class="desc">
+				<yield></yield>
+			</div>
+			<div class="actions">
+				<material-button class="action" each={action in opts.actions} onclick={actionSelected}>{action}</material-button>
+			</div>
+		</div>
+	</div>
+	<script>
+		var self=this;
+
+		this.on('mount',(e)=>{
+			//to avoid any parent positiong conflicts
+			document.body.appendChild(this.root);
+		});
+
+		this.actionSelected=function(e){
+			if(self.opts.onaction){
+				self.opts.onaction(e.target.parentElement.parentElement.innerText.trim());
+			}
+		}
+	</script>
+</material-dialog>
 <material-progressbar>
 	<div class="bar">
 		<div class="progress {opts.moving?'moving':''}" style="width:{opts.progress*100}%"></div>
@@ -989,6 +1108,16 @@ function ImageActions(){
         }).catch(e=>{
           this.Dispatcher.trigger("img:save:failed",{});  
         });
+    }
+
+    this.getImage = function (imageId){
+      fetch(window.apiBase+"/image/details/"+imageId)
+      .then(res=>res.json())
+      .then(data=>{
+        this.Dispatcher.trigger("img:detailsfetch:success",data);  
+      }).catch(e=>{
+        this.Dispatcher.trigger("img:detailsfetch:failed",{});  
+      });
     }
 }
 
@@ -1133,6 +1262,7 @@ veronica.flux.Stores.createStore("NavigationStore",NavigationStore);
 function ImageStore() {
   var self = this;
   var currPic=null;
+  var imgs={};
   //Register for actions
   this.Dispatcher.register("img:save:success", (data)=>{
     currPic = data;
@@ -1142,6 +1272,19 @@ function ImageStore() {
   this.Dispatcher.register("img:save:failed", (data)=>{
     this.emit("img:save:failed");
   });
+
+  this.Dispatcher.register("img:detailsfetch:success", (data)=>{
+    imgs[data.id]=data;
+    this.emit("img:detailsfetch:success");
+  });
+
+  this.Dispatcher.register("img:detailsfetch:failed", (data)=>{
+    this.emit("img:detailsfetch:failed");
+  });
+
+  this.getPicDetails=function(imageId){
+    return imgs[imageId];
+  }
 
   this.getCurrentPicId=function(){
     return currPic;

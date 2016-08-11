@@ -5,8 +5,8 @@ gp-stats{
 		display: inline-block;
 	}
 	.btn-action{
-		background-color: #455A64;
-		border-color: transparent;
+		background-color: #eee;
+		border:1px solid #eee;
 		vertical-align: middle;
 		width: 60px;
 		outline: none;
@@ -14,8 +14,14 @@ gp-stats{
 	.copystats .btn-action{
 		border-radius: 20px 0 0 20px;
 	}
+	.commentstat{
+		float: right;
+	}
+	.comment{
+		border-radius: 20px;
+	}
 	.like{
-		border-radius: 0 20px 20px 0;
+		border-radius: 20px;
 	}
 	.icon{
 		display: inline-block;
@@ -42,7 +48,7 @@ gp-stats{
 		margin-left: 5px;
 		vertical-align: middle;
 		font-size: 12px;
-		color: #eee;
+		color: #333;
 	}
 	.likers{
 		display: inline-block;

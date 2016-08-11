@@ -12,6 +12,11 @@ gp-picunitheader{
 		font-size: 16px;
 		flex:8;
 	}
+	.nameloader{
+		display: inline-block;
+		height: 8px;
+		width: 60%;
+	}
 	.timesection{
 		flex:1;
 		text-align: center;
@@ -20,8 +25,23 @@ gp-picunitheader{
 		min-width: 50px;
 	}
 	.pic{
+		display: inline-block;
+		background-color: #eee;
+		width: 40px;
+		height: 40px;
 		border-radius: 50%;
 		vertical-align: middle;
+	}
+	.picloader{
+		@extend .userbgpic;
+		-webkit-filter: saturate(0);
+		border-radius: 50%;
+		display: inline-block;
+		height: 40px;
+		width: 40px;
+	}
+	.icon-pic{
+		margin-top: 8px;
 	}
 	.event-desc{
 		font-size: 14px;

@@ -1,12 +1,13 @@
 <gp-picunitheader>
 	<div class="picsection">
-		<img class="pic" src="https://scontent.xx.fbcdn.net/v/t1.0-1/p200x200/13669817_1117113145017292_4920305262041128067_n.jpg?oh=32783654cad84190711280a5c377221d&oe=582970EA" height="40" width="40">
-		</img>
+		<img if={!opts.isloading} class="pic" src="" height="40" width="40"></img>
+		<span if={opts.isloading} class="picloader"></span>
 	</div>
 	<div class="namesection">
-		<a href="/profile/112334">prateek</a> <span class="event-desc"> owns this image</span>
+		<a if={!opts.isloading} href="/profile/{opts.details.account_id}">prateek</a> <span if={!opts.isloading} class="event-desc"> owns this image</span>
+		<span class="nameloader animated-background" if={opts.isloading}></span>
 	</div>
-	<div class="timesection">
-		15m
+	<div class="timesection" if={!opts.isloading}>
+		{prettyDate(new Date(),new Date(opts.details.updated_at||opts.details.created_at))}
 	</div>
 </gp-picunitheader>

@@ -19,6 +19,16 @@ function ImageActions(){
           this.Dispatcher.trigger("img:save:failed",{});  
         });
     }
+
+    this.getImage = function (imageId){
+      fetch(window.apiBase+"/image/details/"+imageId)
+      .then(res=>res.json())
+      .then(data=>{
+        this.Dispatcher.trigger("img:detailsfetch:success",data);  
+      }).catch(e=>{
+        this.Dispatcher.trigger("img:detailsfetch:failed",{});  
+      });
+    }
 }
 
 veronica.flux.Actions.createAction("ImageActions",ImageActions); 
