@@ -619,6 +619,7 @@ riot.tag2('gp-picture', '<img onclick="{showContribute}" class="pic {isloading?\
 		}
 
 		this.on('mount',e=>{
+			console.log(opts.img);
 			imageStore.subscribe("img:clone:success",imgCloneSuccess);
 			imageStore.subscribe("img:clone:failed",imgCloneFailure);
 		});
