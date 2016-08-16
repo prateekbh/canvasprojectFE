@@ -29,22 +29,31 @@
 		</div>
 	</div>
 	<script>
-		var self=this;
+		var self = this;
+		var imgActions = veronica.flux.Actions.getAction('ImageActions');
+		var userStore = veronica.flux.Stores.getStore('UserStore');
 
-		this.isPicLiked=false;
-		this.likers=[
+		this.isPicLiked = false;
+		this.likers = [
 			"https://scontent.xx.fbcdn.net/v/t1.0-1/p200x200/13669817_1117113145017292_4920305262041128067_n.jpg?oh=32783654cad84190711280a5c377221d&oe=582970EA",
 			"https://scontent.xx.fbcdn.net/v/t1.0-1/p200x200/13669817_1117113145017292_4920305262041128067_n.jpg?oh=32783654cad84190711280a5c377221d&oe=582970EA",
 			"https://scontent.xx.fbcdn.net/v/t1.0-1/p200x200/13669817_1117113145017292_4920305262041128067_n.jpg?oh=32783654cad84190711280a5c377221d&oe=582970EA",
 			"https://scontent.xx.fbcdn.net/v/t1.0-1/p200x200/13669817_1117113145017292_4920305262041128067_n.jpg?oh=32783654cad84190711280a5c377221d&oe=582970EA"];
-		this.likeCount=opts.details&&parseInt(opts.details.num_of_likes)||0;
+		this.likeCount = opts.details&&parseInt(opts.details.num_of_likes)||0;
 
-		this.likePic=function(e){
+		this.likePic = function(e){
 			e.preventDefault();
 			self.update({
 				isPicLiked:!self.isPicLiked,
 				likeCount:!self.isPicLiked?self.likeCount+1:self.likeCount-1
 			});
+
+			//send the request
+			imgActions.likeImage(opts.details.id,self.isPicLiked,userStore.getSessionId());
 		}
+
+		this.on('mount',e=>{
+			self.update({likeCount : opts.details&&parseInt(opts.details.num_of_likes)||0});
+		})
 	</script>
 </gp-stats>

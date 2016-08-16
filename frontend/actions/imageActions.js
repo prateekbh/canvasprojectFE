@@ -1,5 +1,5 @@
 function ImageActions(){
-    this.saveImage=function(imgId, img,tags,description,sessionId){
+    this.saveImage = function(imgId, img,tags,description,sessionId){
         fetch(window.apiBase+"/image/save",{
             headers: Object.assign({},window.defaultHeaders,{'x-session-id': sessionId}),
             method: "POST",
@@ -21,7 +21,39 @@ function ImageActions(){
         });
     }
 
-    this.publishImage=function(imageId){
+    this.likeImage = function(imageId, liked, sessionId){
+      fetch(window.apiBase+'/image/'+imageId+'/like',{
+        headers: Object.assign({},window.defaultHeaders,{'x-session-id': sessionId}),
+        method: "POST",
+        body:''
+      })
+      .then(res=>res.json())
+      .then(data=>{
+        console.log(data);
+      });
+    }
+
+    this.cloneImage = function(imageId, sessionId){
+      var fetchPromise = fetch(window.apiBase+'/image/clone',{
+        headers: Object.assign({},window.defaultHeaders,{'x-session-id': sessionId}),
+        method: "POST",
+        body:JSON.stringify({ image_id: imageId})
+      })
+      .then(res=>{
+        if(res.status!==200){
+          throw newError('Image Cloning failed');
+        }
+        return res.json()
+      })
+      .then(data=>{
+        this.Dispatcher.trigger("img:clone:success",data);
+      })
+      .catch(e=>{
+        this.Dispatcher.trigger("img:clone:failed",e);
+      })
+    }
+
+    this.publishImage = function(imageId){
       //implement fetch here
     }
 

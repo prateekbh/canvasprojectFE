@@ -638,6 +638,25 @@ gp-picture{
 		height: 100px;
 		width: 100px;
 	}
+	.clone{
+		@extend .thinfont;
+		vertical-align: middle;
+		z-index: 3;
+		position: absolute;
+		bottom: 16px;
+		right: 10px;
+		color:#666;
+		background-color: #eee;
+		border:1px solid #eee;
+		border-radius: 3px;
+		will-change: transform;
+		transition-duration:100ms;
+		transition-property: opacity;
+		opacity: 0;
+		&.shown{
+			opacity: 1;
+		}
+	}
 }
 gp-pictureunit{
 	display: block;

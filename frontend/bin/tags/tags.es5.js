@@ -410,7 +410,7 @@ riot.tag2('gp-header', '<div class="header {currState} {forceShow?\'forceshow\':
     routeStore.subscribe("route:changed", checkBackButton);
   });
 });
-riot.tag2('gp-home', '<gp-pictureunit></gp-pictureunit><gp-pictureunit></gp-pictureunit>', '', '', function (opts) {
+riot.tag2('gp-home', '<h1>home</h1>', '', '', function (opts) {
   var userStore = veronica.flux.Stores.getStore("UserStore");
 
   this.on("mount", function () {
@@ -557,17 +557,62 @@ riot.tag2('gp-navbar', '<nav class="{isNavBarOpen?\'opened\':\'closed\'}" onswip
     userStore.unsubscribe("user:login:success", getUserProfile);
   });
 });
-riot.tag2('gp-picture', '<img class="pic {isloading?\'loading\':\'\'}" height="{window.innerWidth}" riot-src="{opts.img}" onload="{loaded}"></img><icon-pic class="loader"></icon-pic>', '', '', function (opts) {
+riot.tag2('gp-picture', '<img onclick="{showContribute}" class="pic {isloading?\'loading\':\'\'}" height="{window.innerWidth}" riot-src="{opts.img}" onload="{loaded}"></img><icon-pic class="loader"></icon-pic><material-button waves-color="#000" class="clone {shown:(usedAccountId !== opts.owner.account_id)&&isShowingClone}" onclick="{startClone}"><span if="{isCloning}">CLONING</span><span if="{isCloned}">CLONED</span><span if="{!isCloned&&!isCloning}">CONTRIBUTE</span></material-button>', '', '', function (opts) {
   var self = this;
+  var imgActions = veronica.flux.Actions.getAction('ImageActions');
+  var userStore = veronica.flux.Stores.getStore('UserStore');
+  var imageStore = veronica.flux.Stores.getStore('ImageStore');
+
+  this.usedAccountId = userStore.getUserProfile().user.account_id;
   this.isloading = true;
+  this.isShowingClone = false;
+  this.isCloning = false;
+  this.isCloned = false;
+  this.isSelfPic = false;
+
+  function imgCloneSuccess() {
+    self.update({
+      isCloning: false,
+      isCloned: true
+    });
+  }
+
+  function imgCloneFailure() {
+    self.update({
+      isCloning: false,
+      isCloned: false
+    });
+  }
+
   this.loaded = function () {
     self.update({ isloading: false });
   };
+
+  this.showContribute = function () {
+    self.update({ isShowingClone: !self.isShowingClone });
+  };
+
+  this.startClone = function () {
+    self.update({ isCloning: true });
+    imgActions.cloneImage(veronica.getCurrentState().data[':imageid'], userStore.getSessionId());
+  };
+
+  this.on('mount', function (e) {
+    imageStore.subscribe("img:clone:success", imgCloneSuccess);
+    imageStore.subscribe("img:clone:failed", imgCloneFailure);
+  });
+
+  this.on('unmount', function (e) {
+    imageStore.unsubscribe("img:clone:success", imgCloneSuccess);
+    imageStore.unsubscribe("img:clone:failed", imgCloneFailure);
+  });
 });
-riot.tag2('gp-pictureunit', '<gp-picunitheader details="{opts.img}" isloading="{opts.isloading}"></gp-picunitheader><gp-picture img="{opts.img.image}"></gp-picture><div class="desc" if="{!opts.isloading}"> {opts.img.description} </div><a class="taglink" each="{tag in opts.img.tags}" href="/tag/{tag.tag}">#{tag.tag}</a><gp-stats details="{opts.img}" if="{!opts.isloading}"></gp-stats>', '', '', function (opts) {});
+riot.tag2('gp-pictureunit', '<gp-picunitheader details="{opts.img}" isloading="{opts.isloading}"></gp-picunitheader><gp-picture img="{opts.img.image}" owner="{opts.img}"></gp-picture><div class="desc" if="{!opts.isloading}"> {opts.img.description} </div><a class="taglink" each="{tag in opts.img.tags}" href="/tag/{tag.tag}">#{tag.tag}</a><gp-stats details="{opts.img}" if="{!opts.isloading}"></gp-stats>', '', '', function (opts) {});
 riot.tag2('gp-picunitheader', '<div class="picsection"><img if="{!opts.isloading}" class="pic" src="" height="40" width="40"></img><span if="{opts.isloading}" class="picloader"></span></div><div class="namesection"><a if="{!opts.isloading}" href="/profile/{opts.details.account_id}">prateek</a><span if="{!opts.isloading}" class="event-desc"> owns this image</span><span class="nameloader animated-background" if="{opts.isloading}"></span></div><div class="timesection" if="{!opts.isloading}"> {prettyDate(new Date(),new Date(opts.details.updated_at||opts.details.created_at))} </div>', '', '', function (opts) {});
 riot.tag2('gp-stats', '<div class="stats"><div class="commentstat stat"><button class="btn-action comment"><icon-chat class="icon icon-comment"></icon-chat><span class="comment-count count">{opts.details.num_of_comments}</span></button></div><div class="likestat stat"><button class="btn-action like" onclick="{likePic}"><icon-heart class="icon icon-like {isPicLiked?\'liked\':\'\'}"></icon-heart><span class="like-count count">{likeCount}</span></button><div class="likers me"><img class="liker me" src="https://scontent.xx.fbcdn.net/v/t1.0-1/p200x200/13669817_1117113145017292_4920305262041128067_n.jpg?oh=32783654cad84190711280a5c377221d&oe=582970EA" riot-style="transform:{isPicLiked?\'scale(1) translateX(10px)\':\'scale(0) translateX(0px)\'}; z-index:{5} "></div><div class="likers others {isPicLiked?\'liked\':\'\'}"><img class="liker" each="{img,index in likers}" riot-src="{img}" riot-style="transform:translateX({(-10*index)-10}px) {isPicLiked&&index===3?\'scale(0)\':\'\'}; z-index:{4-index}"></div></div></div>', '', '', function (opts) {
   var self = this;
+  var imgActions = veronica.flux.Actions.getAction('ImageActions');
+  var userStore = veronica.flux.Stores.getStore('UserStore');
 
   this.isPicLiked = false;
   this.likers = ["https://scontent.xx.fbcdn.net/v/t1.0-1/p200x200/13669817_1117113145017292_4920305262041128067_n.jpg?oh=32783654cad84190711280a5c377221d&oe=582970EA", "https://scontent.xx.fbcdn.net/v/t1.0-1/p200x200/13669817_1117113145017292_4920305262041128067_n.jpg?oh=32783654cad84190711280a5c377221d&oe=582970EA", "https://scontent.xx.fbcdn.net/v/t1.0-1/p200x200/13669817_1117113145017292_4920305262041128067_n.jpg?oh=32783654cad84190711280a5c377221d&oe=582970EA", "https://scontent.xx.fbcdn.net/v/t1.0-1/p200x200/13669817_1117113145017292_4920305262041128067_n.jpg?oh=32783654cad84190711280a5c377221d&oe=582970EA"];
@@ -579,7 +624,13 @@ riot.tag2('gp-stats', '<div class="stats"><div class="commentstat stat"><button 
       isPicLiked: !self.isPicLiked,
       likeCount: !self.isPicLiked ? self.likeCount + 1 : self.likeCount - 1
     });
+
+    imgActions.likeImage(opts.details.id, self.isPicLiked, userStore.getSessionId());
   };
+
+  this.on('mount', function (e) {
+    self.update({ likeCount: opts.details && parseInt(opts.details.num_of_likes) || 0 });
+  });
 });
 riot.tag2('gp-picunit', '<div class="userinfo"></div><div class="container-pic"></div><div class="stats"></div>', '', '', function (opts) {});
 riot.tag2('gp-followbutton', '<button class="follow {opts.following?\'following\':\'\'}"><icon-add if="{!opts.following}"></icon-add><icon-tick if="{opts.following}"></icon-tick><span class="text">{opts.following?\'following\':\'follow\'}</span></button>', '', '', function (opts) {});
@@ -764,19 +815,50 @@ function ImageActions() {
     });
   };
 
+  this.likeImage = function (imageId, liked, sessionId) {
+    fetch(window.apiBase + '/image/' + imageId + '/like', {
+      headers: Object.assign({}, window.defaultHeaders, { 'x-session-id': sessionId }),
+      method: "POST",
+      body: ''
+    }).then(function (res) {
+      return res.json();
+    }).then(function (data) {
+      console.log(data);
+    });
+  };
+
+  this.cloneImage = function (imageId, sessionId) {
+    var _this7 = this;
+
+    var fetchPromise = fetch(window.apiBase + '/image/clone', {
+      headers: Object.assign({}, window.defaultHeaders, { 'x-session-id': sessionId }),
+      method: "POST",
+      body: JSON.stringify({ image_id: imageId })
+    }).then(function (res) {
+      if (res.status !== 200) {
+        throw newError('Image Cloning failed');
+      }
+      return res.json();
+    }).then(function (data) {
+      _this7.Dispatcher.trigger("img:clone:success", data);
+    }).catch(function (e) {
+      _this7.Dispatcher.trigger("img:clone:failed", e);
+    });
+  };
+
   this.publishImage = function (imageId) {
     //implement fetch here
   };
 
   this.fetchImage = function (imageId) {
-    var _this7 = this;
+    var _this8 = this;
 
     fetch(window.apiBase + "/image/details/" + imageId).then(function (res) {
       return res.json();
     }).then(function (data) {
-      _this7.Dispatcher.trigger("img:detailsfetch:success", data);
+      _this8.Dispatcher.trigger("img:detailsfetch:success", data);
     }).catch(function (e) {
-      _this7.Dispatcher.trigger("img:detailsfetch:failed", {});
+      _this8.Dispatcher.trigger("img:detailsfetch:failed", {});
     });
   };
 }
@@ -784,7 +866,7 @@ function ImageActions() {
 veronica.flux.Actions.createAction("ImageActions", ImageActions);
 
 function UserStore() {
-  var _this8 = this;
+  var _this9 = this;
 
   var sessionId = localStorage.sid || null;
   var users = {};
@@ -807,16 +889,16 @@ function UserStore() {
     users[users["me"].account_id] = users["me"];
     localStorage.sid = sessionId;
     localStorage.user = JSON.stringify(users["me"]);
-    _this8.emit("user:login:success");
+    _this9.emit("user:login:success");
   });
 
   this.Dispatcher.register("user:login:failure", function (data) {
-    _this8.emit("user:login:failure");
+    _this9.emit("user:login:failure");
   });
 
   this.Dispatcher.register("user:fetchprofile:success", function (data) {
     users[data.user.account_id] = data;
-    _this8.emit("user:profile:fetched");
+    _this9.emit("user:profile:fetched");
   });
 
   this.getUserProfile = function (uid) {
@@ -917,7 +999,7 @@ function NavigationStore() {
 //creating an store 
 veronica.flux.Stores.createStore("NavigationStore", NavigationStore);
 function ImageStore() {
-  var _this9 = this;
+  var _this10 = this;
 
   var self = this;
   var currPic = null;
@@ -925,20 +1007,28 @@ function ImageStore() {
   //Register for actions
   this.Dispatcher.register("img:save:success", function (data) {
     currPic = data;
-    _this9.emit("img:save:success");
+    _this10.emit("img:save:success");
   });
 
   this.Dispatcher.register("img:save:failed", function (data) {
-    _this9.emit("img:save:failed");
+    _this10.emit("img:save:failed");
+  });
+
+  this.Dispatcher.register("img:clone:success", function (data) {
+    _this10.emit("img:clone:success");
+  });
+
+  this.Dispatcher.register("img:clone:failed", function (data) {
+    _this10.emit("img:clone:failed");
   });
 
   this.Dispatcher.register("img:detailsfetch:success", function (data) {
     imgs[data.id] = data;
-    _this9.emit("img:detailsfetch:success");
+    _this10.emit("img:detailsfetch:success");
   });
 
   this.Dispatcher.register("img:detailsfetch:failed", function (data) {
-    _this9.emit("img:detailsfetch:failed");
+    _this10.emit("img:detailsfetch:failed");
   });
 
   this.getPicDetails = function (imageId) {

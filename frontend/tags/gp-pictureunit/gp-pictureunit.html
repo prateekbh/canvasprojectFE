@@ -1,6 +1,6 @@
 <gp-pictureunit>
 	<gp-picunitheader details={opts.img} isloading={opts.isloading}></gp-picunitheader>
-	<gp-picture img={opts.img.image}></gp-picture>
+	<gp-picture img={opts.img.image} owner={opts.img}></gp-picture>
 	<div class="desc" if={!opts.isloading}>
 		{opts.img.description}
 	</div>

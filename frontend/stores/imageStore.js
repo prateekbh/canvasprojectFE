@@ -12,6 +12,14 @@ function ImageStore() {
     this.emit("img:save:failed");
   });
 
+  this.Dispatcher.register("img:clone:success", (data)=>{
+    this.emit("img:clone:success");
+  });
+
+  this.Dispatcher.register("img:clone:failed", (data)=>{
+    this.emit("img:clone:failed");
+  });
+
   this.Dispatcher.register("img:detailsfetch:success", (data)=>{
     imgs[data.id]=data;
     this.emit("img:detailsfetch:success");

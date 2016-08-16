@@ -555,8 +555,7 @@
 	</script>
 </gp-header>
 <gp-home>
-	<gp-pictureunit></gp-pictureunit>
-	<gp-pictureunit></gp-pictureunit>
+	<h1>home</h1>
 	<script>
 		var userStore=veronica.flux.Stores.getStore("UserStore");
 		
@@ -805,19 +804,73 @@
 	</script>
 </gp-navbar>
 <gp-picture>
-	<img class="pic {isloading?'loading':''}" height="{window.innerWidth}" src="{opts.img}" onload={loaded}></img>
+	<img onclick={showContribute} 
+		class="pic {isloading?'loading':''}" 
+		height="{window.innerWidth}" src="{opts.img}" 
+		onload={loaded}></img>
 	<icon-pic class="loader"></icon-pic>
+	<material-button 
+		waves-color="#000" class="clone {shown:(usedAccountId !== opts.owner.account_id)&&isShowingClone}" onclick={startClone}>
+		<span if={isCloning}>CLONING</span>
+		<span if={isCloned}>CLONED</span>
+		<span if={!isCloned&&!isCloning}>CONTRIBUTE</span>
+	</material-button>
 	<script>
-		var self=this;
-		this.isloading=true;
+	</script>
+	<script>
+		var self = this;
+		var imgActions = veronica.flux.Actions.getAction('ImageActions');
+		var userStore = veronica.flux.Stores.getStore('UserStore');
+		var imageStore = veronica.flux.Stores.getStore('ImageStore');
+
+		this.usedAccountId = userStore.getUserProfile().user.account_id;
+		this.isloading = true;
+		this.isShowingClone = false;
+		this.isCloning = false;
+		this.isCloned = false;
+		this.isSelfPic = false;
+
+		function imgCloneSuccess(){
+			self.update({
+				isCloning: false,
+				isCloned: true
+			});
+		}
+
+		function imgCloneFailure(){
+			self.update({
+				isCloning: false,
+				isCloned: false
+			});
+		}
+
 		this.loaded=function(){
 			self.update({isloading: false});
 		}
+
+		this.showContribute=function(){
+			self.update({isShowingClone: !self.isShowingClone});
+		}
+
+		this.startClone=function(){
+			self.update({isCloning: true});
+			imgActions.cloneImage(veronica.getCurrentState().data[':imageid'], userStore.getSessionId())
+		}
+
+		this.on('mount',e=>{
+			imageStore.subscribe("img:clone:success",imgCloneSuccess);
+			imageStore.subscribe("img:clone:failed",imgCloneFailure);
+		});
+
+		this.on('unmount',e=>{
+			imageStore.unsubscribe("img:clone:success",imgCloneSuccess);
+			imageStore.unsubscribe("img:clone:failed",imgCloneFailure);
+		});
 	</script>
 </gp-picture>
 <gp-pictureunit>
 	<gp-picunitheader details={opts.img} isloading={opts.isloading}></gp-picunitheader>
-	<gp-picture img={opts.img.image}></gp-picture>
+	<gp-picture img={opts.img.image} owner={opts.img}></gp-picture>
 	<div class="desc" if={!opts.isloading}>
 		{opts.img.description}
 	</div>
@@ -868,23 +921,32 @@
 		</div>
 	</div>
 	<script>
-		var self=this;
+		var self = this;
+		var imgActions = veronica.flux.Actions.getAction('ImageActions');
+		var userStore = veronica.flux.Stores.getStore('UserStore');
 
-		this.isPicLiked=false;
-		this.likers=[
+		this.isPicLiked = false;
+		this.likers = [
 			"https://scontent.xx.fbcdn.net/v/t1.0-1/p200x200/13669817_1117113145017292_4920305262041128067_n.jpg?oh=32783654cad84190711280a5c377221d&oe=582970EA",
 			"https://scontent.xx.fbcdn.net/v/t1.0-1/p200x200/13669817_1117113145017292_4920305262041128067_n.jpg?oh=32783654cad84190711280a5c377221d&oe=582970EA",
 			"https://scontent.xx.fbcdn.net/v/t1.0-1/p200x200/13669817_1117113145017292_4920305262041128067_n.jpg?oh=32783654cad84190711280a5c377221d&oe=582970EA",
 			"https://scontent.xx.fbcdn.net/v/t1.0-1/p200x200/13669817_1117113145017292_4920305262041128067_n.jpg?oh=32783654cad84190711280a5c377221d&oe=582970EA"];
-		this.likeCount=opts.details&&parseInt(opts.details.num_of_likes)||0;
+		this.likeCount = opts.details&&parseInt(opts.details.num_of_likes)||0;
 
-		this.likePic=function(e){
+		this.likePic = function(e){
 			e.preventDefault();
 			self.update({
 				isPicLiked:!self.isPicLiked,
 				likeCount:!self.isPicLiked?self.likeCount+1:self.likeCount-1
 			});
+
+			//send the request
+			imgActions.likeImage(opts.details.id,self.isPicLiked,userStore.getSessionId());
 		}
+
+		this.on('mount',e=>{
+			self.update({likeCount : opts.details&&parseInt(opts.details.num_of_likes)||0});
+		})
 	</script>
 </gp-stats>
 <gp-picunit>
@@ -1119,7 +1181,7 @@ function NavigationActions(){
 veronica.flux.Actions.createAction("NavigationActions",NavigationActions); 
  
 function ImageActions(){
-    this.saveImage=function(imgId, img,tags,description,sessionId){
+    this.saveImage = function(imgId, img,tags,description,sessionId){
         fetch(window.apiBase+"/image/save",{
             headers: Object.assign({},window.defaultHeaders,{'x-session-id': sessionId}),
             method: "POST",
@@ -1141,7 +1203,39 @@ function ImageActions(){
         });
     }
 
-    this.publishImage=function(imageId){
+    this.likeImage = function(imageId, liked, sessionId){
+      fetch(window.apiBase+'/image/'+imageId+'/like',{
+        headers: Object.assign({},window.defaultHeaders,{'x-session-id': sessionId}),
+        method: "POST",
+        body:''
+      })
+      .then(res=>res.json())
+      .then(data=>{
+        console.log(data);
+      });
+    }
+
+    this.cloneImage = function(imageId, sessionId){
+      var fetchPromise = fetch(window.apiBase+'/image/clone',{
+        headers: Object.assign({},window.defaultHeaders,{'x-session-id': sessionId}),
+        method: "POST",
+        body:JSON.stringify({ image_id: imageId})
+      })
+      .then(res=>{
+        if(res.status!==200){
+          throw newError('Image Cloning failed');
+        }
+        return res.json()
+      })
+      .then(data=>{
+        this.Dispatcher.trigger("img:clone:success",data);
+      })
+      .catch(e=>{
+        this.Dispatcher.trigger("img:clone:failed",e);
+      })
+    }
+
+    this.publishImage = function(imageId){
       //implement fetch here
     }
 
@@ -1306,6 +1400,14 @@ function ImageStore() {
 
   this.Dispatcher.register("img:save:failed", (data)=>{
     this.emit("img:save:failed");
+  });
+
+  this.Dispatcher.register("img:clone:success", (data)=>{
+    this.emit("img:clone:success");
+  });
+
+  this.Dispatcher.register("img:clone:failed", (data)=>{
+    this.emit("img:clone:failed");
   });
 
   this.Dispatcher.register("img:detailsfetch:success", (data)=>{

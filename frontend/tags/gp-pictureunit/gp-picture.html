@@ -1,11 +1,65 @@
 <gp-picture>
-	<img class="pic {isloading?'loading':''}" height="{window.innerWidth}" src="{opts.img}" onload={loaded}></img>
+	<img onclick={showContribute} 
+		class="pic {isloading?'loading':''}" 
+		height="{window.innerWidth}" src="{opts.img}" 
+		onload={loaded}></img>
 	<icon-pic class="loader"></icon-pic>
+	<material-button 
+		waves-color="#000" class="clone {shown:(usedAccountId !== opts.owner.account_id)&&isShowingClone}" onclick={startClone}>
+		<span if={isCloning}>CLONING</span>
+		<span if={isCloned}>CLONED</span>
+		<span if={!isCloned&&!isCloning}>CONTRIBUTE</span>
+	</material-button>
 	<script>
-		var self=this;
-		this.isloading=true;
+	</script>
+	<script>
+		var self = this;
+		var imgActions = veronica.flux.Actions.getAction('ImageActions');
+		var userStore = veronica.flux.Stores.getStore('UserStore');
+		var imageStore = veronica.flux.Stores.getStore('ImageStore');
+
+		this.usedAccountId = userStore.getUserProfile().user.account_id;
+		this.isloading = true;
+		this.isShowingClone = false;
+		this.isCloning = false;
+		this.isCloned = false;
+		this.isSelfPic = false;
+
+		function imgCloneSuccess(){
+			self.update({
+				isCloning: false,
+				isCloned: true
+			});
+		}
+
+		function imgCloneFailure(){
+			self.update({
+				isCloning: false,
+				isCloned: false
+			});
+		}
+
 		this.loaded=function(){
 			self.update({isloading: false});
 		}
+
+		this.showContribute=function(){
+			self.update({isShowingClone: !self.isShowingClone});
+		}
+
+		this.startClone=function(){
+			self.update({isCloning: true});
+			imgActions.cloneImage(veronica.getCurrentState().data[':imageid'], userStore.getSessionId())
+		}
+
+		this.on('mount',e=>{
+			imageStore.subscribe("img:clone:success",imgCloneSuccess);
+			imageStore.subscribe("img:clone:failed",imgCloneFailure);
+		});
+
+		this.on('unmount',e=>{
+			imageStore.unsubscribe("img:clone:success",imgCloneSuccess);
+			imageStore.unsubscribe("img:clone:failed",imgCloneFailure);
+		});
 	</script>
 </gp-picture>
