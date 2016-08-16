@@ -1703,7 +1703,8 @@ gp-profile {
   gp-profile .tab {
     display: inline-block;
     width: 100vw;
-    min-height: 600px; }
+    min-height: 600px;
+    vertical-align: top; }
   gp-profile .ownedcontainer {
     display: flex;
     flex-wrap: wrap; }

@@ -414,7 +414,6 @@ riot.tag2('gp-home', '<h1>home</h1>', '', '', function (opts) {
   var userStore = veronica.flux.Stores.getStore("UserStore");
 
   this.on("mount", function () {
-    console.log(userStore.getUserProfile("me"));
     if (!userStore.getUserProfile("me")) {
       veronica.loc("/login", true);
     } else {
@@ -880,11 +879,13 @@ function UserStore() {
   //Register for actions
 
   this.Dispatcher.register("user:login:success", function (data) {
+    //sid for all further requests
+    sessionId = data.session_id;
+
     //start caching big image 
     var img = new Image();
     img.src = data.profile_details.user.full_profile_url;
 
-    sessionId = data.session_id;
     users["me"] = data.profile_details;
     users[users["me"].account_id] = users["me"];
     localStorage.sid = sessionId;

@@ -4,7 +4,6 @@
 		var userStore=veronica.flux.Stores.getStore("UserStore");
 		
 		this.on("mount",function(){
-			console.log(userStore.getUserProfile("me"));
 			if(!userStore.getUserProfile("me"))
 			{
 				veronica.loc("/login",true);
