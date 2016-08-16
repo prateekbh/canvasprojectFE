@@ -9,6 +9,7 @@ spider.log
 .gradle/*
 **/*.DS_Store
 build/
-**/node_modules/*
+frontenda
+node_modules
 !**/node_modules/riot-mui
 **/npm-debug.log
