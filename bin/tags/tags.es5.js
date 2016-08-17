@@ -597,6 +597,7 @@ riot.tag2('gp-picture', '<img onclick="{showContribute}" class="pic {isloading?\
   };
 
   this.on('mount', function (e) {
+    console.log(opts.img);
     imageStore.subscribe("img:clone:success", imgCloneSuccess);
     imageStore.subscribe("img:clone:failed", imgCloneFailure);
   });
@@ -727,7 +728,9 @@ function UserAction() {
     var _this4 = this;
 
     fetch(apiBase + "/user/profile/details/" + uid, {
-      headers: Object.assign({}, defaultHeaders, { 'x-session-id': sid, 'x-account-id': sid })
+      headers: Object.assign({}, defaultHeaders, { 'x-session-id': sid, 'x-account-id': sid }),
+      mode: 'cors',
+      credentials: 'include'
     }).then(function (res) {
       return res.json();
     }).then(function (data) {
@@ -742,6 +745,8 @@ function UserAction() {
     fetch(window.apiBase + "/user/signIn", {
       headers: window.defaultHeaders,
       method: "POST",
+      mode: 'cors',
+      credentials: 'include',
       body: JSON.stringify({
         "user_details": {
           "avatar_url": fbprofile.picture.data.url,
@@ -798,6 +803,8 @@ function ImageActions() {
     fetch(window.apiBase + "/image/save", {
       headers: Object.assign({}, window.defaultHeaders, { 'x-session-id': sessionId }),
       method: "POST",
+      mode: 'cors',
+      credentials: 'include',
       body: JSON.stringify({
         "image": LZW.encode(img),
         "tags": ["string"],
@@ -818,6 +825,8 @@ function ImageActions() {
     fetch(window.apiBase + '/image/' + imageId + '/like', {
       headers: Object.assign({}, window.defaultHeaders, { 'x-session-id': sessionId }),
       method: "POST",
+      mode: 'cors',
+      credentials: 'include',
       body: ''
     }).then(function (res) {
       return res.json();
@@ -832,6 +841,8 @@ function ImageActions() {
     var fetchPromise = fetch(window.apiBase + '/image/clone', {
       headers: Object.assign({}, window.defaultHeaders, { 'x-session-id': sessionId }),
       method: "POST",
+      mode: 'cors',
+      credentials: 'include',
       body: JSON.stringify({ image_id: imageId })
     }).then(function (res) {
       if (res.status !== 200) {
@@ -852,7 +863,10 @@ function ImageActions() {
   this.fetchImage = function (imageId) {
     var _this8 = this;
 
-    fetch(window.apiBase + "/image/details/" + imageId).then(function (res) {
+    fetch(window.apiBase + "/image/details/" + imageId, {
+      mode: 'cors',
+      credentials: 'include'
+    }).then(function (res) {
       return res.json();
     }).then(function (data) {
       _this8.Dispatcher.trigger("img:detailsfetch:success", data);

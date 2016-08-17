@@ -1113,7 +1113,9 @@ function UserAction(){
 
 	this.fetchUserProfile=function(uid, sid){
 		fetch(apiBase+"/user/profile/details/"+uid,{
-			headers: Object.assign({}, defaultHeaders, {'x-session-id': sid, 'x-account-id': sid})
+			headers: Object.assign({}, defaultHeaders, {'x-session-id': sid, 'x-account-id': sid}),
+			mode: 'cors',
+			credentials: 'include'
 		})
 		.then(res=>res.json())
 		.then(data=>{
@@ -1128,6 +1130,8 @@ function UserAction(){
 		fetch(window.apiBase+"/user/signIn",{
 			headers:window.defaultHeaders,
 			method:"POST",
+			mode: 'cors',
+			credentials: 'include',
 			body:JSON.stringify(
 			{
 			  "user_details": {
@@ -1185,6 +1189,8 @@ function ImageActions(){
         fetch(window.apiBase+"/image/save",{
             headers: Object.assign({},window.defaultHeaders,{'x-session-id': sessionId}),
             method: "POST",
+            mode: 'cors',
+            credentials: 'include',
             body: JSON.stringify({
               "image": LZW.encode(img),
               "tags": [
@@ -1207,6 +1213,8 @@ function ImageActions(){
       fetch(window.apiBase+'/image/'+imageId+'/like',{
         headers: Object.assign({},window.defaultHeaders,{'x-session-id': sessionId}),
         method: "POST",
+        mode: 'cors',
+        credentials: 'include',
         body:''
       })
       .then(res=>res.json())
@@ -1219,6 +1227,8 @@ function ImageActions(){
       var fetchPromise = fetch(window.apiBase+'/image/clone',{
         headers: Object.assign({},window.defaultHeaders,{'x-session-id': sessionId}),
         method: "POST",
+        mode: 'cors',
+        credentials: 'include',
         body:JSON.stringify({ image_id: imageId})
       })
       .then(res=>{
@@ -1240,7 +1250,10 @@ function ImageActions(){
     }
 
     this.fetchImage = function (imageId){
-      fetch(window.apiBase+"/image/details/"+imageId)
+      fetch(window.apiBase+"/image/details/"+imageId,{
+        mode: 'cors',
+        credentials: 'include'
+      })
       .then(res=>res.json())
       .then(data=>{
         this.Dispatcher.trigger("img:detailsfetch:success",data);  

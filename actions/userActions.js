@@ -2,7 +2,9 @@ function UserAction(){
 
 	this.fetchUserProfile=function(uid, sid){
 		fetch(apiBase+"/user/profile/details/"+uid,{
-			headers: Object.assign({}, defaultHeaders, {'x-session-id': sid, 'x-account-id': sid})
+			headers: Object.assign({}, defaultHeaders, {'x-session-id': sid, 'x-account-id': sid}),
+			mode: 'cors',
+			credentials: 'include'
 		})
 		.then(res=>res.json())
 		.then(data=>{
@@ -17,6 +19,8 @@ function UserAction(){
 		fetch(window.apiBase+"/user/signIn",{
 			headers:window.defaultHeaders,
 			method:"POST",
+			mode: 'cors',
+			credentials: 'include',
 			body:JSON.stringify(
 			{
 			  "user_details": {

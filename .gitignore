@@ -7,7 +7,8 @@
 spider.log
 **/build/*
 .gradle/*
-**/*.DS_Store
+.DS_Store
+**/.DS_Store
 build/
 frontenda
 node_modules
