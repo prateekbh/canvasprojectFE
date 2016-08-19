@@ -969,7 +969,7 @@
 </gp-followbutton>
 
 <gp-profile>
-	<div class="profilepic {userPic?'loaded':''}" style="{userPic?'background-image:url(\''+userPic+'\')':''}">
+	<div class="profilepic {userPic?'loaded':''}" style="{userPic?'background-image:url(\''+userPic+'\')':''};height:{window.innerHeight*.65}px">
 		<div class="username">{userProfile.user.name}</div>
 		<gp-followbutton 
 			following={userProfile.is_follower}
@@ -1111,9 +1111,8 @@
 </material-progressbar>
 function UserAction(){
 
-	this.fetchUserProfile=function(uid, sid){
+	this.fetchUserProfile = function(uid, sid){
 		fetch(apiBase+"/user/profile/details/"+uid,{
-			headers: Object.assign({}, defaultHeaders, {'x-session-id': sid, 'x-account-id': sid}),
 			mode: 'cors',
 			credentials: 'include'
 		})
@@ -1125,7 +1124,7 @@ function UserAction(){
 		});
 	}
 
-	this.loginUser=(fbprofile,oauth)=>{
+	this.loginUser = (fbprofile,oauth)=>{
 		var user={};
 		fetch(window.apiBase+"/user/signIn",{
 			headers:window.defaultHeaders,
@@ -1155,8 +1154,27 @@ function UserAction(){
 		})
 	}
 
-    this.setUserProfile=function(profile){
+    this.setUserProfile = function(profile){
         this.Dispatcher.trigger("user:setprofile",{profile:profile});
+    }
+
+    this.followUser = function(userId){
+    	fetch(window.apiBase+"/user/addFollower",{
+    		headers:window.defaultHeaders,
+    		method:"POST",
+    		mode: 'cors',
+    		credentials: 'include',
+    		body:JSON.stringify(
+    		{
+    		  'follower_account_id': userId
+    		})
+    	})
+    	.then(res=>res.json())
+    	.then(data=>{
+    		this.Dispatcher.trigger("user:followed:success",{data:data, id:userId});
+    	}).catch(e=>{
+    		this.Dispatcher.trigger("user:followed:failure",{data:e});
+    	})
     }
 
 }

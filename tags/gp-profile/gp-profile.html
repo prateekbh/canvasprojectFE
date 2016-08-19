@@ -1,5 +1,5 @@
 <gp-profile>
-	<div class="profilepic {userPic?'loaded':''}" style="{userPic?'background-image:url(\''+userPic+'\')':''}">
+	<div class="profilepic {userPic?'loaded':''}" style="{userPic?'background-image:url(\''+userPic+'\')':''};height:{window.innerHeight*.65}px">
 		<div class="username">{userProfile.user.name}</div>
 		<gp-followbutton 
 			following={userProfile.is_follower}

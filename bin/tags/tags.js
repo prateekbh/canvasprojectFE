@@ -665,7 +665,7 @@ riot.tag2('gp-picunit', '<div class="userinfo"></div><div class="container-pic">
 riot.tag2('gp-followbutton', '<button class="follow {opts.following?\'following\':\'\'}"><icon-add if="{!opts.following}"></icon-add><icon-tick if="{opts.following}"></icon-tick><span class="text">{opts.following?\'following\':\'follow\'}</span></button>', '', '', function(opts) {
 });
 
-riot.tag2('gp-profile', '<div class="profilepic {userPic?\'loaded\':\'\'}" riot-style="{userPic?\'background-image:url(\\\'\'+userPic+\'\\\')\':\'\'}"><div class="username">{userProfile.user.name}</div><gp-followbutton following="{userProfile.is_follower}" if="{userProfile&&ownerProfile&&ownerProfile.user.user_id!==userProfile.user.user_id}"></gp-followbutton></div><div class="usercontent" if="{userProfile}"><material-tabs useline="true" tabs="{tabs}" __selected="{selectedTab}" tabchanged="{tabChanged}"></material-tabs><div class="tabcontent tab{selectedTab}" onswipeleft="{incTabsIndex}" onswiperight="{decTabsIndex}"><div class="tab tab-owned"><div class="ownedcontainer"><a class="piclink" each="{pic, index in userProfile.owned_images}" href="/image/{pic.id}"><img height="{(window.innerWidth/3)-2}" class="ownedpic" riot-src="{pic.url}"></img></a></div></div><div class="tab tab-contri"> Tab2 </div></div></div><div class="usercontent" if="{!userProfile}"><div class="loader"><material-spinner></material-spinner></div></div>', '', '', function(opts) {
+riot.tag2('gp-profile', '<div class="profilepic {userPic?\'loaded\':\'\'}" riot-style="{userPic?\'background-image:url(\\\'\'+userPic+\'\\\')\':\'\'};height:{window.innerHeight*.65}px"><div class="username">{userProfile.user.name}</div><gp-followbutton following="{userProfile.is_follower}" if="{userProfile&&ownerProfile&&ownerProfile.user.user_id!==userProfile.user.user_id}"></gp-followbutton></div><div class="usercontent" if="{userProfile}"><material-tabs useline="true" tabs="{tabs}" __selected="{selectedTab}" tabchanged="{tabChanged}"></material-tabs><div class="tabcontent tab{selectedTab}" onswipeleft="{incTabsIndex}" onswiperight="{decTabsIndex}"><div class="tab tab-owned"><div class="ownedcontainer"><a class="piclink" each="{pic, index in userProfile.owned_images}" href="/image/{pic.id}"><img height="{(window.innerWidth/3)-2}" class="ownedpic" riot-src="{pic.url}"></img></a></div></div><div class="tab tab-contri"> Tab2 </div></div></div><div class="usercontent" if="{!userProfile}"><div class="loader"><material-spinner></material-spinner></div></div>', '', '', function(opts) {
 		var self = this;
 		var userStore = veronica.flux.Stores.getStore("UserStore");
 		var userAction = veronica.flux.Actions.getAction("UserActions");
@@ -754,9 +754,8 @@ riot.tag2('material-progressbar', '<div class="bar"><div class="progress {opts.m
 });
 function UserAction(){
 
-	this.fetchUserProfile=function(uid, sid){
+	this.fetchUserProfile = function(uid, sid){
 		fetch(apiBase+"/user/profile/details/"+uid,{
-			headers: Object.assign({}, defaultHeaders, {'x-session-id': sid, 'x-account-id': sid}),
 			mode: 'cors',
 			credentials: 'include'
 		})
@@ -768,7 +767,7 @@ function UserAction(){
 		});
 	}
 
-	this.loginUser=(fbprofile,oauth)=>{
+	this.loginUser = (fbprofile,oauth)=>{
 		var user={};
 		fetch(window.apiBase+"/user/signIn",{
 			headers:window.defaultHeaders,
@@ -798,8 +797,27 @@ function UserAction(){
 		})
 	}
 
-    this.setUserProfile=function(profile){
+    this.setUserProfile = function(profile){
         this.Dispatcher.trigger("user:setprofile",{profile:profile});
+    }
+
+    this.followUser = function(userId){
+    	fetch(window.apiBase+"/user/addFollower",{
+    		headers:window.defaultHeaders,
+    		method:"POST",
+    		mode: 'cors',
+    		credentials: 'include',
+    		body:JSON.stringify(
+    		{
+    		  'follower_account_id': userId
+    		})
+    	})
+    	.then(res=>res.json())
+    	.then(data=>{
+    		this.Dispatcher.trigger("user:followed:success",{data:data, id:userId});
+    	}).catch(e=>{
+    		this.Dispatcher.trigger("user:followed:failure",{data:e});
+    	})
     }
 
 }

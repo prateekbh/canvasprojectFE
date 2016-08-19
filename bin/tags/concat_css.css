@@ -1659,7 +1659,7 @@ gp-profile {
   gp-profile .profilepic {
     position: relative;
     margin-top: -4px;
-    height: 65vh;
+    min-height: 300px;
     transition-delay: 600ms;
     transition-duration: 300ms;
     transition-timing-function: cubic-bezier(0.075, 0.82, 0.165, 1);

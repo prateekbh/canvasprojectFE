@@ -635,7 +635,7 @@ riot.tag2('gp-stats', '<div class="stats"><div class="commentstat stat"><button 
 riot.tag2('gp-picunit', '<div class="userinfo"></div><div class="container-pic"></div><div class="stats"></div>', '', '', function (opts) {});
 riot.tag2('gp-followbutton', '<button class="follow {opts.following?\'following\':\'\'}"><icon-add if="{!opts.following}"></icon-add><icon-tick if="{opts.following}"></icon-tick><span class="text">{opts.following?\'following\':\'follow\'}</span></button>', '', '', function (opts) {});
 
-riot.tag2('gp-profile', '<div class="profilepic {userPic?\'loaded\':\'\'}" riot-style="{userPic?\'background-image:url(\\\'\'+userPic+\'\\\')\':\'\'}"><div class="username">{userProfile.user.name}</div><gp-followbutton following="{userProfile.is_follower}" if="{userProfile&&ownerProfile&&ownerProfile.user.user_id!==userProfile.user.user_id}"></gp-followbutton></div><div class="usercontent" if="{userProfile}"><material-tabs useline="true" tabs="{tabs}" __selected="{selectedTab}" tabchanged="{tabChanged}"></material-tabs><div class="tabcontent tab{selectedTab}" onswipeleft="{incTabsIndex}" onswiperight="{decTabsIndex}"><div class="tab tab-owned"><div class="ownedcontainer"><a class="piclink" each="{pic, index in userProfile.owned_images}" href="/image/{pic.id}"><img height="{(window.innerWidth/3)-2}" class="ownedpic" riot-src="{pic.url}"></img></a></div></div><div class="tab tab-contri"> Tab2 </div></div></div><div class="usercontent" if="{!userProfile}"><div class="loader"><material-spinner></material-spinner></div></div>', '', '', function (opts) {
+riot.tag2('gp-profile', '<div class="profilepic {userPic?\'loaded\':\'\'}" riot-style="{userPic?\'background-image:url(\\\'\'+userPic+\'\\\')\':\'\'};height:{window.innerHeight*.65}px"><div class="username">{userProfile.user.name}</div><gp-followbutton following="{userProfile.is_follower}" if="{userProfile&&ownerProfile&&ownerProfile.user.user_id!==userProfile.user.user_id}"></gp-followbutton></div><div class="usercontent" if="{userProfile}"><material-tabs useline="true" tabs="{tabs}" __selected="{selectedTab}" tabchanged="{tabChanged}"></material-tabs><div class="tabcontent tab{selectedTab}" onswipeleft="{incTabsIndex}" onswiperight="{decTabsIndex}"><div class="tab tab-owned"><div class="ownedcontainer"><a class="piclink" each="{pic, index in userProfile.owned_images}" href="/image/{pic.id}"><img height="{(window.innerWidth/3)-2}" class="ownedpic" riot-src="{pic.url}"></img></a></div></div><div class="tab tab-contri"> Tab2 </div></div></div><div class="usercontent" if="{!userProfile}"><div class="loader"><material-spinner></material-spinner></div></div>', '', '', function (opts) {
   var _this2 = this;
 
   var self = this;
@@ -728,7 +728,6 @@ function UserAction() {
     var _this4 = this;
 
     fetch(apiBase + "/user/profile/details/" + uid, {
-      headers: Object.assign({}, defaultHeaders, { 'x-session-id': sid, 'x-account-id': sid }),
       mode: 'cors',
       credentials: 'include'
     }).then(function (res) {
@@ -772,6 +771,26 @@ function UserAction() {
   this.setUserProfile = function (profile) {
     this.Dispatcher.trigger("user:setprofile", { profile: profile });
   };
+
+  this.followUser = function (userId) {
+    var _this6 = this;
+
+    fetch(window.apiBase + "/user/addFollower", {
+      headers: window.defaultHeaders,
+      method: "POST",
+      mode: 'cors',
+      credentials: 'include',
+      body: JSON.stringify({
+        'follower_account_id': userId
+      })
+    }).then(function (res) {
+      return res.json();
+    }).then(function (data) {
+      _this6.Dispatcher.trigger("user:followed:success", { data: data, id: userId });
+    }).catch(function (e) {
+      _this6.Dispatcher.trigger("user:followed:failure", { data: e });
+    });
+  };
 }
 
 veronica.flux.Actions.createAction("UserActions", UserAction);
@@ -798,7 +817,7 @@ veronica.flux.Actions.createAction("NavigationActions", NavigationActions);
 
 function ImageActions() {
   this.saveImage = function (imgId, img, tags, description, sessionId) {
-    var _this6 = this;
+    var _this7 = this;
 
     fetch(window.apiBase + "/image/save", {
       headers: Object.assign({}, window.defaultHeaders, { 'x-session-id': sessionId }),
@@ -815,9 +834,9 @@ function ImageActions() {
     }).then(function (res) {
       return res.json();
     }).then(function (data) {
-      _this6.Dispatcher.trigger("img:save:success", data);
+      _this7.Dispatcher.trigger("img:save:success", data);
     }).catch(function (e) {
-      _this6.Dispatcher.trigger("img:save:failed", {});
+      _this7.Dispatcher.trigger("img:save:failed", {});
     });
   };
 
@@ -836,7 +855,7 @@ function ImageActions() {
   };
 
   this.cloneImage = function (imageId, sessionId) {
-    var _this7 = this;
+    var _this8 = this;
 
     var fetchPromise = fetch(window.apiBase + '/image/clone', {
       headers: Object.assign({}, window.defaultHeaders, { 'x-session-id': sessionId }),
@@ -850,9 +869,9 @@ function ImageActions() {
       }
       return res.json();
     }).then(function (data) {
-      _this7.Dispatcher.trigger("img:clone:success", data);
+      _this8.Dispatcher.trigger("img:clone:success", data);
     }).catch(function (e) {
-      _this7.Dispatcher.trigger("img:clone:failed", e);
+      _this8.Dispatcher.trigger("img:clone:failed", e);
     });
   };
 
@@ -861,7 +880,7 @@ function ImageActions() {
   };
 
   this.fetchImage = function (imageId) {
-    var _this8 = this;
+    var _this9 = this;
 
     fetch(window.apiBase + "/image/details/" + imageId, {
       mode: 'cors',
@@ -869,9 +888,9 @@ function ImageActions() {
     }).then(function (res) {
       return res.json();
     }).then(function (data) {
-      _this8.Dispatcher.trigger("img:detailsfetch:success", data);
+      _this9.Dispatcher.trigger("img:detailsfetch:success", data);
     }).catch(function (e) {
-      _this8.Dispatcher.trigger("img:detailsfetch:failed", {});
+      _this9.Dispatcher.trigger("img:detailsfetch:failed", {});
     });
   };
 }
@@ -879,7 +898,7 @@ function ImageActions() {
 veronica.flux.Actions.createAction("ImageActions", ImageActions);
 
 function UserStore() {
-  var _this9 = this;
+  var _this10 = this;
 
   var sessionId = localStorage.sid || null;
   var users = {};
@@ -904,16 +923,16 @@ function UserStore() {
     users[users["me"].account_id] = users["me"];
     localStorage.sid = sessionId;
     localStorage.user = JSON.stringify(users["me"]);
-    _this9.emit("user:login:success");
+    _this10.emit("user:login:success");
   });
 
   this.Dispatcher.register("user:login:failure", function (data) {
-    _this9.emit("user:login:failure");
+    _this10.emit("user:login:failure");
   });
 
   this.Dispatcher.register("user:fetchprofile:success", function (data) {
     users[data.user.account_id] = data;
-    _this9.emit("user:profile:fetched");
+    _this10.emit("user:profile:fetched");
   });
 
   this.getUserProfile = function (uid) {
@@ -1014,7 +1033,7 @@ function NavigationStore() {
 //creating an store 
 veronica.flux.Stores.createStore("NavigationStore", NavigationStore);
 function ImageStore() {
-  var _this10 = this;
+  var _this11 = this;
 
   var self = this;
   var currPic = null;
@@ -1022,28 +1041,28 @@ function ImageStore() {
   //Register for actions
   this.Dispatcher.register("img:save:success", function (data) {
     currPic = data;
-    _this10.emit("img:save:success");
+    _this11.emit("img:save:success");
   });
 
   this.Dispatcher.register("img:save:failed", function (data) {
-    _this10.emit("img:save:failed");
+    _this11.emit("img:save:failed");
   });
 
   this.Dispatcher.register("img:clone:success", function (data) {
-    _this10.emit("img:clone:success");
+    _this11.emit("img:clone:success");
   });
 
   this.Dispatcher.register("img:clone:failed", function (data) {
-    _this10.emit("img:clone:failed");
+    _this11.emit("img:clone:failed");
   });
 
   this.Dispatcher.register("img:detailsfetch:success", function (data) {
     imgs[data.id] = data;
-    _this10.emit("img:detailsfetch:success");
+    _this11.emit("img:detailsfetch:success");
   });
 
   this.Dispatcher.register("img:detailsfetch:failed", function (data) {
-    _this10.emit("img:detailsfetch:failed");
+    _this11.emit("img:detailsfetch:failed");
   });
 
   this.getPicDetails = function (imageId) {
