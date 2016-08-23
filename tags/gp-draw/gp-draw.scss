@@ -114,7 +114,6 @@ gp-draw{
 		width: 100%;
 		padding: 8px 16px;
 		background-color: #fff;
-		height: 0px;
 		border-top: 1px solid #ccc;
 		bottom: 0;
 		left: 0;
@@ -123,8 +122,14 @@ gp-draw{
 		transition-duration:300ms;
 		transition-property:transform;
 		will-change:transform;
+		.content{
+			height: 0px;
+			overflow: hidden;
+		}
 		&.shown{
-			height: 300px;
+			.content{
+				height: 300px;
+			}
 			transform:translateY(0px);
 			.closesheet{
 				display: inline-block;
