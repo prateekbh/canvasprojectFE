@@ -625,7 +625,6 @@
 				isLoading: false,
 				image: imgDetails
 			});
-			console.log(imgDetails);
 		}
 
 		this.on('mount',(e)=>{
@@ -1044,7 +1043,6 @@
 		var userStore = veronica.flux.Stores.getStore("UserStore");
 		var userAction = veronica.flux.Actions.getAction("UserActions");
 		var pid=veronica.getCurrentState().data[':pid'];
-		var userProfileEventSubscribed=false;
 		var $tabs=null;
 
 		/* place holders for tab swiping */
@@ -1121,21 +1119,17 @@
 
 
 		this.on("mount",()=>{
-			userAction.fetchUserProfile(pid, userStore.getSessionId());
 			$tabs=this.root.querySelector("material-tabs");
-			if(!this.userProfile){
-				userProfileEventSubscribed=true;
-				userStore.subscribe("user:profile:fetched",setUserProfile);
-			}else{
+			if(this.userProfile){
 				setUserPic(this.userProfile);
+				setUserProfile();
 			}
-
+			userAction.fetchUserProfile(pid, userStore.getSessionId());
+			userStore.subscribe("user:profile:fetched",setUserProfile);
 		});
 
 		this.on("unmount",(e)=>{
-			if(userProfileEventSubscribed){
-				userStore.unsubscribe("user:profile:fetched",setUserProfile);
-			}
+			userStore.unsubscribe("user:profile:fetched",setUserProfile);
 		})
 	</script>
 </gp-profile>

@@ -1722,7 +1722,8 @@ gp-profile {
   gp-profile material-tabs material-button {
     background-color: transparent;
     padding: 8px 0;
-    height: auto; }
+    height: auto;
+    width: 50%; }
   gp-profile material-tabs material-button .content .text {
     color: #ccc; }
   gp-profile material-tabs material-button.selected .content .text {

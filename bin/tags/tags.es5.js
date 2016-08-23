@@ -442,7 +442,6 @@ riot.tag2('gp-imagedetails', '<gp-pictureunit isloading="{isLoading}" img="{imag
       isLoading: false,
       image: imgDetails
     });
-    console.log(imgDetails);
   }
 
   this.on('mount', function (e) {
@@ -678,7 +677,6 @@ riot.tag2('gp-profile', '<div class="profilepic {userPic?\'loaded\':\'\'}" riot-
   var userStore = veronica.flux.Stores.getStore("UserStore");
   var userAction = veronica.flux.Actions.getAction("UserActions");
   var pid = veronica.getCurrentState().data[':pid'];
-  var userProfileEventSubscribed = false;
   var $tabs = null;
 
   var initPoint = null;
@@ -747,20 +745,17 @@ riot.tag2('gp-profile', '<div class="profilepic {userPic?\'loaded\':\'\'}" riot-
   };
 
   this.on("mount", function () {
-    userAction.fetchUserProfile(pid, userStore.getSessionId());
     $tabs = _this2.root.querySelector("material-tabs");
-    if (!_this2.userProfile) {
-      userProfileEventSubscribed = true;
-      userStore.subscribe("user:profile:fetched", setUserProfile);
-    } else {
+    if (_this2.userProfile) {
       setUserPic(_this2.userProfile);
+      setUserProfile();
     }
+    userAction.fetchUserProfile(pid, userStore.getSessionId());
+    userStore.subscribe("user:profile:fetched", setUserProfile);
   });
 
   this.on("unmount", function (e) {
-    if (userProfileEventSubscribed) {
-      userStore.unsubscribe("user:profile:fetched", setUserProfile);
-    }
+    userStore.unsubscribe("user:profile:fetched", setUserProfile);
   });
 });
 
