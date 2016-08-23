@@ -1244,7 +1244,7 @@ gp-draw {
     width: 100%;
     padding: 8px 16px;
     background-color: #fff;
-    height: 300px;
+    height: 0px;
     border-top: 1px solid #ccc;
     bottom: 0;
     left: 0;
@@ -1254,11 +1254,15 @@ gp-draw {
     transition-property: transform;
     will-change: transform; }
     gp-draw .bottomsheet.shown {
+      height: 300px;
       transform: translateY(0px); }
+      gp-draw .bottomsheet.shown .closesheet {
+        display: inline-block; }
     gp-draw .bottomsheet .sheetcontent {
       height: 235px;
       overflow: scroll; }
     gp-draw .bottomsheet .closesheet {
+      display: none;
       bottom: auto;
       right: 15px;
       top: -23px;

@@ -330,7 +330,7 @@ gp-draw{
 		width: 100%;
 		padding: 8px 16px;
 		background-color: #fff;
-		height: 300px;
+		height: 0px;
 		border-top: 1px solid #ccc;
 		bottom: 0;
 		left: 0;
@@ -340,7 +340,11 @@ gp-draw{
 		transition-property:transform;
 		will-change:transform;
 		&.shown{
+			height: 300px;
 			transform:translateY(0px);
+			.closesheet{
+				display: inline-block;
+			}
 		}
 
 		.sheetcontent{
@@ -349,6 +353,7 @@ gp-draw{
 		}
 
 		.closesheet{
+			display: none;
 			bottom: auto;
 			right: 15px;
 			top: -23px;

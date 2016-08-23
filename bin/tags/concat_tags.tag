@@ -625,6 +625,7 @@
 				isLoading: false,
 				image: imgDetails
 			});
+			console.log(imgDetails);
 		}
 
 		this.on('mount',(e)=>{

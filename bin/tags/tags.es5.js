@@ -442,6 +442,7 @@ riot.tag2('gp-imagedetails', '<gp-pictureunit isloading="{isLoading}" img="{imag
       isLoading: false,
       image: imgDetails
     });
+    console.log(imgDetails);
   }
 
   this.on('mount', function (e) {
