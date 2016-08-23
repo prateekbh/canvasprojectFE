@@ -653,25 +653,33 @@
 		var self=this;
 		var userStore=veronica.flux.Stores.getStore("UserStore");
 		var userActions=veronica.flux.Actions.getAction("UserActions");
+		var toastActions=veronica.flux.Actions.getAction("ToastActions");
 		
 		this.userProfile=userStore.getUserProfile("me");
 		this.loading=false;
 
 		this.startLoading=function(){
-			self.update({loading:true});
-			window.FB&&FB.login(function(res){
-				if(res.status==="connected"){
-					var url = '/me?fields=name,email,picture';
-	                FB.api(url, function (response) {
-	                	userActions.loginUser(response,res);
-	                });
-				}
-			});
+			if(window.FB){
+				self.update({loading:true});
+				FB.login(function(res){
+					if(res.status==="connected"){
+						var url = '/me?fields=name,email,picture';
+	          FB.api(url, function (response) {
+	          	userActions.loginUser(response,res);
+	          });
+					}
+				});
+			}
 		}
 
 		function logInSuccess(){
-			//show toast
+			toastActions.showToast('Login successful',{type:'success'});
 			veronica.loc("/",true);
+		}
+
+		function logInFailed(){
+			toastActions.showToast('Login failed',{type:'error'});
+			self.update({loading:false});
 		}
 
 		this.on("mount",()=>{
@@ -679,11 +687,13 @@
 				veronica.loc("/",true);
 			}else{
 				userStore.subscribe("user:login:success", logInSuccess);
+				userStore.subscribe("user:login:failed", logInFailed);
 			}
 		});
 
 		this.on("unmount",()=>{
 			userStore.unsubscribe("user:login:success", logInSuccess);
+			userStore.unsubscribe("user:login:failed", logInFailed);
 		});
 	</script>
 </gp-login>
@@ -714,12 +724,9 @@
 		});
 	</script>
 </gp-modal>
-<gp-nav>
-	<nav>
-	</nav>
-</gp-nav>
-<gp-navbar>
-	<nav class="{isNavBarOpen?'opened':'closed'}" onswipeleft={closeNavBar}>
+<gp-navbar >
+	<nav class="{isNavBarOpen?'opened':'closed'}" 
+		onswipeleft={closeNavBar} >
 		<div class="userinfo">
 			<img class="pic" width="60" height="60" src="{userProfile.user.avatar_url}"></img>
 			<div class="name">{userProfile.user.name}</div>
@@ -765,8 +772,10 @@
 		var navActions=veronica.flux.Actions.getAction("NavigationActions");
 		var navStore=veronica.flux.Stores.getStore("NavigationStore");
 		var userStore=veronica.flux.Stores.getStore("UserStore");
+		var initTouchPoint=null;
 
-		this.userProfile=userStore.getUserProfile("me");
+		this.userProfile = userStore.getUserProfile("me");
+		this.forcedStyle = '';
 
 		function changeNavBarStatus(){
 			self.update({ 
@@ -788,7 +797,31 @@
 			navActions.hideModal();
 		}
 
+		this.initTouch = function(e){
+			initTouchPoint = e.touches[0];
+			self.update({
+				forcedStyle: 'transition-duration:0ms'
+			});
+		}
+
+		this.navBarDragging = function(e){
+			var touch = e.touches[0];
+			var delta = touch.clientX - initTouchPoint.clientX;
+			if(delta < 1){
+				self.update({
+					forcedStyle: 'transition-duration:0ms; transform:translateX('+delta+'px)'
+				});
+			}
+		}
+
+		this.endTouch = function(e){
+			self.update({
+				forcedStyle: ''
+			});
+		}
+
 		this.on("mount",function(){
+
 			navStore.subscribe("nav:statuschange",changeNavBarStatus);
 			navStore.subscribe("nav:modalchange",changeNavBarStatus);
 			userStore.subscribe("user:login:success",getUserProfile);
@@ -973,6 +1006,7 @@
 		<div class="username">{userProfile.user.name}</div>
 		<gp-followbutton 
 			following={userProfile.is_follower}
+			onclick={startFollowingUser}
 			if={userProfile&&ownerProfile&&ownerProfile.user.user_id!==userProfile.user.user_id}>
 		</gp-followbutton>
 	</div>
@@ -985,7 +1019,7 @@
 		<div 
 			class="tabcontent tab{selectedTab}"
 			onswipeleft={incTabsIndex}
-			onswiperight={decTabsIndex}>
+			onswiperight={decTabsIndex} >
 			<div class="tab tab-owned">
 				<div class="ownedcontainer">
 					<a class="piclink" each={pic, index in userProfile.owned_images} href="/image/{pic.id}">
@@ -1012,6 +1046,11 @@
 		var userProfileEventSubscribed=false;
 		var $tabs=null;
 
+		/* place holders for tab swiping */
+		var initPoint = null;
+		var isCancelling = false;
+
+
 		this.userProfile = userStore.getUserProfile(pid);
 		this.ownerProfile = userStore.getUserProfile("me");
 		this.userPic = null;
@@ -1037,24 +1076,48 @@
 			});
 			setUserPic(userStore.getUserProfile(pid));
 			$tabs=self.root.querySelector("material-tabs");
+
+			//HIGHLY Experimental
+			setTimeout(()=>{
+				self.root.querySelector('.usercontent').addEventListener('touchstart',(e)=>{
+					initPoint=e.touches[0];
+				});	
+				self.root.querySelector('.usercontent').addEventListener('touchmove',(e)=>{
+					var scrollDirectionIntent = Math.abs(initPoint.clientX - e.touches[0].clientX)/Math.abs(initPoint.clientY - e.touches[0].clientY);
+					if(isCancelling || scrollDirectionIntent > 0.8){
+						isCancelling = true;
+						e.preventDefault();
+					}
+				});	
+				self.root.querySelector('.usercontent').addEventListener('touchend',(e)=>{
+					isCancelling = false;
+					initPoint = null;
+				});	
+			},100);
+			
 		}
 
-		this.incTabsIndex=function(e){
+		this.incTabsIndex = function(e){
 			if(this.selectedTab<1){
 				self.update({selectedTab:this.selectedTab+1});
 				$tabs._tag.changeTab(this.selectedTab);
 			}
 		}
-		this.decTabsIndex=function(e){
+		this.decTabsIndex = function(e){
 			if(this.selectedTab>0){
 				self.update({selectedTab:this.selectedTab-1});
 				$tabs._tag.changeTab(this.selectedTab);
 			}
 		}
 
-		this.tabChanged=function(){
+		this.tabChanged = function(){
 			self.update({selectedTab:$tabs._tag.selected});
 		}
+
+		this.startFollowingUser = function(){
+			userAction.followUser(pid,self.userProfile.is_follower);
+		} 
+
 
 		this.on("mount",()=>{
 			userAction.fetchUserProfile(pid, userStore.getSessionId());
@@ -1076,6 +1139,46 @@
 	</script>
 </gp-profile>
 
+<gp-search>
+	<input type="" onkeyup={search}>
+	<script>
+		this.search=function(q){
+			fetch(apiBase+'/galleria/search/any/'+q.target.value,{
+				mode: 'cors',
+				credentials: 'include'
+			})
+			.then(res=>res.json())
+			.then(data=>{
+				console.log(data);
+			})
+		}
+	</script>
+</gp-search>
+<gp-toast>
+	<div class="toastcontainer"></div>
+	<script>
+		var self = this;
+		var toastStore = veronica.flux.Stores.getStore('ToastStore');
+		var $tContainer=null;
+
+		function showToast(){
+			var toastObj = toastStore.getToastData();
+			var toastDom = document.createElement('div');
+			toastDom.setAttribute('class','toast '+toastObj.data.type);
+			toastDom.innerText = toastObj.text;
+			$tContainer.appendChild(toastDom);
+		}
+
+		this.on('mount',(e)=>{
+			$tContainer=this.root.querySelector('.toastcontainer');
+			toastStore.subscribe('toast:show',showToast);
+		});
+
+		this.on('unmount',(e)=>{
+			toastStore.unsubscribe('toast:show',showToast);
+		});
+	</script>
+</gp-toast>
 <material-dialog>
 	<div if={opts.shown}>
 		<div class="bg"></div>
@@ -1116,6 +1219,7 @@ function UserAction(){
 			mode: 'cors',
 			credentials: 'include'
 		})
+		.then(handleErrors)
 		.then(res=>res.json())
 		.then(data=>{
 			this.Dispatcher.trigger("user:fetchprofile:success",data);
@@ -1146,6 +1250,7 @@ function UserAction(){
 			  }
 			})
 		})
+		.then(handleErrors)
 		.then(res=>res.json())
 		.then(data=>{
 			this.Dispatcher.trigger("user:login:success",data);
@@ -1169,6 +1274,7 @@ function UserAction(){
     		  'follower_account_id': userId
     		})
     	})
+    	.then(handleErrors)
     	.then(res=>res.json())
     	.then(data=>{
     		this.Dispatcher.trigger("user:followed:success",{data:data, id:userId});
@@ -1219,6 +1325,7 @@ function ImageActions(){
               "image_id": imgId
             })
         })
+        .then(handleErrors)
         .then(res=>res.json())
         .then(data=>{
           this.Dispatcher.trigger("img:save:success",data);  
@@ -1235,6 +1342,7 @@ function ImageActions(){
         credentials: 'include',
         body:''
       })
+      .then(handleErrors)
       .then(res=>res.json())
       .then(data=>{
         console.log(data);
@@ -1268,20 +1376,35 @@ function ImageActions(){
     }
 
     this.fetchImage = function (imageId){
-      fetch(window.apiBase+"/image/details/"+imageId,{
+      fetch(apiBase+"/image/details/"+imageId,{
         mode: 'cors',
         credentials: 'include'
       })
+      .then(handleErrors)
       .then(res=>res.json())
       .then(data=>{
         this.Dispatcher.trigger("img:detailsfetch:success",data);  
       }).catch(e=>{
         this.Dispatcher.trigger("img:detailsfetch:failed",{});  
       });
+      
     }
 }
 
 veronica.flux.Actions.createAction("ImageActions",ImageActions); 
+ 
+function ToastActions(){
+    this.showToast = function(text,opts){
+        this.Dispatcher.trigger("toast:show",{text:text,data:opts});
+    }
+
+    this.showSnackBar = function(text,opts){
+        this.Dispatcher.trigger("snackbar:show",{text:text,data:opts});
+    }
+   
+}
+
+veronica.flux.Actions.createAction("ToastActions",ToastActions); 
  
 function UserStore(){
 
@@ -1464,3 +1587,21 @@ function ImageStore() {
 
 //creating an store 
 veronica.flux.Stores.createStore("ImageStore", ImageStore);
+
+function ToastStore(){
+    var self=this;
+
+    var toastData=null;
+
+    this.Dispatcher.register('toast:show',(data)=>{
+    	toastData = data;
+    	this.emit('toast:show');
+    });
+
+    this.getToastData = function(){
+    	return toastData;
+    }
+}
+ 
+//creating an store 
+veronica.flux.Stores.createStore("ToastStore",ToastStore);  

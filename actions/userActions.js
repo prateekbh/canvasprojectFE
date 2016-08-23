@@ -5,6 +5,7 @@ function UserAction(){
 			mode: 'cors',
 			credentials: 'include'
 		})
+		.then(handleErrors)
 		.then(res=>res.json())
 		.then(data=>{
 			this.Dispatcher.trigger("user:fetchprofile:success",data);
@@ -35,6 +36,7 @@ function UserAction(){
 			  }
 			})
 		})
+		.then(handleErrors)
 		.then(res=>res.json())
 		.then(data=>{
 			this.Dispatcher.trigger("user:login:success",data);
@@ -58,6 +60,7 @@ function UserAction(){
     		  'follower_account_id': userId
     		})
     	})
+    	.then(handleErrors)
     	.then(res=>res.json())
     	.then(data=>{
     		this.Dispatcher.trigger("user:followed:success",{data:data, id:userId});

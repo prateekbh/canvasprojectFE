@@ -1,5 +1,6 @@
-<gp-navbar>
-	<nav class="{isNavBarOpen?'opened':'closed'}" onswipeleft={closeNavBar}>
+<gp-navbar >
+	<nav class="{isNavBarOpen?'opened':'closed'}" 
+		onswipeleft={closeNavBar} >
 		<div class="userinfo">
 			<img class="pic" width="60" height="60" src="{userProfile.user.avatar_url}"></img>
 			<div class="name">{userProfile.user.name}</div>
@@ -45,8 +46,10 @@
 		var navActions=veronica.flux.Actions.getAction("NavigationActions");
 		var navStore=veronica.flux.Stores.getStore("NavigationStore");
 		var userStore=veronica.flux.Stores.getStore("UserStore");
+		var initTouchPoint=null;
 
-		this.userProfile=userStore.getUserProfile("me");
+		this.userProfile = userStore.getUserProfile("me");
+		this.forcedStyle = '';
 
 		function changeNavBarStatus(){
 			self.update({ 
@@ -68,7 +71,31 @@
 			navActions.hideModal();
 		}
 
+		this.initTouch = function(e){
+			initTouchPoint = e.touches[0];
+			self.update({
+				forcedStyle: 'transition-duration:0ms'
+			});
+		}
+
+		this.navBarDragging = function(e){
+			var touch = e.touches[0];
+			var delta = touch.clientX - initTouchPoint.clientX;
+			if(delta < 1){
+				self.update({
+					forcedStyle: 'transition-duration:0ms; transform:translateX('+delta+'px)'
+				});
+			}
+		}
+
+		this.endTouch = function(e){
+			self.update({
+				forcedStyle: ''
+			});
+		}
+
 		this.on("mount",function(){
+
 			navStore.subscribe("nav:statuschange",changeNavBarStatus);
 			navStore.subscribe("nav:modalchange",changeNavBarStatus);
 			userStore.subscribe("user:login:success",getUserProfile);

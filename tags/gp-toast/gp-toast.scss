@@ -1,0 +1,36 @@
+gp-toast{
+	.toast{
+		position: fixed;
+		bottom: 0;
+		left: 0;
+		width: 100%;
+		background: #333;
+		color: #fff;
+		padding: 24px;
+		will-change:transform;
+		animation-name: toastappear;
+		animation-duration: 3600ms;
+		animation-fill-mode: forwards;
+		&.success{
+
+		}
+		&.error{
+			background-color: #d32F2f;
+		}
+	}
+}
+
+@keyframes toastappear{
+ 0%{
+ 	transform: translateY(100%);
+ }
+ 8%{
+ 	transform: translateY(0%);
+ }
+ 92%{
+ 	transform: translateY(0%);
+ }
+ 100%{
+ 	transform: translateY(100%);	
+ }
+}

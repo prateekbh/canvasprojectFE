@@ -15,6 +15,7 @@ function ImageActions(){
               "image_id": imgId
             })
         })
+        .then(handleErrors)
         .then(res=>res.json())
         .then(data=>{
           this.Dispatcher.trigger("img:save:success",data);  
@@ -31,6 +32,7 @@ function ImageActions(){
         credentials: 'include',
         body:''
       })
+      .then(handleErrors)
       .then(res=>res.json())
       .then(data=>{
         console.log(data);
@@ -64,16 +66,18 @@ function ImageActions(){
     }
 
     this.fetchImage = function (imageId){
-      fetch(window.apiBase+"/image/details/"+imageId,{
+      fetch(apiBase+"/image/details/"+imageId,{
         mode: 'cors',
         credentials: 'include'
       })
+      .then(handleErrors)
       .then(res=>res.json())
       .then(data=>{
         this.Dispatcher.trigger("img:detailsfetch:success",data);  
       }).catch(e=>{
         this.Dispatcher.trigger("img:detailsfetch:failed",{});  
       });
+      
     }
 }
 

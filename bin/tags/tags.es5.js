@@ -459,25 +459,33 @@ riot.tag2('gp-login', '<div class="title titlefont"> KanvasProject </div><div cl
   var self = this;
   var userStore = veronica.flux.Stores.getStore("UserStore");
   var userActions = veronica.flux.Actions.getAction("UserActions");
+  var toastActions = veronica.flux.Actions.getAction("ToastActions");
 
   this.userProfile = userStore.getUserProfile("me");
   this.loading = false;
 
   this.startLoading = function () {
-    self.update({ loading: true });
-    window.FB && FB.login(function (res) {
-      if (res.status === "connected") {
-        var url = '/me?fields=name,email,picture';
-        FB.api(url, function (response) {
-          userActions.loginUser(response, res);
-        });
-      }
-    });
+    if (window.FB) {
+      self.update({ loading: true });
+      FB.login(function (res) {
+        if (res.status === "connected") {
+          var url = '/me?fields=name,email,picture';
+          FB.api(url, function (response) {
+            userActions.loginUser(response, res);
+          });
+        }
+      });
+    }
   };
 
   function logInSuccess() {
-
+    toastActions.showToast('Login successful', { type: 'success' });
     veronica.loc("/", true);
+  }
+
+  function logInFailed() {
+    toastActions.showToast('Login failed', { type: 'error' });
+    self.update({ loading: false });
   }
 
   this.on("mount", function () {
@@ -485,11 +493,13 @@ riot.tag2('gp-login', '<div class="title titlefont"> KanvasProject </div><div cl
       veronica.loc("/", true);
     } else {
       userStore.subscribe("user:login:success", logInSuccess);
+      userStore.subscribe("user:login:failed", logInFailed);
     }
   });
 
   this.on("unmount", function () {
     userStore.unsubscribe("user:login:success", logInSuccess);
+    userStore.unsubscribe("user:login:failed", logInFailed);
   });
 });
 riot.tag2('gp-modal', '<div class="modal {isModalShown?\'opened\':\'\'}" onclick="{closeModal}"></div>', '', '', function (opts) {
@@ -512,7 +522,6 @@ riot.tag2('gp-modal', '<div class="modal {isModalShown?\'opened\':\'\'}" onclick
 
   this.on("unmount", function (e) {});
 });
-riot.tag2('gp-nav', '<nav></nav>', '', '', function (opts) {});
 riot.tag2('gp-navbar', '<nav class="{isNavBarOpen?\'opened\':\'closed\'}" onswipeleft="{closeNavBar}"><div class="userinfo"><img class="pic" width="60" height="60" riot-src="{userProfile.user.avatar_url}"></img><div class="name">{userProfile.user.name}</div></div><div class="navcontents"><div class="navlinks"><a class="navlink" onclick="{closeNavBar}" href="/search"><svg class="icon" fill="#FFFFFF" height="24" viewbox="0 0 24 24" width="24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"></path></svg><span class="text">Search</span></a><a class="navlink" onclick="{closeNavBar}" href="/profile/{userProfile.user.account_id}"><svg class="icon" fill="#FFFFFF" height="24" viewbox="0 0 24 24" width="24"><path d="M12 5.9c1.16 0 2.1.94 2.1 2.1s-.94 2.1-2.1 2.1S9.9 9.16 9.9 8s.94-2.1 2.1-2.1m0 9c2.97 0 6.1 1.46 6.1 2.1v1.1H5.9V17c0-.64 3.13-2.1 6.1-2.1M12 4C9.79 4 8 5.79 8 8s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm0 9c-2.67 0-8 1.34-8 4v3h16v-3c0-2.66-5.33-4-8-4z"></path></svg><span class="text">Profile</span></a><a class="navlink" onclick="{closeNavBar}" href="/draw"><svg class="icon" fill="#FFFFFF" height="24" viewbox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"></path><path d="M7 14c-1.66 0-3 1.34-3 3 0 1.31-1.16 2-2 2 .92 1.22 2.49 2 4 2 2.21 0 4-1.79 4-4 0-1.66-1.34-3-3-3zm13.71-9.37l-1.34-1.34c-.39-.39-1.02-.39-1.41 0L9 12.25 11.75 15l8.96-8.96c.39-.39.39-1.02 0-1.41z"></path></svg><span class="text">New Canvas</span></a></div></div><div class="settings"><a class="navlink" href="/search"><svg class="icon" fill="#FFFFFF" height="24" viewbox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"></path><path d="M13 3h-2v10h2V3zm4.83 2.17l-1.42 1.42C17.99 7.86 19 9.81 19 12c0 3.87-3.13 7-7 7s-7-3.13-7-7c0-2.19 1.01-4.14 2.58-5.42L6.17 5.17C4.23 6.82 3 9.26 3 12c0 4.97 4.03 9 9 9s9-4.03 9-9c0-2.74-1.23-5.18-3.17-6.83z"></path></svg><span class="text">Logout</span></a></div></nav>', '', '', function (opts) {
   var self = this;
 
@@ -521,8 +530,10 @@ riot.tag2('gp-navbar', '<nav class="{isNavBarOpen?\'opened\':\'closed\'}" onswip
   var navActions = veronica.flux.Actions.getAction("NavigationActions");
   var navStore = veronica.flux.Stores.getStore("NavigationStore");
   var userStore = veronica.flux.Stores.getStore("UserStore");
+  var initTouchPoint = null;
 
   this.userProfile = userStore.getUserProfile("me");
+  this.forcedStyle = '';
 
   function changeNavBarStatus() {
     self.update({
@@ -544,7 +555,31 @@ riot.tag2('gp-navbar', '<nav class="{isNavBarOpen?\'opened\':\'closed\'}" onswip
     navActions.hideModal();
   };
 
+  this.initTouch = function (e) {
+    initTouchPoint = e.touches[0];
+    self.update({
+      forcedStyle: 'transition-duration:0ms'
+    });
+  };
+
+  this.navBarDragging = function (e) {
+    var touch = e.touches[0];
+    var delta = touch.clientX - initTouchPoint.clientX;
+    if (delta < 1) {
+      self.update({
+        forcedStyle: 'transition-duration:0ms; transform:translateX(' + delta + 'px)'
+      });
+    }
+  };
+
+  this.endTouch = function (e) {
+    self.update({
+      forcedStyle: ''
+    });
+  };
+
   this.on("mount", function () {
+
     navStore.subscribe("nav:statuschange", changeNavBarStatus);
     navStore.subscribe("nav:modalchange", changeNavBarStatus);
     userStore.subscribe("user:login:success", getUserProfile);
@@ -635,7 +670,7 @@ riot.tag2('gp-stats', '<div class="stats"><div class="commentstat stat"><button 
 riot.tag2('gp-picunit', '<div class="userinfo"></div><div class="container-pic"></div><div class="stats"></div>', '', '', function (opts) {});
 riot.tag2('gp-followbutton', '<button class="follow {opts.following?\'following\':\'\'}"><icon-add if="{!opts.following}"></icon-add><icon-tick if="{opts.following}"></icon-tick><span class="text">{opts.following?\'following\':\'follow\'}</span></button>', '', '', function (opts) {});
 
-riot.tag2('gp-profile', '<div class="profilepic {userPic?\'loaded\':\'\'}" riot-style="{userPic?\'background-image:url(\\\'\'+userPic+\'\\\')\':\'\'};height:{window.innerHeight*.65}px"><div class="username">{userProfile.user.name}</div><gp-followbutton following="{userProfile.is_follower}" if="{userProfile&&ownerProfile&&ownerProfile.user.user_id!==userProfile.user.user_id}"></gp-followbutton></div><div class="usercontent" if="{userProfile}"><material-tabs useline="true" tabs="{tabs}" __selected="{selectedTab}" tabchanged="{tabChanged}"></material-tabs><div class="tabcontent tab{selectedTab}" onswipeleft="{incTabsIndex}" onswiperight="{decTabsIndex}"><div class="tab tab-owned"><div class="ownedcontainer"><a class="piclink" each="{pic, index in userProfile.owned_images}" href="/image/{pic.id}"><img height="{(window.innerWidth/3)-2}" class="ownedpic" riot-src="{pic.url}"></img></a></div></div><div class="tab tab-contri"> Tab2 </div></div></div><div class="usercontent" if="{!userProfile}"><div class="loader"><material-spinner></material-spinner></div></div>', '', '', function (opts) {
+riot.tag2('gp-profile', '<div class="profilepic {userPic?\'loaded\':\'\'}" riot-style="{userPic?\'background-image:url(\\\'\'+userPic+\'\\\')\':\'\'};height:{window.innerHeight*.65}px"><div class="username">{userProfile.user.name}</div><gp-followbutton following="{userProfile.is_follower}" onclick="{startFollowingUser}" if="{userProfile&&ownerProfile&&ownerProfile.user.user_id!==userProfile.user.user_id}"></gp-followbutton></div><div class="usercontent" if="{userProfile}"><material-tabs useline="true" tabs="{tabs}" __selected="{selectedTab}" tabchanged="{tabChanged}"></material-tabs><div class="tabcontent tab{selectedTab}" onswipeleft="{incTabsIndex}" onswiperight="{decTabsIndex}"><div class="tab tab-owned"><div class="ownedcontainer"><a class="piclink" each="{pic, index in userProfile.owned_images}" href="/image/{pic.id}"><img height="{(window.innerWidth/3)-2}" class="ownedpic" riot-src="{pic.url}"></img></a></div></div><div class="tab tab-contri"> Tab2 </div></div></div><div class="usercontent" if="{!userProfile}"><div class="loader"><material-spinner></material-spinner></div></div>', '', '', function (opts) {
   var _this2 = this;
 
   var self = this;
@@ -644,6 +679,9 @@ riot.tag2('gp-profile', '<div class="profilepic {userPic?\'loaded\':\'\'}" riot-
   var pid = veronica.getCurrentState().data[':pid'];
   var userProfileEventSubscribed = false;
   var $tabs = null;
+
+  var initPoint = null;
+  var isCancelling = false;
 
   this.userProfile = userStore.getUserProfile(pid);
   this.ownerProfile = userStore.getUserProfile("me");
@@ -667,6 +705,23 @@ riot.tag2('gp-profile', '<div class="profilepic {userPic?\'loaded\':\'\'}" riot-
     });
     setUserPic(userStore.getUserProfile(pid));
     $tabs = self.root.querySelector("material-tabs");
+
+    setTimeout(function () {
+      self.root.querySelector('.usercontent').addEventListener('touchstart', function (e) {
+        initPoint = e.touches[0];
+      });
+      self.root.querySelector('.usercontent').addEventListener('touchmove', function (e) {
+        var scrollDirectionIntent = Math.abs(initPoint.clientX - e.touches[0].clientX) / Math.abs(initPoint.clientY - e.touches[0].clientY);
+        if (isCancelling || scrollDirectionIntent > 0.8) {
+          isCancelling = true;
+          e.preventDefault();
+        }
+      });
+      self.root.querySelector('.usercontent').addEventListener('touchend', function (e) {
+        isCancelling = false;
+        initPoint = null;
+      });
+    }, 100);
   }
 
   this.incTabsIndex = function (e) {
@@ -684,6 +739,10 @@ riot.tag2('gp-profile', '<div class="profilepic {userPic?\'loaded\':\'\'}" riot-
 
   this.tabChanged = function () {
     self.update({ selectedTab: $tabs._tag.selected });
+  };
+
+  this.startFollowingUser = function () {
+    userAction.followUser(pid, self.userProfile.is_follower);
   };
 
   this.on("mount", function () {
@@ -704,14 +763,50 @@ riot.tag2('gp-profile', '<div class="profilepic {userPic?\'loaded\':\'\'}" riot-
   });
 });
 
-riot.tag2('material-dialog', '<div if="{opts.shown}"><div class="bg"></div><div class="dialog {shown:opts.shown}"><div class="title">{opts.title}</div><div class="desc"><yield></yield></div><div class="actions"><material-button class="action" each="{action in opts.actions}" onclick="{actionSelected}">{action}</material-button></div></div></div>', '', '', function (opts) {
+riot.tag2('gp-search', '<input type="" onkeyup="{search}">', '', '', function (opts) {
+  this.search = function (q) {
+    fetch(apiBase + '/galleria/search/any/' + q.target.value, {
+      mode: 'cors',
+      credentials: 'include'
+    }).then(function (res) {
+      return res.json();
+    }).then(function (data) {
+      console.log(data);
+    });
+  };
+});
+riot.tag2('gp-toast', '<div class="toastcontainer"></div>', '', '', function (opts) {
   var _this3 = this;
+
+  var self = this;
+  var toastStore = veronica.flux.Stores.getStore('ToastStore');
+  var $tContainer = null;
+
+  function showToast() {
+    var toastObj = toastStore.getToastData();
+    var toastDom = document.createElement('div');
+    toastDom.setAttribute('class', 'toast ' + toastObj.data.type);
+    toastDom.innerText = toastObj.text;
+    $tContainer.appendChild(toastDom);
+  }
+
+  this.on('mount', function (e) {
+    $tContainer = _this3.root.querySelector('.toastcontainer');
+    toastStore.subscribe('toast:show', showToast);
+  });
+
+  this.on('unmount', function (e) {
+    toastStore.unsubscribe('toast:show', showToast);
+  });
+});
+riot.tag2('material-dialog', '<div if="{opts.shown}"><div class="bg"></div><div class="dialog {shown:opts.shown}"><div class="title">{opts.title}</div><div class="desc"><yield></yield></div><div class="actions"><material-button class="action" each="{action in opts.actions}" onclick="{actionSelected}">{action}</material-button></div></div></div>', '', '', function (opts) {
+  var _this4 = this;
 
   var self = this;
 
   this.on('mount', function (e) {
 
-    document.body.appendChild(_this3.root);
+    document.body.appendChild(_this4.root);
   });
 
   this.actionSelected = function (e) {
@@ -722,20 +817,20 @@ riot.tag2('material-dialog', '<div if="{opts.shown}"><div class="bg"></div><div 
 });
 riot.tag2('material-progressbar', '<div class="bar"><div class="progress {opts.moving?\'moving\':\'\'}" riot-style="width:{opts.progress*100}%"></div></div>', '', '', function (opts) {});
 function UserAction() {
-  var _this5 = this;
+  var _this6 = this;
 
   this.fetchUserProfile = function (uid, sid) {
-    var _this4 = this;
+    var _this5 = this;
 
     fetch(apiBase + "/user/profile/details/" + uid, {
       mode: 'cors',
       credentials: 'include'
-    }).then(function (res) {
+    }).then(handleErrors).then(function (res) {
       return res.json();
     }).then(function (data) {
-      _this4.Dispatcher.trigger("user:fetchprofile:success", data);
+      _this5.Dispatcher.trigger("user:fetchprofile:success", data);
     }).catch(function (e) {
-      _this4.Dispatcher.trigger("user:fetchprofile:failed", e);
+      _this5.Dispatcher.trigger("user:fetchprofile:failed", e);
     });
   };
 
@@ -759,12 +854,12 @@ function UserAction() {
           }
         }
       })
-    }).then(function (res) {
+    }).then(handleErrors).then(function (res) {
       return res.json();
     }).then(function (data) {
-      _this5.Dispatcher.trigger("user:login:success", data);
+      _this6.Dispatcher.trigger("user:login:success", data);
     }).catch(function (e) {
-      _this5.Dispatcher.trigger("user:login:failure", { data: e });
+      _this6.Dispatcher.trigger("user:login:failure", { data: e });
     });
   };
 
@@ -773,7 +868,7 @@ function UserAction() {
   };
 
   this.followUser = function (userId) {
-    var _this6 = this;
+    var _this7 = this;
 
     fetch(window.apiBase + "/user/addFollower", {
       headers: window.defaultHeaders,
@@ -783,12 +878,12 @@ function UserAction() {
       body: JSON.stringify({
         'follower_account_id': userId
       })
-    }).then(function (res) {
+    }).then(handleErrors).then(function (res) {
       return res.json();
     }).then(function (data) {
-      _this6.Dispatcher.trigger("user:followed:success", { data: data, id: userId });
+      _this7.Dispatcher.trigger("user:followed:success", { data: data, id: userId });
     }).catch(function (e) {
-      _this6.Dispatcher.trigger("user:followed:failure", { data: e });
+      _this7.Dispatcher.trigger("user:followed:failure", { data: e });
     });
   };
 }
@@ -817,7 +912,7 @@ veronica.flux.Actions.createAction("NavigationActions", NavigationActions);
 
 function ImageActions() {
   this.saveImage = function (imgId, img, tags, description, sessionId) {
-    var _this7 = this;
+    var _this8 = this;
 
     fetch(window.apiBase + "/image/save", {
       headers: Object.assign({}, window.defaultHeaders, { 'x-session-id': sessionId }),
@@ -831,12 +926,12 @@ function ImageActions() {
         "title": "string",
         "image_id": imgId
       })
-    }).then(function (res) {
+    }).then(handleErrors).then(function (res) {
       return res.json();
     }).then(function (data) {
-      _this7.Dispatcher.trigger("img:save:success", data);
+      _this8.Dispatcher.trigger("img:save:success", data);
     }).catch(function (e) {
-      _this7.Dispatcher.trigger("img:save:failed", {});
+      _this8.Dispatcher.trigger("img:save:failed", {});
     });
   };
 
@@ -847,7 +942,7 @@ function ImageActions() {
       mode: 'cors',
       credentials: 'include',
       body: ''
-    }).then(function (res) {
+    }).then(handleErrors).then(function (res) {
       return res.json();
     }).then(function (data) {
       console.log(data);
@@ -855,7 +950,7 @@ function ImageActions() {
   };
 
   this.cloneImage = function (imageId, sessionId) {
-    var _this8 = this;
+    var _this9 = this;
 
     var fetchPromise = fetch(window.apiBase + '/image/clone', {
       headers: Object.assign({}, window.defaultHeaders, { 'x-session-id': sessionId }),
@@ -869,9 +964,9 @@ function ImageActions() {
       }
       return res.json();
     }).then(function (data) {
-      _this8.Dispatcher.trigger("img:clone:success", data);
+      _this9.Dispatcher.trigger("img:clone:success", data);
     }).catch(function (e) {
-      _this8.Dispatcher.trigger("img:clone:failed", e);
+      _this9.Dispatcher.trigger("img:clone:failed", e);
     });
   };
 
@@ -880,25 +975,37 @@ function ImageActions() {
   };
 
   this.fetchImage = function (imageId) {
-    var _this9 = this;
+    var _this10 = this;
 
-    fetch(window.apiBase + "/image/details/" + imageId, {
+    fetch(apiBase + "/image/details/" + imageId, {
       mode: 'cors',
       credentials: 'include'
-    }).then(function (res) {
+    }).then(handleErrors).then(function (res) {
       return res.json();
     }).then(function (data) {
-      _this9.Dispatcher.trigger("img:detailsfetch:success", data);
+      _this10.Dispatcher.trigger("img:detailsfetch:success", data);
     }).catch(function (e) {
-      _this9.Dispatcher.trigger("img:detailsfetch:failed", {});
+      _this10.Dispatcher.trigger("img:detailsfetch:failed", {});
     });
   };
 }
 
 veronica.flux.Actions.createAction("ImageActions", ImageActions);
 
+function ToastActions() {
+  this.showToast = function (text, opts) {
+    this.Dispatcher.trigger("toast:show", { text: text, data: opts });
+  };
+
+  this.showSnackBar = function (text, opts) {
+    this.Dispatcher.trigger("snackbar:show", { text: text, data: opts });
+  };
+}
+
+veronica.flux.Actions.createAction("ToastActions", ToastActions);
+
 function UserStore() {
-  var _this10 = this;
+  var _this11 = this;
 
   var sessionId = localStorage.sid || null;
   var users = {};
@@ -923,16 +1030,16 @@ function UserStore() {
     users[users["me"].account_id] = users["me"];
     localStorage.sid = sessionId;
     localStorage.user = JSON.stringify(users["me"]);
-    _this10.emit("user:login:success");
+    _this11.emit("user:login:success");
   });
 
   this.Dispatcher.register("user:login:failure", function (data) {
-    _this10.emit("user:login:failure");
+    _this11.emit("user:login:failure");
   });
 
   this.Dispatcher.register("user:fetchprofile:success", function (data) {
     users[data.user.account_id] = data;
-    _this10.emit("user:profile:fetched");
+    _this11.emit("user:profile:fetched");
   });
 
   this.getUserProfile = function (uid) {
@@ -1033,7 +1140,7 @@ function NavigationStore() {
 //creating an store 
 veronica.flux.Stores.createStore("NavigationStore", NavigationStore);
 function ImageStore() {
-  var _this11 = this;
+  var _this12 = this;
 
   var self = this;
   var currPic = null;
@@ -1041,28 +1148,28 @@ function ImageStore() {
   //Register for actions
   this.Dispatcher.register("img:save:success", function (data) {
     currPic = data;
-    _this11.emit("img:save:success");
+    _this12.emit("img:save:success");
   });
 
   this.Dispatcher.register("img:save:failed", function (data) {
-    _this11.emit("img:save:failed");
+    _this12.emit("img:save:failed");
   });
 
   this.Dispatcher.register("img:clone:success", function (data) {
-    _this11.emit("img:clone:success");
+    _this12.emit("img:clone:success");
   });
 
   this.Dispatcher.register("img:clone:failed", function (data) {
-    _this11.emit("img:clone:failed");
+    _this12.emit("img:clone:failed");
   });
 
   this.Dispatcher.register("img:detailsfetch:success", function (data) {
     imgs[data.id] = data;
-    _this11.emit("img:detailsfetch:success");
+    _this12.emit("img:detailsfetch:success");
   });
 
   this.Dispatcher.register("img:detailsfetch:failed", function (data) {
-    _this11.emit("img:detailsfetch:failed");
+    _this12.emit("img:detailsfetch:failed");
   });
 
   this.getPicDetails = function (imageId) {
@@ -1076,4 +1183,24 @@ function ImageStore() {
 
 //creating an store 
 veronica.flux.Stores.createStore("ImageStore", ImageStore);
+
+function ToastStore() {
+  var _this13 = this;
+
+  var self = this;
+
+  var toastData = null;
+
+  this.Dispatcher.register('toast:show', function (data) {
+    toastData = data;
+    _this13.emit('toast:show');
+  });
+
+  this.getToastData = function () {
+    return toastData;
+  };
+}
+
+//creating an store 
+veronica.flux.Stores.createStore("ToastStore", ToastStore);
 //# sourceMappingURL=tags.es5.js.map

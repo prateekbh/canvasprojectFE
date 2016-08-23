@@ -2,10 +2,12 @@ var fluxFiles = [
     "./actions/userActions.js",
     "./actions/navigationActions.js",
     "./actions/imageActions.js",
+    "./actions/toastActions.js",
     "./stores/userStore.js",
     "./stores/routeStore.js",
     "./stores/navigationStore.js",
     "./stores/imageStore.js",
+    "./stores/toastStore.js"
 ];
 var vendorFiles = [
     "./node_modules/node-lzw/lib/lzw.js", 

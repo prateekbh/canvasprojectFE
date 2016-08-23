@@ -14,25 +14,33 @@
 		var self=this;
 		var userStore=veronica.flux.Stores.getStore("UserStore");
 		var userActions=veronica.flux.Actions.getAction("UserActions");
+		var toastActions=veronica.flux.Actions.getAction("ToastActions");
 		
 		this.userProfile=userStore.getUserProfile("me");
 		this.loading=false;
 
 		this.startLoading=function(){
-			self.update({loading:true});
-			window.FB&&FB.login(function(res){
-				if(res.status==="connected"){
-					var url = '/me?fields=name,email,picture';
-	                FB.api(url, function (response) {
-	                	userActions.loginUser(response,res);
-	                });
-				}
-			});
+			if(window.FB){
+				self.update({loading:true});
+				FB.login(function(res){
+					if(res.status==="connected"){
+						var url = '/me?fields=name,email,picture';
+	          FB.api(url, function (response) {
+	          	userActions.loginUser(response,res);
+	          });
+					}
+				});
+			}
 		}
 
 		function logInSuccess(){
-			//show toast
+			toastActions.showToast('Login successful',{type:'success'});
 			veronica.loc("/",true);
+		}
+
+		function logInFailed(){
+			toastActions.showToast('Login failed',{type:'error'});
+			self.update({loading:false});
 		}
 
 		this.on("mount",()=>{
@@ -40,11 +48,13 @@
 				veronica.loc("/",true);
 			}else{
 				userStore.subscribe("user:login:success", logInSuccess);
+				userStore.subscribe("user:login:failed", logInFailed);
 			}
 		});
 
 		this.on("unmount",()=>{
 			userStore.unsubscribe("user:login:success", logInSuccess);
+			userStore.unsubscribe("user:login:failed", logInFailed);
 		});
 	</script>
 </gp-login>

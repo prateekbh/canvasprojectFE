@@ -1,0 +1,25 @@
+<gp-toast>
+	<div class="toastcontainer"></div>
+	<script>
+		var self = this;
+		var toastStore = veronica.flux.Stores.getStore('ToastStore');
+		var $tContainer=null;
+
+		function showToast(){
+			var toastObj = toastStore.getToastData();
+			var toastDom = document.createElement('div');
+			toastDom.setAttribute('class','toast '+toastObj.data.type);
+			toastDom.innerText = toastObj.text;
+			$tContainer.appendChild(toastDom);
+		}
+
+		this.on('mount',(e)=>{
+			$tContainer=this.root.querySelector('.toastcontainer');
+			toastStore.subscribe('toast:show',showToast);
+		});
+
+		this.on('unmount',(e)=>{
+			toastStore.unsubscribe('toast:show',showToast);
+		});
+	</script>
+</gp-toast>

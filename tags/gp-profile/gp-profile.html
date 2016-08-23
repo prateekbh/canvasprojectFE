@@ -3,6 +3,7 @@
 		<div class="username">{userProfile.user.name}</div>
 		<gp-followbutton 
 			following={userProfile.is_follower}
+			onclick={startFollowingUser}
 			if={userProfile&&ownerProfile&&ownerProfile.user.user_id!==userProfile.user.user_id}>
 		</gp-followbutton>
 	</div>
@@ -15,7 +16,7 @@
 		<div 
 			class="tabcontent tab{selectedTab}"
 			onswipeleft={incTabsIndex}
-			onswiperight={decTabsIndex}>
+			onswiperight={decTabsIndex} >
 			<div class="tab tab-owned">
 				<div class="ownedcontainer">
 					<a class="piclink" each={pic, index in userProfile.owned_images} href="/image/{pic.id}">
@@ -42,6 +43,11 @@
 		var userProfileEventSubscribed=false;
 		var $tabs=null;
 
+		/* place holders for tab swiping */
+		var initPoint = null;
+		var isCancelling = false;
+
+
 		this.userProfile = userStore.getUserProfile(pid);
 		this.ownerProfile = userStore.getUserProfile("me");
 		this.userPic = null;
@@ -67,24 +73,48 @@
 			});
 			setUserPic(userStore.getUserProfile(pid));
 			$tabs=self.root.querySelector("material-tabs");
+
+			//HIGHLY Experimental
+			setTimeout(()=>{
+				self.root.querySelector('.usercontent').addEventListener('touchstart',(e)=>{
+					initPoint=e.touches[0];
+				});	
+				self.root.querySelector('.usercontent').addEventListener('touchmove',(e)=>{
+					var scrollDirectionIntent = Math.abs(initPoint.clientX - e.touches[0].clientX)/Math.abs(initPoint.clientY - e.touches[0].clientY);
+					if(isCancelling || scrollDirectionIntent > 0.8){
+						isCancelling = true;
+						e.preventDefault();
+					}
+				});	
+				self.root.querySelector('.usercontent').addEventListener('touchend',(e)=>{
+					isCancelling = false;
+					initPoint = null;
+				});	
+			},100);
+			
 		}
 
-		this.incTabsIndex=function(e){
+		this.incTabsIndex = function(e){
 			if(this.selectedTab<1){
 				self.update({selectedTab:this.selectedTab+1});
 				$tabs._tag.changeTab(this.selectedTab);
 			}
 		}
-		this.decTabsIndex=function(e){
+		this.decTabsIndex = function(e){
 			if(this.selectedTab>0){
 				self.update({selectedTab:this.selectedTab-1});
 				$tabs._tag.changeTab(this.selectedTab);
 			}
 		}
 
-		this.tabChanged=function(){
+		this.tabChanged = function(){
 			self.update({selectedTab:$tabs._tag.selected});
 		}
+
+		this.startFollowingUser = function(){
+			userAction.followUser(pid,self.userProfile.is_follower);
+		} 
+
 
 		this.on("mount",()=>{
 			userAction.fetchUserProfile(pid, userStore.getSessionId());

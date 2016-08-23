@@ -1,0 +1,15 @@
+<gp-search>
+	<input type="" onkeyup={search}>
+	<script>
+		this.search=function(q){
+			fetch(apiBase+'/galleria/search/any/'+q.target.value,{
+				mode: 'cors',
+				credentials: 'include'
+			})
+			.then(res=>res.json())
+			.then(data=>{
+				console.log(data);
+			})
+		}
+	</script>
+</gp-search>

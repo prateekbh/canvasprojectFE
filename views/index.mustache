@@ -12,17 +12,32 @@
 	<gp-modal></gp-modal>
 	<div class="container app-body">
 	</div>
+	<gp-toast></gp-toast>
 	<script src="https://cdn.polyfill.io/v2/polyfill.min.js"></script>
 	<script type="text/javascript" src="/bin/js/vendor.js"></script>
 	<script type="text/javascript" src="/bin/tags/tags.js"></script>
 	<script type="text/javascript">
+		//api url
 		window.apiBase="http://54.93.115.203:8080";
+
+		//default headers
 		window.defaultHeaders={
 			"content-type":"application/json"
 		};
+
+		//fetch error handling
+		function handleErrors(response) {
+		    if (!response.ok) {
+		        throw Error(response.statusText);
+		    }
+		    return response;
+		}
+
+		//riot and veronica configs
 		riot.mount("gp-header",{});
 		riot.mount("gp-navbar",{});
 		riot.mount("gp-modal",{});
+		riot.mount("gp-toast",{});
 		veronica.addRoute(veronica.createRoute("home","/","gp-home"));
 		veronica.addRoute(veronica.createRoute("login","/login","gp-login"));
 		veronica.addRoute(veronica.createRoute("search","/search","gp-search"));
