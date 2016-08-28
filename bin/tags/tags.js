@@ -88,7 +88,7 @@ riot.tag2('gp-contriimage', '<img if="{loadedImagesCount===2}" riot-src="{opts.b
 			self.update({loadedImagesCount:loadedImagesCount+1});
 		}
 });
-riot.tag2('gp-draw', '<div class="canvascontainer"><canvas if="{showCanvas}" id="canvas" width="800" height="800"></canvas></div><div class="pbar" if="{isSaving}"><material-progressbar progress="{0.5}" moving="{true}"></material-progressbar></div><div if="{!isSaving}" class="controls {isControlsOpen?\'controlsshown\':\'\'}"><button class="btn-control colors" onclick="{showColors}"><svg fill="#FFFFFF" height="24" viewbox="0 0 24 24" width="24"><path d="M12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9c.83 0 1.5-.67 1.5-1.5 0-.39-.15-.74-.39-1.01-.23-.26-.38-.61-.38-.99 0-.83.67-1.5 1.5-1.5H16c2.76 0 5-2.24 5-5 0-4.42-4.03-8-9-8zm-5.5 9c-.83 0-1.5-.67-1.5-1.5S5.67 9 6.5 9 8 9.67 8 10.5 7.33 12 6.5 12zm3-4C8.67 8 8 7.33 8 6.5S8.67 5 9.5 5s1.5.67 1.5 1.5S10.33 8 9.5 8zm5 0c-.83 0-1.5-.67-1.5-1.5S13.67 5 14.5 5s1.5.67 1.5 1.5S15.33 8 14.5 8zm3 4c-.83 0-1.5-.67-1.5-1.5S16.67 9 17.5 9s1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"></path><path d="M0 0h24v24H0z" fill="none"></path></svg></button><button class="btn-control brush" onclick="{showBrushes}"><svg fill="#FFFFFF" height="24" viewbox="0 0 24 24" width="24"><path d="M7 14c-1.66 0-3 1.34-3 3 0 1.31-1.16 2-2 2 .92 1.22 2.49 2 4 2 2.21 0 4-1.79 4-4 0-1.66-1.34-3-3-3zm13.71-9.37l-1.34-1.34c-.39-.39-1.02-.39-1.41 0L9 12.25 11.75 15l8.96-8.96c.39-.39.39-1.02 0-1.41z"></path></svg></button><button class="btn-control save" onclick="{save}"><svg fill="#FFFFFF" height="24" viewbox="0 0 24 24" width="24"><path d="M17 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V7l-4-4zm-5 16c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3zm3-10H5V5h10v4z"></path></svg></button><button class="btn-control save" onclick="{save}"><svg fill="#FFFFFF" height="24" viewbox="0 0 24 24" width="24"><path d="M17 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V7l-4-4zm-5 16c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3zm3-10H5V5h10v4z"></path></svg></button><button class="btn-control publish" onclick="{publish}"><icon-publish></icon-publish></button><button class="btn-control options {isControlsOpen?\'controlsshown\':\'\'}" onclick="{openControls}"><svg class="firstleg leg" fill="#FFFFFF" height="24" viewbox="0 0 24 24" width="24"><path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"></path></svg><svg class="secondleg leg" fill="#FFFFFF" height="24" viewbox="0 0 24 24" width="24"><path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"></path></svg></button></div><div class="bottomsheet {isBottomsheetShown?\'shown\':\'\'}"><div class="contents"><button class="btn-control closesheet" onclick="{closeSheet}"><svg class="firstleg leg" fill="#FFFFFF" height="24" viewbox="0 0 24 24" width="24"><path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"></path></svg><svg class="secondleg leg" fill="#FFFFFF" height="24" viewbox="0 0 24 24" width="24"><path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"></path></svg></button><div class="title">{sheetTitle}</div><div class="sheetcontent"><gp-colorpicker if="{currentControl===⁗PALLETE⁗}" onselectchange="{selectColor}"></gp-colorpicker><div class="brushlist" if="{currentControl===⁗BRUSHES⁗}"><div class="brushcontrol" each="{brush in brushesList}" onclick="{selectBrush}"> {brush} </div></div></div><material-dialog title="Publish image" shown="{isPublishPopupShown}" actions="{[ \'CANCEL\', \'PUBLISH\']}" onaction="{popupaction}"><div><material-input placeholder="enter title" required valuechanged="{this.parent.changeTitle}"></material-input><material-input placeholder="enter description" required valuechanged="{this.parent.changeDesc}"></material-input></div></material-dialog></div></div>', '', '', function(opts) {
+riot.tag2('gp-draw', '<div class="canvascontainer"><canvas if="{showCanvas}" id="canvas" width="800" height="800"></canvas></div><div class="pbar" if="{isSaving}"><material-progressbar progress="{0.5}" moving="{true}"></material-progressbar></div><div if="{!isSaving}" class="controls {isControlsOpen?\'controlsshown\':\'\'}"><button class="btn-control colors" onclick="{showColors}"><svg fill="#FFFFFF" height="24" viewbox="0 0 24 24" width="24"><path d="M12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9c.83 0 1.5-.67 1.5-1.5 0-.39-.15-.74-.39-1.01-.23-.26-.38-.61-.38-.99 0-.83.67-1.5 1.5-1.5H16c2.76 0 5-2.24 5-5 0-4.42-4.03-8-9-8zm-5.5 9c-.83 0-1.5-.67-1.5-1.5S5.67 9 6.5 9 8 9.67 8 10.5 7.33 12 6.5 12zm3-4C8.67 8 8 7.33 8 6.5S8.67 5 9.5 5s1.5.67 1.5 1.5S10.33 8 9.5 8zm5 0c-.83 0-1.5-.67-1.5-1.5S13.67 5 14.5 5s1.5.67 1.5 1.5S15.33 8 14.5 8zm3 4c-.83 0-1.5-.67-1.5-1.5S16.67 9 17.5 9s1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"></path><path d="M0 0h24v24H0z" fill="none"></path></svg></button><button class="btn-control brush" onclick="{showBrushes}"><svg fill="#FFFFFF" height="24" viewbox="0 0 24 24" width="24"><path d="M7 14c-1.66 0-3 1.34-3 3 0 1.31-1.16 2-2 2 .92 1.22 2.49 2 4 2 2.21 0 4-1.79 4-4 0-1.66-1.34-3-3-3zm13.71-9.37l-1.34-1.34c-.39-.39-1.02-.39-1.41 0L9 12.25 11.75 15l8.96-8.96c.39-.39.39-1.02 0-1.41z"></path></svg></button><button class="btn-control save" onclick="{save}"><svg fill="#FFFFFF" height="24" viewbox="0 0 24 24" width="24"><path d="M17 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V7l-4-4zm-5 16c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3zm3-10H5V5h10v4z"></path></svg></button><button class="btn-control save" onclick="{save}"><svg fill="#FFFFFF" height="24" viewbox="0 0 24 24" width="24"><path d="M17 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V7l-4-4zm-5 16c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3zm3-10H5V5h10v4z"></path></svg></button><button class="btn-control publish" onclick="{publish}"><icon-publish></icon-publish></button><button class="btn-control options {isControlsOpen?\'controlsshown\':\'\'}" onclick="{openControls}"><svg class="firstleg leg" fill="#FFFFFF" height="24" viewbox="0 0 24 24" width="24"><path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"></path></svg><svg class="secondleg leg" fill="#FFFFFF" height="24" viewbox="0 0 24 24" width="24"><path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"></path></svg></button></div><div class="bottomsheet {isBottomsheetShown?\'shown\':\'\'}"><button class="btn-control closesheet" onclick="{closeSheet}"><svg class="firstleg leg" fill="#FFFFFF" height="24" viewbox="0 0 24 24" width="24"><path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"></path></svg><svg class="secondleg leg" fill="#FFFFFF" height="24" viewbox="0 0 24 24" width="24"><path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"></path></svg></button><div class="title">{sheetTitle}</div><div class="sheetcontent"><gp-colorpicker if="{currentControl===⁗PALLETE⁗}" onselectchange="{selectColor}"></gp-colorpicker><div class="brushlist" if="{currentControl===⁗BRUSHES⁗}"><div class="brushcontrol" each="{brush in brushesList}" onclick="{selectBrush}"> {brush} </div></div></div><material-dialog title="Publish image" shown="{isPublishPopupShown}" actions="{[\'CANCEL\',\'PUBLISH\']}" onaction="{popupaction}"><div><material-input placeholder="enter title" required valuechanged="{this.parent.changeTitle}"></material-input><material-input placeholder="enter description" required valuechanged="{this.parent.changeDesc}"></material-input></div></material-dialog></div>', '', '', function(opts) {
     var self = this;
     var imageActions = veronica.flux.Actions.getAction("ImageActions");
     var userStore = veronica.flux.Stores.getStore("UserStore");
@@ -113,8 +113,8 @@ riot.tag2('gp-draw', '<div class="canvascontainer"><canvas if="{showCanvas}" id=
     this.isPublishPopupShown = false;
     this.imgId = null;
 
-    this.title = "";
-    this.description = "";
+    this.title="";
+    this.description="";
 
     var el, ctx;
     var factor = 800 / window.innerWidth;
@@ -160,6 +160,7 @@ riot.tag2('gp-draw', '<div class="canvascontainer"><canvas if="{showCanvas}" id=
     }
 
     function draw(e) {
+        e.preventDefault();
         e.clientX = e.touches[0].clientX * factor;
         e.clientY = (e.touches[0].clientY - 66) * factor;
         switch (selectedBrush) {
@@ -236,8 +237,8 @@ riot.tag2('gp-draw', '<div class="canvascontainer"><canvas if="{showCanvas}" id=
 
     }
 
-    function saveImage() {
-        imageActions.saveImage(self.imgId, el.toDataURL(), self.title, self.description, userStore.getSessionId());
+    function saveImage(){
+      imageActions.saveImage(self.imgId, el.toDataURL(), self.title, self.description, userStore.getSessionId());
     }
 
     this.openControls = function(e) {
@@ -296,38 +297,36 @@ riot.tag2('gp-draw', '<div class="canvascontainer"><canvas if="{showCanvas}" id=
         saveImage();
     }
 
-    this.publish = function(e) {
-        e.preventDefault();
-        this.closeSheet(e);
-        self.update({
-            isPublishPopupShown: true,
-            isControlsOpen: false
-        });
-        saveImage();
+    this.publish = function(e){
+      e.preventDefault();
+      this.closeSheet(e);
+      self.update({
+          isPublishPopupShown: true,
+          isControlsOpen: false
+      });
+      saveImage();
     }
 
-    this.changeTitle = function(e) {
-        self.update({
-            title: e
-        });
+    this.changeTitle=function(e){
+      self.update({
+        title:e
+      });
     }
 
-    this.changeDesc = function(e) {
-        self.update({
-            description: e
-        });
+    this.changeDesc=function(e){
+      self.update({
+        description:e
+      });
     }
 
-    this.popupaction = function(btnText) {
-        switch (btnText) {
-            case "CANCEL":
-                self.update({
-                    isPublishPopupShown: false
-                });
-            case "PUBLISH":
-                saveImage();
-                imageActions.publishImage();
-        }
+    this.popupaction=function(btnText){
+      switch(btnText){
+        case "CANCEL":
+          self.update({isPublishPopupShown: false});
+        case "PUBLISH":
+          saveImage();
+          imageActions.publishImage();
+      }
     }
 
     this.on("mount", function() {
@@ -343,7 +342,7 @@ riot.tag2('gp-draw', '<div class="canvascontainer"><canvas if="{showCanvas}" id=
             el = document.getElementById('canvas');
             ctx = el.getContext('2d');
             el.addEventListener("touchstart", startDraw, false);
-            el.addEventListener("touchmove", draw, false);
+            el.addEventListener("touchmove", draw);
             el.addEventListener("touchend", endDraw, false);
         }, 400);
 

@@ -119,7 +119,7 @@
 </gp-contriimage>
 <gp-draw>
     <div class="canvascontainer">
-        <canvas if={showCanvas} id="canvas" width="800" height="800"></canvas>
+      <canvas if={showCanvas} id="canvas" width="800" height="800"></canvas>
     </div>
     <div class="pbar" if={isSaving}>
         <material-progressbar progress={0.5} moving={true}></material-progressbar>
@@ -159,31 +159,33 @@
         </button>
     </div>
     <div class="bottomsheet {isBottomsheetShown?'shown':''}">
-        <div class="contents">
-            <button class="btn-control closesheet" onclick={closeSheet}>
-                <svg class="firstleg leg" fill="#FFFFFF" height="24" viewBox="0 0 24 24" width="24">
-                    <path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z" />
-                </svg>
-                <svg class="secondleg leg" fill="#FFFFFF" height="24" viewBox="0 0 24 24" width="24">
-                    <path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z" />
-                </svg>
-            </button>
-            <div class="title">{sheetTitle}</div>
-            <div class="sheetcontent">
-                <gp-colorpicker if={currentControl==="PALLETE" } onselectchange={selectColor}></gp-colorpicker>
-                <div class="brushlist" if={currentControl==="BRUSHES" }>
-                    <div class="brushcontrol" each={brush in brushesList} onclick={selectBrush}>
-                        {brush}
-                    </div>
+        <button class="btn-control closesheet" onclick={closeSheet}>
+            <svg class="firstleg leg" fill="#FFFFFF" height="24" viewBox="0 0 24 24" width="24">
+                <path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z" />
+            </svg>
+            <svg class="secondleg leg" fill="#FFFFFF" height="24" viewBox="0 0 24 24" width="24">
+                <path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z" />
+            </svg>
+        </button>
+        <div class="title">{sheetTitle}</div>
+        <div class="sheetcontent">
+            <gp-colorpicker if={currentControl==="PALLETE" } onselectchange={selectColor}></gp-colorpicker>
+            <div class="brushlist" if={currentControl==="BRUSHES" }>
+                <div class="brushcontrol" each={brush in brushesList} onclick={selectBrush}>
+                    {brush}
                 </div>
             </div>
-            <material-dialog title="Publish image" shown={isPublishPopupShown} actions={[ 'CANCEL', 'PUBLISH']} onaction={popupaction}>
-                <div>
-                    <material-input placeholder="enter title" required valuechanged={this.parent.changeTitle}></material-input>
-                    <material-input placeholder="enter description" required valuechanged={this.parent.changeDesc}></material-input>
-                </div>
-            </material-dialog>
         </div>
+        <material-dialog 
+          title="Publish image" 
+          shown={isPublishPopupShown} 
+          actions={['CANCEL','PUBLISH']} 
+          onaction={popupaction}>
+          <div>
+            <material-input placeholder="enter title" required valuechanged={this.parent.changeTitle}></material-input>
+            <material-input placeholder="enter description" required valuechanged={this.parent.changeDesc}></material-input>
+          </div>
+        </material-dialog>
     </div>
     <script>
     var self = this;
@@ -211,8 +213,8 @@
     this.imgId = null;
 
     //image properties
-    this.title = "";
-    this.description = "";
+    this.title="";
+    this.description="";
 
     // Brush Variables
     var el, ctx;
@@ -264,6 +266,7 @@
     }
 
     function draw(e) {
+        e.preventDefault();
         e.clientX = e.touches[0].clientX * factor;
         e.clientY = (e.touches[0].clientY - 66) * factor;
         switch (selectedBrush) {
@@ -340,8 +343,8 @@
         //show toast
     }
 
-    function saveImage() {
-        imageActions.saveImage(self.imgId, el.toDataURL(), self.title, self.description, userStore.getSessionId());
+    function saveImage(){
+      imageActions.saveImage(self.imgId, el.toDataURL(), self.title, self.description, userStore.getSessionId());
     }
 
 
@@ -401,39 +404,37 @@
         saveImage();
     }
 
-    this.publish = function(e) {
-        e.preventDefault();
-        this.closeSheet(e);
-        self.update({
-            isPublishPopupShown: true,
-            isControlsOpen: false
-        });
-        saveImage();
+    this.publish = function(e){
+      e.preventDefault();
+      this.closeSheet(e);
+      self.update({
+          isPublishPopupShown: true,
+          isControlsOpen: false
+      });
+      saveImage();
     }
 
-    this.changeTitle = function(e) {
-        self.update({
-            title: e
-        });
+    this.changeTitle=function(e){
+      self.update({
+        title:e
+      });
     }
 
-    this.changeDesc = function(e) {
-        self.update({
-            description: e
-        });
+    this.changeDesc=function(e){
+      self.update({
+        description:e
+      });
     }
 
 
-    this.popupaction = function(btnText) {
-        switch (btnText) {
-            case "CANCEL":
-                self.update({
-                    isPublishPopupShown: false
-                });
-            case "PUBLISH":
-                saveImage();
-                imageActions.publishImage();
-        }
+    this.popupaction=function(btnText){
+      switch(btnText){
+        case "CANCEL":
+          self.update({isPublishPopupShown: false});
+        case "PUBLISH":
+          saveImage();
+          imageActions.publishImage();
+      }
     }
 
 
@@ -450,7 +451,7 @@
             el = document.getElementById('canvas');
             ctx = el.getContext('2d');
             el.addEventListener("touchstart", startDraw, false);
-            el.addEventListener("touchmove", draw, false);
+            el.addEventListener("touchmove", draw);
             el.addEventListener("touchend", endDraw, false);
         }, 400);
 

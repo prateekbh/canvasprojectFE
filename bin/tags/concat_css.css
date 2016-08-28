@@ -1244,6 +1244,7 @@ gp-draw {
     width: 100%;
     padding: 8px 16px;
     background-color: #fff;
+    height: 0px;
     border-top: 1px solid #ccc;
     bottom: 0;
     left: 0;
@@ -1252,13 +1253,9 @@ gp-draw {
     transition-duration: 300ms;
     transition-property: transform;
     will-change: transform; }
-    gp-draw .bottomsheet .content {
-      height: 0px;
-      overflow: hidden; }
     gp-draw .bottomsheet.shown {
+      height: 300px;
       transform: translateY(0px); }
-      gp-draw .bottomsheet.shown .content {
-        height: 300px; }
       gp-draw .bottomsheet.shown .closesheet {
         display: inline-block; }
     gp-draw .bottomsheet .sheetcontent {
